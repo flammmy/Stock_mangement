@@ -22,7 +22,7 @@ const menuItems = {
       icon: 'icon-ui',
       children: [
         {
-          id: 'component',
+          id: 'Users',
           title: 'Component',
           type: 'collapse',
           icon: 'feather icon-box',
