@@ -11,7 +11,22 @@ const menuItems = {
           title: 'Dashboard',
           type: 'item',
           icon: 'feather icon-home',
-          url: '/app/dashboard/default'
+          url: '/dashboard'
+        }
+      ]
+    },
+    {
+      id: 'users',
+      title: 'Users',
+      type: 'group',
+      icon: 'icon-navigation',
+      children: [
+        {
+          id: 'Users',
+          title: 'Users',
+          type: 'item',
+          icon: 'feather icon-home',
+          url: '/users'
         }
       ]
     },
@@ -23,7 +38,7 @@ const menuItems = {
       children: [
         {
           id: 'Users',
-          title: 'Component',
+          title: 'Users',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
