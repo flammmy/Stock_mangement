@@ -16,7 +16,7 @@ const menuItems = {
       ]
     },
     {
-      id: 'ui-element',
+      id: '',
       title: 'UI ELEMENT',
       type: 'group',
       icon: 'icon-ui',

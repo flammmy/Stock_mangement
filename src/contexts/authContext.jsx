@@ -1,30 +1,25 @@
-import React, { createContext, useReducer } from 'react';
-import auth, { initialState } from '../store/accountReducer'; 
+import React, { createContext, useReducer, useEffect } from 'react';
+import auth, { initialState } from '../store/accountReducer';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(auth, {
-      ...initialState,
-      isLoggedIn: !!localStorage.getItem('token'),
-      user: JSON.parse(localStorage.getItem('user')) || null,
-    });
-  
-    // Save auth state to localStorage whenever it changes
-    React.useEffect(() => {
-      if (state.isLoggedIn) {
-        localStorage.setItem('user', JSON.stringify(state.user));
-        localStorage.setItem('token', state.user?.token || '');
-      } else {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-      }
-    }, [state]);
-  
-    return (
-      <AuthContext.Provider value={{ state, dispatch }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  };
-  
+  const [state, dispatch] = useReducer(auth, initialState);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Simulate fetching user info or validating token
+      const user = { name: 'John Doe', email: 'johndoe@example.com' }; // Replace with API call if needed
+      dispatch({ type: 'INITIALIZE', payload: { isLoggedIn: true, user } });
+    } else {
+      dispatch({ type: 'INITIALIZE', payload: { isLoggedIn: false, user: null } });
+    }
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

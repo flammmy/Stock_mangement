@@ -36,6 +36,12 @@ const auth = (state = initialState, action) => {
         user: null
       };
     }
+    case 'INITIALIZE': {
+      return {
+        ...state,
+        isInitialized: true,
+      };
+    }
     default: {
       return { ...state };
     }

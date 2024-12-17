@@ -1,10 +1,12 @@
-import React from 'react';
+import React,{useEffect,useContext} from 'react';
 import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/authContext';
 import avatar1 from '../../assets/images/user/avatar-1.jpg';
 import avatar2 from '../../assets/images/user/avatar-2.jpg';
 import avatar3 from '../../assets/images/user/avatar-3.jpg';
+
 
 const dashSalesData = [
   { title: 'Daily Sales', amount: '$249.95', icon: 'icon-arrow-up text-c-green', value: 50, class: 'progress-c-theme' },
@@ -13,6 +15,15 @@ const dashSalesData = [
 ];
 
 const DashDefault = () => {
+  const { state } = useContext(AuthContext); // Access state from AuthContext
+  const navigate = useNavigate();
+ useEffect(() => {
+    // Check if the user is logged in
+    if (!state.isLoggedIn) {
+      navigate('/login'); // Redirect to login if not logged in
+    }
+  }, [state.isLoggedIn, navigate]); // Dependency array to watch changes in login state
+
   const tabContent = (
     <React.Fragment>
       <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">

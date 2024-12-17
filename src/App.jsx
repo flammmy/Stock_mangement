@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-
 import routes, { renderRoutes } from './routes';
 import { AuthProvider } from '../src/contexts/authContext';
 
