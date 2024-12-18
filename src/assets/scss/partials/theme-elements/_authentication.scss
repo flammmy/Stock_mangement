@@ -1,0 +1,173 @@
+.auth-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 100%;
+  min-height: 100vh;
+  background-color: #24674b;
+  background: url('./assets/images/authImage.svg') no-repeat center center / cover;
+
+
+  a,
+  p > a {
+    color: $theme-heading-color;
+    font-weight: 600;
+  }
+
+  .btn-auth-gen {
+    .btn-icon {
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 45px;
+
+      small {
+        font-size: 15px;
+      }
+    }
+  }
+
+  .card {
+    border-radius: 10px;
+    background-color: #ffffff81;
+    box-shadow: 0 0 20px 18px #29242415;
+
+    .card-body {
+      padding: 20px 30px;
+    }
+  }
+
+  .auth-content {
+    width: 350px;
+    padding: 15px;
+    z-index: 5;
+
+    @media (max-width: 768px) {
+      width: 300px;
+      padding: 10px;
+    }
+
+    @media (max-width: 575px) {
+      width: 90%;
+    }
+  }
+
+  .auth-bg {
+    .r {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+
+      &:first-child {
+        top: 0px;
+        right: 117px;
+        background: $theme-color;
+      }
+
+      &:last-child {
+        left: 68px;
+        bottom: 0px;
+        background: $theme-color;
+      }
+
+      &.s {
+        width: 20px;
+        height: 20px;
+        &:nth-child(2) {
+          top: 150px;
+          background: $primary-color;
+        }
+
+        &:nth-child(3) {
+          right: 228px;
+          bottom: 121px;
+          background: $success-color;
+        }
+      }
+
+      &:nth-child(odd) {
+        animation: floating 7s infinite;
+      }
+
+      &:nth-child(even) {
+        animation: floating 9s infinite;
+        
+      }
+    }
+  }
+}
+
+.aut-bg-img {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.auth-image {
+  width: 65vw;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+
+  img {
+    width: 350px;
+
+    @media (max-width: 768px) {
+      width: 80%;
+      max-width: 300px;
+    }
+
+    @media (max-width: 575px) {
+      // width: 70%;
+      max-width: 250px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 3rem;
+  }
+}
+
+
+
+// Responsive adjustments for `.auth-wrapper`
+@media (max-width: 991px) {
+  .auth-wrapper {
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
+// Responsive adjustments for `.card`
+@media (max-width: 500px) {
+   .card-body {
+    margin: 0px;
+  }
+  .auth-content{
+    width: 100%;
+    height: 78%;
+  }
+
+}
+
+
+@keyframes floating {
+  from {
+    transform: rotate(0deg) translate(-10px) rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg) translate(-10px) rotate(-360deg);
+  }
+}
