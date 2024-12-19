@@ -131,15 +131,65 @@ const UsersPage = () => {
       ),
     },
   ];
-
+  const handleDelete = async (userId) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      toast.success('User deleted successfully');
+      setUsers(users.filter((user) => user.id !== userId));
+      setFilteredUsers(filteredUsers.filter((user) => user.id !== userId));
+    } catch (error) {
+      toast.error('Failed to delete user');
+    }
+  };
   const handleEdit = (user) => {
     setSelectedUser(user);
     setShowEditModal(true);
+  };
+  const handleUpdateUser = async () => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`,
+        {
+          username: selectedUser.username,
+          name: selectedUser.name,
+          email: selectedUser.email,
+          phone: selectedUser.phone,
+          role: selectedUser.role == 'operator' ? 2 : 3,
+          password: selectedUser.password,
+          status: selectedUser.status == 'active' ? 1 : 0
+        },
+        {
+          headers: {
+            Authorization: Bearer `${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log(response);
+      toast.success('User updated successfully!');
+      setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user)));
+
+      setShowEditModal(false);
+    } catch (err) {
+      toast.error('Error updating user!');
+    }
   };
 
   const handleAddUser = () => {
     navigate('/add-user');
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedUser((prevUser) => ({
+      ...prevUser,
+      [name]: value
+    }));
+  };
+  
 
   const customStyles = {
     header: {
@@ -240,8 +290,95 @@ const UsersPage = () => {
           </div>
         </div>
       </div>
+      {/* Edit User Modal */}
+      {showEditModal && (
+        <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+          <Modal.Header closeButton style={{backgroundColor: '#3f4d67'}}>
+            <Modal.Title className="text-white">Edit User</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{backgroundColor: '#f0fff4'}}>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="username" 
+                  value={selectedUser.username || ''} 
+                  onChange={handleChange} 
+                  className="bg-white shadow-sm"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="name" 
+                  value={selectedUser.name || ''} 
+                  onChange={handleChange} 
+                  className="bg-white shadow-sm"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control 
+                  type="email" 
+                  name="email" 
+                  value={selectedUser.email || ''} 
+                  onChange={handleChange} 
+                  className="bg-white shadow-sm"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="phone" 
+                  value={selectedUser.phone || ''} 
+                  onChange={handleChange} 
+                  className="bg-white shadow-sm"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Role</Form.Label>
+                <Form.Select 
+                  name="role" 
+                  value={selectedUser.role || ''} 
+                  onChange={handleChange}
+                  className="bg-white shadow-sm"
+                >
+                  <option value="Superadmin">Superadmin</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Operator">Operator</option>
+                  <option value="Supplier">Supplier</option>
+                </Form.Select>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Status</Form.Label>
+                <Form.Select 
+                  name="status" 
+                  value={selectedUser.status || ''} 
+                  onChange={handleChange}
+                  className="bg-white shadow-sm"
+                >
+                  <option value={1}>Active</option>
+                  <option value={0}>Inactive</option>
+                </Form.Select>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer style={{backgroundColor: '#f0fff4'}}>
+            <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+              Close
+            </Button>
+            <Button variant="success" onClick={handleUpdateUser}>
+              Update
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 };
+
 
 export default UsersPage;

@@ -38,11 +38,36 @@ const menuItems = {
       children: [
         {
           id: 'Users',
-          title: 'Users',
+          title: 'Peoples',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
             {
+              id: 'user',
+              title: 'Users',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/users'
+            },{
+              id: 'supplier',
+              title: 'Supplier',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/supplier'
+            },
+            {
+              id: 'receiver',
+              title: 'Receiver',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/receiver'
+            },{
+              id: 'bank',
+              title: 'Bank',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/bank'
+            },{
               id: 'button',
               title: 'Button',
               type: 'item',

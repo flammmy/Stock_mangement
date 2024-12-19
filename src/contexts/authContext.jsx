@@ -8,13 +8,14 @@ export const AuthProvider = ({ children }) => {
       ...initialState,
       isLoggedIn: !!localStorage.getItem('token'),
       user: JSON.parse(localStorage.getItem('user')) || null,
+      
     });
-  
+  console.log(state);
     // Save auth state to localStorage whenever it changes
     React.useEffect(() => {
       if (state.isLoggedIn) {
         localStorage.setItem('user', JSON.stringify(state.user));
-        localStorage.setItem('token', state.user?.token || '');
+        localStorage.setItem('token', state.token || '');
       } else {
         localStorage.removeItem('user');
         localStorage.removeItem('token');

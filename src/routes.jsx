@@ -46,7 +46,7 @@ const routes = [
     path: '/auth/signup-1',
     element: lazy(() => import('./views/auth/signup/SignUp1'))
   },
-  
+
   {
     path: '*',
     layout: AdminLayout,
@@ -65,6 +65,30 @@ const routes = [
         exact: 'true',
         path: '/add-user',
         element: lazy(() => import('./views/users/AddUser'))
+      }, {
+        exact: 'true',
+        path: '/Supplier',
+        element: lazy(() => import('./views/supplier/Index'))
+      },{
+        exact: 'true',
+        path: '/add-Supplier',
+        element: lazy(() => import('./views/supplier/AddSupplier'))
+      },{
+        exact: 'true',
+        path: '/receiver',
+        element: lazy(() => import('./views/receiver/Index'))
+      },{
+        exact: 'true',
+        path: '/add-Receiver',
+        element: lazy(() => import('./views/receiver/AddReceiver'))
+      },{
+        exact: 'true',
+        path: '/bank',
+        element: lazy(() => import('./views/bank/Index'))
+      },{
+        exact: 'true',
+        path: '/add-Bank',
+        element: lazy(() => import('./views/bank/AddBank'))
       },
       {
         exact: 'true',

@@ -28,16 +28,17 @@ const JWTLogin = () => {
       );
   
       // On success, extract user data from the response
-      const user = response.data.data;
+      const user = response.data.user;
+      const token = response.data.access_token;
   
       // Dispatch LOGIN action to update the state
       dispatch({
         type: 'LOGIN',
-        payload: { user },
+        payload: { user,token },
       });
   
       // Persist user data in localStorage
-      localStorage.setItem('token', user.token);
+      localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
   
       // Redirect or navigate after successful login
