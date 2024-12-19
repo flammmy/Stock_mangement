@@ -169,7 +169,10 @@ const UsersPage = () => {
           }
         }
       );
+<<<<<<< HEAD
       console.log(response);
+=======
+>>>>>>> d06517d4c46e4a925605a42f139c5a66d3ffc15d
       toast.success('User updated successfully!');
       setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user)));
 
