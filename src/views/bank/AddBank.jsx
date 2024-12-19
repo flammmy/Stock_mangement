@@ -20,14 +20,18 @@ const AddBank = () => {
         account_number: '',
         status: 'Active',
     });
+
     const navigate = useNavigate();
     const statuses = ['Active✅', 'Inactive❌'];
+    const mainColor = '#3f4d67';
 
+    // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -50,9 +54,7 @@ const AddBank = () => {
         }
     };
 
-    const mainColor = '#3f4d67';
-
-    const FormField = ({ icon: Icon, label, name, value, onChange, type = 'text', options = null, required = true }) => (
+    const FormField = ({ icon: Icon, label, name, value, onChange, type = 'text', options = null }) => (
         <Form.Group className="mb-3 position-relative">
             <Form.Label className="d-flex align-items-center">
                 <Icon className="me-2" style={{ color: mainColor }} />
@@ -63,7 +65,6 @@ const AddBank = () => {
                     name={name}
                     value={value}
                     onChange={onChange}
-                    required={required}
                     style={{
                         paddingLeft: '40px',
                         borderColor: mainColor,
@@ -82,7 +83,6 @@ const AddBank = () => {
                     name={name}
                     value={value}
                     onChange={onChange}
-                    required={required}
                     className="form-control-icon"
                     style={{
                         paddingLeft: '40px',
@@ -160,6 +160,14 @@ const AddBank = () => {
                                             name="account_number"
                                             value={formData.account_number}
                                             onChange={handleChange}
+                                        />
+                                        <FormField
+                                            icon={FaCheckCircle}
+                                            label="Status"
+                                            name="status"
+                                            value={formData.status}
+                                            onChange={handleChange}
+                                            options={statuses}
                                         />
                                     </Col>
                                 </Row>
