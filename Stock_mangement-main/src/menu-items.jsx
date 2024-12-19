@@ -29,7 +29,7 @@ const menuItems = {
           children: [
             {
               id: 'button',
-              title: 'Button',
+              title: 'Add User',
               type: 'item',
               url: '/basic/button'
             },

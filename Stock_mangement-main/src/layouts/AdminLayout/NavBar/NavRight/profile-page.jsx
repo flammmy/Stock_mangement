@@ -1,615 +1,719 @@
-// import React, { useEffect, useState } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import Badge from "react-bootstrap/Badge";
-// import backgroundImage from '../NavRight/image2.jpg'
-// import { Link } from 'react-router-dom';
-// import { color } from "d3";
-// import Image from '../NavRight/image22.png'
+// import React, { useEffect, useState } from 'react';
+// import Image from "../NavRight/image33.png";
 
-// function Profile({ user }) {
-//   // State to control transition effect
-//   const [isVisible, setIsVisible] = useState(false);
+// const ProfilePage = () => {
+//   const [user, setUser] = useState(null);
 
-//   // Inline CSS styles
-//   const profilePageStyle = {
-//     height: "100vh",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     color: "#ffffff",
-//     fontFamily: "Arial, sans-serif",
-//     background: "linear-gradient(45deg, #5067AA, #86A6DE)",
-//     // backgroundImage: `url(${backgroundImage})`,
-//     transition: "transform 1s ease-out", // Transition for movement
-//     transform: isVisible ? "translateY(0)" : "translateY(-100%)", // "Up to Lower" transition
-//   };
+//   useEffect(() => {
+//     // Retrieve user data from localStorage
+//     const storedUser = JSON.parse(localStorage.getItem("user"));
+//     if (storedUser) {
+//       setUser(storedUser);
+//     } else {
+//       console.log("User not found, redirecting...");
+//     }
+//   }, []);
 
-//   const profileCardStyle = {
-//     // background: "linear-gradient(45deg, var(--bs-warning), var(--bs-teal))",
-//     background: "linear-gradient(45deg, var(--bs-gray-100), var(--bs-blue))",
-//     padding: "2rem",
-//     borderRadius: "12px",
-//     width: "60%",
-//     marginTop:"10%",
-//     height:"90%",
-//     // transform: "rotate(-3deg)", // Rotates the container by 10 degrees
-//     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Optional shadow for a better look
-//     margin: "2rem auto",
-//   };
-  
-  
-//   const profileHeaderStyle = {
-//     width: "100%",
-//     textAlign: "center"
-//   };
-
-//   const profileImageStyle = {
-//     width: "80px",
-//     height: "80px",
-//     objectFit: "cover",
-//   };
-
-//   const profileNameStyle = {
-//     fontSize: "1.5rem",
-//     fontWeight: "bold",
-//     color:"black"
-//   };
-
-//   const profileSubtitleStyle = {
-//     fontSize: "0.9rem",
-//     // color: "#b0b0b0",
-//     color:"black"
-//   };
-
-//   const searchBarStyle = {
-//     marginTop: "1rem",
-//     marginBottom: "1rem",
-//     color:"black"
-//   };
-
-//   const inputStyle = {
-//     border: "none",
-//     padding: "0.6rem",
-//     borderRadius: "8px",
-//     backgroundColor: "#333",
-//     // color: "#fff",
-//     color:"black"
-//   };
-
-//   const profileInfoStyle = {
-//     // display: "grid",
-//     gridTemplateColumns: "1fr 1fr",
-//     gap: "1rem",
-//   };
-
-//   const infoItemStyle = {
-//     display: "flex",
-//     flexDirection: "column",
-//     // fontWeight: "bold",
-//     fontSize: "0.9rem",
-//     color: "#d1d1d1",
-//     color:"black"
-//     // backgroundColor: isHovered ? "white" : "transparent", // Apply white background on hover
-//     // transition: "background-color 0.3s ease",
-//   };
- 
-//   const infoValueStyle = {
-//     backgroundColor: "#fff",
-//     padding: "0.5rem",
-//     borderRadius: "8px",
-//     textAlign: "center",
-//     color:"black",
-  
-//   };
-
-//   const buttonStyle = {
-//     backgroundColor: "#5e5e5e",
-//     color: "#fff",
-//     border: "none",
-//     padding: "0.6rem 2rem",
-//     borderRadius: "8px",
-//   };
-
-//   const buttonHoverStyle = {
-//     backgroundColor: "#4a4a4a",
-//   };
-
-//   // Role badge logic
+//   // Get Role Badge Function
 //   const getRoleBadge = (role) => {
 //     switch (role) {
 //       case 1:
-//         return <Badge bg="success" style={{color:"black"}}>CMP Techssreact LLP</Badge>;
+//         return <span style={badgeStyle("#FF6B6B")}>Admin</span>;
 //       case 2:
-//         return <Badge bg="primary" style={{color:"black",backgroundColor:"red"}}>Admin</Badge>;
+//         return <span style={badgeStyle("#5067AA")}>CMP Techssreact LLP</span>;
 //       case 3:
-//         return <Badge bg="warning" text="dark" style={{color:"black"}}>Supervisor</Badge>;
+//         return <span style={badgeStyle("#FFB703")}>Supervisor</span>;
 //       case 4:
-//         return <Badge bg="info" style={{color:"black"}}>Executive</Badge>;
+//         return <span style={badgeStyle("#34A853")}>Executive</span>;
 //       default:
-//         return <Badge bg="secondary" style={{color:"black"}}>Unknown Role</Badge>;
+//         return <span style={badgeStyle("#888")}>Unknown Role</span>;
 //     }
 //   };
 
-//   // Set the state to trigger transition after component mounts
-//   useEffect(() => {
-//     setIsVisible(true);
-//   }, []);
+//   const badgeStyle = (bgColor) => ({
+//     backgroundColor: bgColor,
+//     color: "#fff",
+//     padding: "0.3rem 1.8rem",
+//     borderRadius: "16px",
+//     fontSize: "0.9rem",
+//     fontWeight: "600",
+//     display: "inline-block",
+//     marginLeft:"160px",
+//     marginTop: "0.5rem",
+//   });
+
+//   const styles = {
+//     body: {
+//       minHeight: '100vh',
+//       width:"100%",
+//       marginLeft:"20%",
+//       marginRight:"20%",
+//       display: 'flex',
+//       justifyContent: 'center',
+//       flexWrap: 'wrap',
+//       alignContent: 'flex-start',
+//       fontFamily: "'Roboto', sans-serif",
+//       fontSize: '15px',
+//       background: "linear-gradient(150deg, #1dcc45 20%, #42b883 100%)",
+//       // background:"cornflowerblue",
+//       margin: 0,
+//       padding: 0,
+//       transition: "transform 1s ease-out",
+//     // transform: isVisible ? "translateY(0)" : "translateY(-100%)"
+//     },
+//     header: {
+//       padding: '150px 30px',
+//       marginBottom: '15px',
+//       display: 'flex',
+//       flexDirection: 'column',
+//       justifyContent: 'center',
+//       alignItems: 'center',
+//       color: '#333',
+//       lineHeight: '1.5',
+//       textAlign: 'center',
+      
+      
+//     },
+//     main: {
+//       display: 'flex',
+//       width: '100%',
+//       justifyContent: 'center',
+//       background: '#fff',
+//       marginBottom:"25px",
+//       boxShadow: '0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08)',
+//       // marginLeft:"-20px"
+//       // padding: '20px',
+//     },
+//     profilePage: {
+//       display: 'flex',
+//       flexDirection: 'column',
+//       width: "100%",
+//       marginTop:"-265px"
+//       // marginTop:"-330px"
+      
+//     },
+//     content: {
+//       display: 'flex',
+//       flexDirection: 'column',
+//       maxWidth: '500px',
+//       width: '100%',
+//       // height:"900px",
+//       position: 'relative',
+//       zIndex: 2,
+//       margin: 'auto',
+//       padding: '2rem',
+//       // background: '#fff',
+//       // background: "linear-gradient(150deg, #1dcc45 20%, #42b883 100%)",
+//       borderRadius: '2rem',
+//       boxShadow: 'rgba(50, 50, 93, 0.1) 0px 15px 35px, rgba(64, 59, 30, 50.07) 0px 5px 15px',
+//     },
+//     avatar: {
+//       width: '10rem',
+//       height: '10rem',
+//       left: '18%',
+//       marginLeft: "31%",
+//       backgroundImage: `url(${Image})`,
+//       backgroundSize: 'cover',
+//       borderRadius: '50%',
+//       boxShadow: '0 15px 35px rgba(50,50,93,0.1), 0 5px 15px rgba(0,0,0,0.07)',
+//     },
+//     title: {
+//       textAlign: 'center',
+//       marginTop: '1.5rem',
+//     },
+//     description: {
+//       textAlign: 'center',
+//       marginTop: '1.5rem',
+//     },
+//     userInfo: {
+//       textAlign: 'center',
+//       marginTop: '1rem',
+//       fontSize: '1rem',
+//       color: '#333',
+//       // lineHeight: '1.6',
+//     },
+//     buttonShowMore: {
+//       display: 'inline-block',
+//       padding: '1.2rem 1.8rem',
+//       textAlign: 'center',
+//       textDecoration: 'none',
+//       background: 'linear-gradient(100deg, #1d8cf8 30%, #3358f4 100%)',
+//       borderRadius: '2rem',
+//       boxShadow: '0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08)',
+//       fontSize: '1rem',
+//       color: '#fff',
+//       cursor: 'pointer',
+//       marginLeft: '158px',
+//       marginBottom:"-6px"
+//     },
+
+//     footer: {
+//       textAlign: 'center',
+//       padding: '12px',
+//       fontSize: '9pt',
+//       marginTop: '40px',
+//       background: '#fff',
+//       color: '#333',
+//     },
+//     span1: {
+//       width: "12rem",
+//       height: "12rem",
+//       top: "42%",
+//       right: "28%",
+//       background: "rgba(255, 255, 255, 0.1)",
+//       animationDuration: "40s",
+//       display: "block",
+//       borderRadius: "50%",
+//       animation: "floating 34s infinite",
+//       marginLeft: "200px"
+//     },
+//     span2: {
+//       width: "12rem",
+//       height: "12rem",
+//       top: "42%",
+//       right: "28%",
+//       background: "rgba(255, 255, 255, 0.1)",
+//       animationDuration: "40s",
+//       display: "block",
+//       borderRadius: "50%",
+//       animation: "floating 34s infinite",
+//       marginLeft: "600px",
+//       marginTop: "-10px"
+//     },
+//     span3: {
+//       width: "12rem",
+//       height: "12rem",
+//       top: "42%",
+//       right: "28%",
+//       marginTop: "-162px",
+//       background: "rgba(255, 255, 255, 0.1)",
+//       animationDuration: "40s",
+//       display: "block",
+//       borderRadius: "50%",
+//       animation: "floating 34s infinite",
+//       marginLeft: "-150px"
+//     },
+//     span4: {
+//       width: "12rem",
+//       height: "12rem",
+//       top: "42%",
+//       right: "28%",
+//       marginTop: "-262px",
+//       background: "rgba(255, 255, 255, 0.1)",
+//       animationDuration: "40s",
+//       display: "block",
+//       borderRadius: "50%",
+//       animation: "floating 34s infinite",
+//       marginLeft: "850px"
+//     },
+   
+//   }
+
+//   if (!user) return null;
 
 //   return (
-//     <div style={profilePageStyle} className="main-div-profile">
-//       <div style={profileCardStyle} className="shadow-lg rounded">
-//         {/* Profile Header */}
-//         <div style={profileHeaderStyle}>
-//           <img
-//             alt="Profile"
-//             style={profileImageStyle}
-//             className="rounded-circle"
-//             src={Image}
-//           />
-//           <div>
-//             <h3 style={profileNameStyle} className="mb-1">
-//               {user.name}
-//             </h3>
-//             <p style={profileSubtitleStyle} className="mb-0">
-//               {user.username}
-//             </p>
-//             <p style={profileSubtitleStyle}>{user.email}</p>
+//     <div style={styles.body}>
+//       <div>
+//         <span style={styles.span1}></span>
+//         <span style={styles.span2}></span>
+//         <span style={styles.span3}></span>
+//         <span style={styles.span4}></span>
+//       </div>
+//       <header style={styles.header}></header>
+//       <main style={styles.main}>
+//         <div style={styles.profilePage}>
+//           <div style={styles.content}>
+//             <div style={styles.avatar}></div>
+//             <div>{getRoleBadge(user.role)}</div>
+//             <div style={styles.title}>
+//               <h4>{user.name}</h4>
+//               <span>{user.location || "Location"}</span>
+//             </div>
+//             <div style={styles.userInfo}>
+//               <p>Username: {user.username}</p>
+//               <p>Email: {user.email}</p>
+//               <p>Password: {user.password}</p> {/* Displaying password */}
+//               <p>Phone: {user.phone || "Not Provided"}</p> 
+//               {/* <div>{getRoleBadge(user.role)}</div> */}
+//             </div>
+//             <div style={styles.buttonShowMoreMain}>
+//               <a href="/app/dashboard/default" style={styles.buttonShowMore}>
+//                 Go Back
+//               </a>
+//             </div>
 //           </div>
 //         </div>
+//       </main>
+//     </div>
+//   );
+// };
 
-//         {/* User Info */}
-//         <div style={profileInfoStyle}>
-//           <div style={infoItemStyle}>
-//             <label>Name</label>
-//             <div style={infoValueStyle}>{user.name}</div>
-//           </div>
-//           <div style={infoItemStyle}>
-//             <label>Username</label>
-//             <div style={infoValueStyle}>{user.username}</div>
-//           </div>
-//           <div style={infoItemStyle}>
-//             <label>Email</label>
-//             <div style={infoValueStyle}>{user.email}</div>
-//           </div>
-//           <div style={infoItemStyle}>
-//             <label>Phone</label>
-//             <div style={infoValueStyle}>{user.phone}</div>
-//           </div>
-//           <div style={infoItemStyle}>
-//             <label>Role</label>
-//             <div style={infoValueStyle}>{getRoleBadge(user.role)}</div>
-//           </div>
-//         </div>
+// export default ProfilePage;
 
-//         {/* Footer */}
-//         <div style={{ textAlign: "center", marginTop: "1rem" }}>
-//           <Link to="/dashboard">
-//           <button style={buttonStyle} onMouseEnter={(e) => (e.target.style.backgroundColor = "#4a4a4a")} onMouseLeave={(e) => (e.target.style.backgroundColor = "#5e5e5e")}>
-//             Go Back
-//           </button>
-//           </Link>
+
+
+
+
+
+// import React from 'react';
+
+// const LoginPage = () => {
+//   const styles = {
+//     body: {
+//       background: 'linear-gradient(90deg, #C7C5F4, #776BCC)',
+//       fontFamily: 'Raleway, sans-serif',
+//       margin: 0,
+//       padding: 0,
+//     },
+//     container: {
+//       display: 'flex',
+//       alignItems: 'center',
+//       justifyContent: 'center',
+//       minHeight: '100vh',
+//     },
+//     screen: {
+//       background: 'linear-gradient(90deg, #5D54A4, #7C78B8)',
+//       position: 'relative',
+//       height: '600px',
+//       width: '360px',
+//       boxShadow: '0px 0px 24px #5C5696',
+//     },
+//     screenContent: {
+//       zIndex: 1,
+//       position: 'relative',
+//       height: '100%',
+//       padding: '30px',
+//       paddingTop: '156px',
+//     },
+//     field: {
+//       padding: '20px 0px',
+//       position: 'relative',
+//     },
+//     icon: {
+//       position: 'absolute',
+//       top: '30px',
+//       color: '#7875B5',
+//     },
+//     input: {
+//       border: 'none',
+//       borderBottom: '2px solid #D1D1D4',
+//       background: 'none',
+//       padding: '10px',
+//       paddingLeft: '24px',
+//       fontWeight: 700,
+//       width: '75%',
+//       transition: '.2s',
+//     },
+//     inputFocus: {
+//       outline: 'none',
+//       borderBottomColor: '#6A679E',
+//     },
+//     button: {
+//       background: '#fff',
+//       fontSize: '14px',
+//       marginTop: '30px',
+//       padding: '16px 20px',
+//       borderRadius: '26px',
+//       border: '1px solid #D4D3E8',
+//       textTransform: 'uppercase',
+//       fontWeight: 700,
+//       display: 'flex',
+//       alignItems: 'center',
+//       width: '100%',
+//       color: '#4C489D',
+//       boxShadow: '0px 2px 2px #5C5696',
+//       cursor: 'pointer',
+//       transition: '.2s',
+//     },
+//     buttonHover: {
+//       borderColor: '#6A679E',
+//       outline: 'none',
+//     },
+//     socialLogin: {
+//       position: 'absolute',
+//       height: '140px',
+//       width: '160px',
+//       textAlign: 'center',
+//       bottom: '0px',
+//       right: '0px',
+//       color: '#fff',
+//     },
+//     socialIcons: {
+//       display: 'flex',
+//       alignItems: 'center',
+//       justifyContent: 'center',
+//     },
+//     socialIcon: {
+//       padding: '20px 10px',
+//       color: '#fff',
+//       textDecoration: 'none',
+//       textShadow: '0px 0px 8px #7875B5',
+//     },
+//     socialIconHover: {
+//       transform: 'scale(1.5)',
+//     },
+//     background: {
+//       position: 'absolute',
+//       top: 0,
+//       left: 0,
+//       right: 0,
+//       bottom: 0,
+//       zIndex: 0,
+//       clipPath: 'inset(0 0 0 0)',
+//     },
+//     shape: {
+//       transform: 'rotate(45deg)',
+//       position: 'absolute',
+//     },
+//     shape1: {
+//       height: '520px',
+//       width: '520px',
+//       background: '#FFF',
+//       top: '-50px',
+//       right: '120px',
+//       borderRadius: '0 72px 0 0',
+//     },
+//     shape2: {
+//       height: '220px',
+//       width: '220px',
+//       background: '#6C63AC',
+//       top: '-172px',
+//       right: 0,
+//       borderRadius: '32px',
+//     },
+//     shape3: {
+//       height: '540px',
+//       width: '190px',
+//       background: 'linear-gradient(270deg, #5D54A4, #6A679E)',
+//       top: '-24px',
+//       right: 0,
+//       borderRadius: '32px',
+//     },
+//     shape4: {
+//       height: '400px',
+//       width: '200px',
+//       background: '#7E7BB9',
+//       top: '420px',
+//       right: '50px',
+//       borderRadius: '60px',
+//     },
+//   };
+
+//   return (
+//     <div style={styles.body }>
+//       <div style={styles.container}>
+//         <div style={styles.screen}>
+//           <div style={styles.background}>
+//             <div style={{ ...styles.shape, ...styles.shape1 }}></div>
+//             <div style={{ ...styles.shape, ...styles.shape2 }}></div>
+//             <div style={{ ...styles.shape, ...styles.shape3 }}></div>
+//             <div style={{ ...styles.shape, ...styles.shape4 }}></div>
+//           </div>
+          
 //         </div>
 //       </div>
 //     </div>
 //   );
-// }
+// };
 
-// // Example usage
-// export default function App() {
-//   const userProfile = {
-//     name: "Admin",
-//     username: "CMP TechsSreact LLP",
-//     email: "sholys@example.com",
-//     phone: "1234567891",
-//     role: 2, // Admin Role
-//   };
-
-//   return <Profile user={userProfile} />;
-// }
+// export default LoginPage;
 
 
-import React, { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Badge from "react-bootstrap/Badge";
-import { Link } from "react-router-dom";
-import Image from "../NavRight/image22.png";
 
-function Profile({ user }) {
-  const [isVisible, setIsVisible] = useState(false);
+import React, { useState, useEffect } from 'react'; 
+import Image from "../NavRight/image33.png"; // Assuming you have a placeholder image
 
-  // Styles
-  const profilePageStyle = {
-    height: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "Arial, sans-serif",
-    background: "linear-gradient(45deg, #5067AA, #86A6DE)",
-    transition: "transform 1s ease-out",
-    transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-    
-    
-  };
+const LoginPage = () => {
+  const [user, setUser] = useState(null);
 
-  const profileCardStyle = {
-    background: "linear-gradient(45deg, var(--bs-gray-100), var(--bs-blue))",
-    // padding: "2rem",
-    borderRadius: "12px",
-    width: "60%",
-    marginTop: "9%",
-    height: "95%",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    animation: "fadeIn 1s ease-in-out",
-   transition: "backgroundColor 0.3s ease-in-out"
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      console.log("User not found, redirecting...");
+    }
+  }, []);
 
-  };
-  const profileHeaderStyle = {
-    textAlign: "center",
-  };
-
-  const profileImageStyle = {
-    width: "80px",
-    height: "80px",
-    objectFit: "cover",
-  };
-
-  const profileNameStyle = {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: "black",
-  };
-
-  const profileSubtitleStyle = {
-    fontSize: "0.9rem",
-    color: "black",
-    fontWeight:"600"
-
-  };
-
-  const profileInfoStyle = {
-    // display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "1rem",
-    marginTop: "1rem",
-  };
-
-  const infoItemStyle = {
-    display: "flex",
-    flexDirection: "column",
-    padding: "0.5rem",
-    borderRadius: "8px",
-    transition: "all 0.3s ease",
-  };
-
-  const labelStyle = {
-    fontSize: "1rem",
-    fontWeight: "bold",
-    color: "black",
-    transition: "all 0.3s ease",
-    cursor: "pointer",
-  };
-
-  const infoValueStyle = {
-    backgroundColor: "#fff",
-    padding: "0.5rem",
-    borderRadius: "8px",
-    textAlign: "center",
-    color: "black",
-  };
-
-  const buttonStyle = {
-    backgroundColor: "red",
-    // color: "navy-blue",
-    border: "none",
-    padding: "0.6rem 2rem",
-    borderRadius: "8px",
-    transition: "background-color 0.3s ease",
-  };
-
+  // Get Role Badge Function
   const getRoleBadge = (role) => {
     switch (role) {
       case 1:
-        return <Badge bg="success" style={{ color: "black" }}>CMP Techssreact LLP</Badge>;
+        return <span style={badgeStyle("#FF6B6B")}>Admin</span>;
       case 2:
-        return <Badge bg="primary" style={{ color: "black", backgroundColor: "red" }}>Admin</Badge>;
+        return <span style={badgeStyle("#5067AA")}>CMP Techssreact LLP</span>;
       case 3:
-        return <Badge bg="warning" text="dark" style={{ color: "black" }}>Supervisor</Badge>;
+        return <span style={badgeStyle("#FFB703")}>Supervisor</span>;
       case 4:
-        return <Badge bg="info" style={{ color: "black" }}>Executive</Badge>;
+        return <span style={badgeStyle("#34A853")}>Executive</span>;
       default:
-        return <Badge bg="secondary" style={{ color: "black" }}>Unknown Role</Badge>;
+        return <span style={badgeStyle("#888")}>Unknown Role</span>;
     }
   };
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+  // Badge style
+  const badgeStyle = (bgColor) => ({
+    backgroundColor: bgColor,
+    padding: '5px 10px',
+    borderRadius: '15px',
+    color: '#fff',
+  });
+
+  const styles = {
+    body: {
+      fontFamily: 'Raleway, sans-serif',
+      margin: 0,
+      padding: 0,
+    },
+    profilePage: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: "100%",
+    },
+    content: {
+      display: 'flex',
+      flexDirection: 'column',
+      maxWidth: '500px',
+      width: '100%',
+      alignItems:"center",
+      position: 'relative',
+      zIndex: 2,
+      margin: 'auto',
+      padding: '2rem',
+      borderRadius: '2rem',
+      boxShadow: 'rgba(50, 50, 93, 0.1) 0px 15px 35px, rgba(64, 59, 30, 50.07) 13px 44px -1px',
+    },
+    avatar: {
+      width: '10rem',
+      height: '10rem',
+      backgroundImage: `url(${Image})`,
+      backgroundSize: 'cover',
+      borderRadius: '50%',
+      boxShadow: '0 15px 35px rgba(50,50,93,0.1), 0 5px 15px rgba(0,0,0,0.07)',
+    },
+    title: {
+      textAlign: 'center',
+      marginTop: '1.5rem',
+    },
+    description: {
+      textAlign: 'center',
+      marginTop: '1.5rem',
+    },
+    userInfo: {
+      textAlign: 'center',
+      marginTop: '1rem',
+      fontSize: '1rem',
+      color: 'black',
+    },
+    buttonShowMore: {
+      display: 'inline-block',
+      padding: '1.2rem 1.8rem',
+      textAlign: 'center',
+      textDecoration: 'none',
+      background: 'linear-gradient(100deg, #1d8cf8 30%, #3358f4 100%)',
+      borderRadius: '2rem',
+      boxShadow: '0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08)',
+      fontSize: '1rem',
+      color: '#fff',
+      cursor: 'pointer',
+      marginBottom: "-6px",
+      transition: 'all 0.3s ease',  // Smooth transition for hover effect
+    },
+    buttonShowMoreHover: {
+      background: 'red', // Change background on hover
+      transform: 'scale(1.05)', // Slightly scale the button on hover
+      boxShadow: '0 6px 10px rgba(50,50,93,0.2), 0 2px 6px rgba(0,0,0,0.12)', // Increase shadow on hover
+    },
+    buttonShowMoreActive: {
+      background: 'green', // Change background on active (click)
+      transform: 'scale(1.02)', // Slightly scale the button on click
+      boxShadow: '0 4px 6px rgba(50,50,93,0.2), 0 2px 6px rgba(0,0,0,0.12)', // Active shadow
+    },
+    footer: {
+      textAlign: 'center',
+      padding: '12px',
+      fontSize: '9pt',
+      marginTop: '40px',
+      background: '#fff',
+      color: '#333',
+    },
+    container: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+    },
+    screen: {
+      background: 'linear-gradient(90deg, #5D54A4, #7C78B8)',
+      position: 'relative',
+      height: '528px',
+      marginTop:"-120px",
+      width: '360px',
+      boxShadow: '0px 0px 24px #5C5696',
+    },
+    screenContent: {
+      zIndex: 1,
+      position: 'relative',
+      height: '100%',
+      padding: '30px',
+      paddingTop: '156px',
+    },
+    field: {
+      padding: '20px 0px',
+      position: 'relative',
+    },
+    icon: {
+      position: 'absolute',
+      top: '30px',
+      color: '#7875B5',
+    },
+    input: {
+      border: 'none',
+      borderBottom: '2px solid #D1D1D4',
+      background: 'none',
+      padding: '10px',
+      paddingLeft: '24px',
+      fontWeight: 700,
+      width: '75%',
+      transition: '.2s',
+    },
+    inputFocus: {
+      outline: 'none',
+      borderBottomColor: '#6A679E',
+    },
+    button: {
+      background: '#fff',
+      fontSize: '14px',
+      marginTop: '30px',
+      padding: '16px 20px',
+      borderRadius: '26px',
+      border: '1px solid #D4D3E8',
+      textTransform: 'uppercase',
+      fontWeight: 700,
+      display: 'flex',
+      alignItems: 'center',
+      width: '100%',
+      color: '#4C489D',
+      boxShadow: '0px 2px 2px #5C5696',
+      cursor: 'pointer',
+      transition: '.2s',
+    },
+    buttonHover: {
+      borderColor: '#6A679E',
+      outline: 'none',
+    },
+    socialLogin: {
+      position: 'absolute',
+      height: '140px',
+      width: '160px',
+      textAlign: 'center',
+      bottom: '0px',
+      right: '0px',
+      color: '#fff',
+    },
+    socialIcons: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    socialIcon: {
+      padding: '20px 10px',
+      color: '#fff',
+      textDecoration: 'none',
+      textShadow: '0px 0px 8px #7875B5',
+    },
+    socialIconHover: {
+      transform: 'scale(1.5)',
+    },
+    background: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 0,
+      clipPath: 'inset(0 0 0 0)',
+    },
+    shape: {
+      transform: 'rotate(45deg)',
+      position: 'absolute',
+    },
+    shape1: {
+      height: '520px',
+      width: '520px',
+      background: '#FFF',
+      top: '-50px',
+      right: '120px',
+      borderRadius: '0 72px 0 0',
+    },
+    shape2: {
+      height: '220px',
+      width: '220px',
+      background: '#6C63AC',
+      top: '-172px',
+      right: 0,
+      borderRadius: '32px',
+    },
+    shape3: {
+      height: '540px',
+      width: '190px',
+      background: 'linear-gradient(270deg, #5D54A4, #6A679E)',
+      top: '-24px',
+      right: 0,
+      borderRadius: '32px',
+    },
+    shape4: {
+      height: '400px',
+      width: '200px',
+      background: '#7E7BB9',
+      top: '420px',
+      right: '50px',
+      borderRadius: '60px',
+    },
+    buttonShowMore_main: {
+      width: "100%",
+      textAlign: "center"
+    }
+  };
 
   return (
-    <div style={profilePageStyle}>
-      <div style={profileCardStyle} className="shadow-lg rounded">
-        {/* Profile Header */}
-        <div style={profileHeaderStyle}>
-          <img
-            alt="Profile"
-            style={profileImageStyle}
-            className="rounded-circle"
-            src={Image}
-          />
-          <div>
-            <h3 style={profileNameStyle}>{user.name}</h3>
-            <p style={profileSubtitleStyle}>{user.username}</p>
-            <p style={profileSubtitleStyle}>{user.email}</p>
+    <div style={styles.body}>
+      <div style={styles.container}>
+        <div style={styles.screen}>
+          <div style={styles.background}>
+            <div style={{ ...styles.shape, ...styles.shape1 }}></div>
+            <div style={{ ...styles.shape, ...styles.shape2 }}></div>
+            <div style={{ ...styles.shape, ...styles.shape3 }}></div>
+            <div style={{ ...styles.shape, ...styles.shape4 }}></div>
           </div>
-        </div>
 
-        {/* User Info */}
-        <div style={profileInfoStyle}>
-          {/* Each Info Item */}
-          {["Name", "Username", "Email", "Phone", "Role"].map((item, index) => (
-            <div
-              key={index}
-              style={infoItemStyle}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5067AA")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-            >
-              <label
-                style={labelStyle}
-                onMouseEnter={(e) => (e.target.style.transform = "scale(1.1)")}
-                onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
-              >
-                {item}
-              </label>
-              <div style={infoValueStyle}>
-                {item === "Role"
-                  ? getRoleBadge(user.role)
-                  : user[item.toLowerCase()]}
+          <div style={styles.profilePage}>
+            <div style={styles.content}>
+              <div style={styles.avatar}></div>
+              <div style={styles.buttonShowMore_main}>
+                {getRoleBadge(user?.role)}
+              </div>
+              <div style={styles.title}>
+                <h4>{user?.name}</h4>
+                <span>{user?.location || "Location"}</span>
+              </div>
+              <div style={styles.userInfo}>
+                <p>Username: {user?.username}</p>
+                <p>Email: {user?.email}</p>
+                <p>Password: *****</p> {/* Masked password */}
+                <p>Phone: {user?.phone || "Not Provided"}</p>
+              </div>
+              <div >
+                <a href="/app/dashboard/default" style={styles.buttonShowMore}>
+                  Go Back
+                </a>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: "1rem" }}>
-          <Link to="/app/dashboard/default">
-            <button
-              style={buttonStyle}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "green")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "red")}
-            >
-              Go Back
-            </button>
-          </Link>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default function App() {
-  const userProfile = {
-    name: "Admin",
-    username: "Vishal Sales",
-    email: "sholys@example.com",
-    phone: "1234567891",
-    role: 2,
-  };
-
-  return <Profile user={userProfile} />;
-}
-
-
-
-// import React, { useEffect, useState } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import Badge from "react-bootstrap/Badge";
-// import { Link, useNavigate } from "react-router-dom";
-// import Image from "../NavRight/image22.png";
-
-// function Profile() {
-//   const navigate = useNavigate();
-//   const [user, setUser] = useState(null);
-//   const [isVisible, setIsVisible] = useState(false);
-
-//   useEffect(() => {
-//     // Fetch user data from localStorage
-//     const storedUser = JSON.parse(localStorage.getItem("user"));
-
-//     if (storedUser) {
-//       setUser(storedUser);
-//       setIsVisible(true);
-//     } else {
-//       // Redirect to login if no user data is found
-//       navigate('/');
-//     }
-//   }, [navigate]);
-
-//   // Styles
-//   // const profilePageStyle = {
-//   //   height: "100vh",
-//   //   display: "flex",
-//   //   alignItems: "center",
-//   //   justifyContent: "center",
-//   //   fontFamily: "Arial, sans-serif",
-//   //   background: "linear-gradient(45deg, #5067AA, #86A6DE)",
-//   //   transition: "transform 1s ease-out",
-//   //   transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-//   // };
-
-//   // const profileCardStyle = {
-//   //   background: "linear-gradient(45deg, var(--bs-gray-100), var(--bs-blue))",
-//   //   borderRadius: "12px",
-//   //   width: "60%",
-//   //   marginTop: "9%",
-//   //   height: "95%",
-//   //   boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-//   //   animation: "fadeIn 1s ease-in-out",
-//   //   transition: "backgroundColor 0.3s ease-in-out",
-//   // };
-//   const profilePageStyle = {
-//         height: "100vh",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center",
-//         fontFamily: "Arial, sans-serif",
-//         background: "linear-gradient(45deg, #5067AA, #86A6DE)",
-//         transition: "transform 1s ease-out",
-//         transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-        
-        
-//       };
-    
-//       const profileCardStyle = {
-//         background: "linear-gradient(45deg, var(--bs-gray-100), var(--bs-blue))",
-//         // padding: "2rem",
-//         borderRadius: "12px",
-//         width: "60%",
-//         marginTop: "9%",
-//         height: "95%",
-//         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-//         animation: "fadeIn 1s ease-in-out",
-//        transition: "backgroundColor 0.3s ease-in-out"
-    
-//       };
-//   const profileHeaderStyle = {
-//     textAlign: "center",
-//   };
-
-//   const profileImageStyle = {
-//     width: "80px",
-//     height: "80px",
-//     objectFit: "cover",
-//   };
-
-//   const profileNameStyle = {
-//     fontSize: "1.5rem",
-//     fontWeight: "bold",
-//     color: "black",
-//   };
-
-//   const profileSubtitleStyle = {
-//     fontSize: "0.9rem",
-//     color: "black",
-//     fontWeight: "600",
-//   };
-
-//   const profileInfoStyle = {
-//     gridTemplateColumns: "1fr 1fr",
-//     gap: "1rem",
-//     marginTop: "1rem",
-//   };
-
-//   const infoItemStyle = {
-//     display: "flex",
-//     flexDirection: "column",
-//     padding: "0.5rem",
-//     borderRadius: "8px",
-//     transition: "all 0.3s ease",
-//   };
-
-//   const labelStyle = {
-//     fontSize: "1rem",
-//     fontWeight: "bold",
-//     color: "black",
-//     transition: "all 0.3s ease",
-//     cursor: "pointer",
-//   };
-
-//   const infoValueStyle = {
-//     backgroundColor: "#fff",
-//     padding: "0.5rem",
-//     borderRadius: "8px",
-//     textAlign: "center",
-//     color: "black",
-//   };
-
-//   const buttonStyle = {
-//     backgroundColor: "red",
-//     border: "none",
-//     padding: "0.6rem 2rem",
-//     borderRadius: "8px",
-//     transition: "background-color 0.3s ease",
-//   };
-
-//   // Function to get a badge based on the role key
-//   const getRoleBadge = (role) => {
-//     switch (role) {
-//       case 1:
-//         return <Badge bg="primary" style={{ color: "black", backgroundColor: "red" }}>Admin</Badge>;
-//       case 2:
-        
-//         return <Badge bg="success" style={{ color: "black" }}>CMP Techssreact LLP</Badge>;
-//       case 3:
-//         return <Badge bg="warning" text="dark" style={{ color: "black" }}>Supervisor</Badge>;
-//       case 4:
-//         return <Badge bg="info" style={{ color: "black" }}>Executive</Badge>;
-//       default:
-//         return <Badge bg="secondary" style={{ color: "black" }}>Unknown Role</Badge>;
-//     }
-//   };
-
-//   if (!user) return null; // Show nothing if user is not loaded
-
-//   return (
-//     <div style={profilePageStyle}>
-//       <div style={profileCardStyle} className="shadow-lg rounded">
-//         {/* Profile Header */}
-//         <div style={profileHeaderStyle}>
-//           <img
-//             alt="Profile"
-//             style={profileImageStyle}
-//             className="rounded-circle"
-//             src={Image}
-//           />
-//           <div>
-//             <h3 style={profileNameStyle}>{user.name}</h3>
-//             <p style={profileSubtitleStyle}>Username: {user.username}</p>
-//             <p style={profileSubtitleStyle}>Email: {user.email}</p>
-//             <p style={profileSubtitleStyle}>Phone: {user.phone}</p>
-//             <p style={profileSubtitleStyle}>Role: {getRoleBadge(user.role)}</p>
-//           </div>
-//         </div>
-
-//         {/* User Info */}
-//         <div style={profileInfoStyle}>
-//           {["Name", "Username", "Email", "Phone", "Role"].map((item, index) => (
-//             <div
-//               key={index}
-//               style={infoItemStyle}
-//               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5067AA")}
-//               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-//             >
-//               <label
-//                 style={labelStyle}
-//                 onMouseEnter={(e) => (e.target.style.transform = "scale(1.1)")}
-//                 onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
-//               >
-//                 {item}
-//               </label>
-//               <div style={infoValueStyle}>
-//                 {item === "Role"
-//                   ? getRoleBadge(user.role)
-//                   : user[item.toLowerCase()]}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Footer */}
-//         <div style={{ textAlign: "center", marginTop: "1rem" }}>
-//           <Link to="/app/dashboard/default">
-//             <button
-//               style={buttonStyle}
-//               onMouseEnter={(e) => (e.target.style.backgroundColor = "green")}
-//               onMouseLeave={(e) => (e.target.style.backgroundColor = "red")}
-//             >
-//               Go Back
-//             </button>
-//           </Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Profile;
+export default LoginPage;

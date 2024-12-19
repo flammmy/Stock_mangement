@@ -56,7 +56,7 @@ const routes = [
         exact: 'true',
         path: '/basic/button',
         element: lazy(() => import('./views/ui-elements/basic/BasicButton')),
-        guard: PrivateRoute // Protect this route as well
+        // guard: PrivateRoute // Protect this route as well
       },
       {
         exact: 'true',
