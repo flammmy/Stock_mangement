@@ -16,13 +16,17 @@ import avatar4 from '../../../../assets/images/user/avatar-4.jpg';
 
 const NavRight = () => {
   const [listOpen, setListOpen] = useState(false);
-  const { dispatch } = useContext(AuthContext);
+  const { dispatch, state } = useContext(AuthContext);
+  const name = state.user.name;
+  const role_id = state.user.role;
+  const role = role_id == 1?'admin': role_id == 2? 'supplier' : role_id == 3? 'operator':'user'
+
+
 
   const navigate = useNavigate();
    const token = localStorage.getItem('token')
   const handleLogout =  async () => {
     try {
-      // API call to logout endpoint
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/logout`,
         {}, // Empty body
@@ -164,7 +168,7 @@ const NavRight = () => {
             <Dropdown.Menu align="end" className="profile-notification">
               <div className="pro-head">
                 <img src={avatar1} className="img-radius" alt="User Profile" />
-                <span>John Doe</span>
+                <span>{`${name} (${role})`}</span>
                 <Link to="#" className="dud-logout" title="Logout">
                   <i className="feather icon-log-out" />
                 </Link>
@@ -180,11 +184,11 @@ const NavRight = () => {
                     <i className="feather icon-user" /> Profile
                   </Link>
                 </ListGroup.Item>
-                <ListGroup.Item as="li" bsPrefix=" ">
+                {/* <ListGroup.Item as="li" bsPrefix=" ">
                   <Link to="#" className="dropdown-item">
                     <i className="feather icon-mail" /> My Messages
                   </Link>
-                </ListGroup.Item>
+                </ListGroup.Item> */}
                 <ListGroup.Item as="li" bsPrefix=" ">
                   <Link onClick = {handleLogout} className="dropdown-item">
                     <i className="feather icon-lock" /> Logout

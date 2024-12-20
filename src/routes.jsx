@@ -6,6 +6,8 @@ import AdminLayout from './layouts/AdminLayout';
 
 import { BASE_URL } from './config/constant';
 
+import ProtectedRoute from './views/auth/ProtectedRoute';
+
 export const renderRoutes = (routes = []) => (
   <Suspense fallback={<Loader />}>
     <Routes>
@@ -20,7 +22,15 @@ export const renderRoutes = (routes = []) => (
             path={route.path}
             element={
               <Guard>
-                <Layout>{route.routes ? renderRoutes(route.routes) : <Element props={true} />}</Layout>
+                <Layout>
+                  {route.allowedRoles ? (
+                    <ProtectedRoute allowedRoles={route.allowedRoles}>
+                      {route.routes ? renderRoutes(route.routes) : <Element />}
+                    </ProtectedRoute>
+                  ) : (
+                    route.routes ? renderRoutes(route.routes) : <Element />
+                  )}
+                </Layout>
               </Guard>
             }
           />
@@ -36,16 +46,16 @@ const routes = [
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
-  {
-    exact: 'true',
-    path: '/auth/signin-1',
-    element: lazy(() => import('./views/auth/signin/SignIn1'))
-  },
-  {
-    exact: 'true',
-    path: '/auth/signup-1',
-    element: lazy(() => import('./views/auth/signup/SignUp1'))
-  },
+  // {
+  //   exact: 'true',
+  //   path: '/auth/signin-1',
+  //   element: lazy(() => import('./views/auth/signin/SignIn1'))
+  // },
+  // {
+  //   exact: 'true',
+  //   path: '/auth/signup-1',
+  //   element: lazy(() => import('./views/auth/signup/SignUp1'))
+  // },
 
   {
     path: '*',
@@ -54,46 +64,70 @@ const routes = [
       {
         exact: 'true',
         path: '/dashboard',
-        element: lazy(() => import('./views/dashboard'))
+        element: lazy(() => import('./views/dashboard')),
+        allowedRoles : [1,2,3]
       },
       {
         exact: 'true',
         path: '/users',
-        element: lazy(() => import('./views/users/Index'))
+        element: lazy(() => import('./views/users/Index')),
+        allowedRoles:[1]
+
       },
       {
         exact: 'true',
         path: '/add-user',
-        element: lazy(() => import('./views/users/AddUser'))
+        element: lazy(() => import('./views/users/AddUser')),
+        allowedRoles:[1]
+
       }, {
         exact: 'true',
         path: '/Supplier',
-        element: lazy(() => import('./views/supplier/Index'))
+        element: lazy(() => import('./views/supplier/Index')),
+        allowedRoles:[]
       },{
         exact: 'true',
         path: '/add-Supplier',
-        element: lazy(() => import('./views/supplier/AddSupplier'))
+        element: lazy(() => import('./views/supplier/AddSupplier')),
+        allowedRoles:[]
+
       },{
         exact: 'true',
         path: '/receiver',
-        element: lazy(() => import('./views/receiver/Index'))
+        element: lazy(() => import('./views/receiver/Index')),
+        allowedRoles:[]
+
       },{
         exact: 'true',
         path: '/add-Receiver',
-        element: lazy(() => import('./views/receiver/AddReceiver'))
+        element: lazy(() => import('./views/receiver/AddReceiver')),
+        allowedRoles:[]
+
       },{
         exact: 'true',
         path: '/bank',
-        element: lazy(() => import('./views/bank/Index'))
+        element: lazy(() => import('./views/bank/Index')),
+        allowedRoles:[]
+
       },{
         exact: 'true',
         path: '/add-Bank',
-        element: lazy(() => import('./views/bank/AddBank'))
+        element: lazy(() => import('./views/bank/AddBank')),
+        allowedRoles:[]
+
+      },
+      {
+        exact: 'true',
+        path: '/add-invoice',
+        element: lazy(() => import('./views/stock/Add_inoice')),
+        allowedRoles:[1]
+
       },
       {
         exact: 'true',
         path: '/basic/badges',
-        element: lazy(() => import('./views/ui-elements/basic/BasicBadges'))
+        element: lazy(() => import('./views/ui-elements/basic/BasicBadges')),
+        
       },
       {
         exact: 'true',
