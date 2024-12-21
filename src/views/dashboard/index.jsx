@@ -17,6 +17,7 @@ const dashSalesData = [
 const DashDefault = () => {
   const { state } = useContext(AuthContext); // Access state from AuthContext
   const navigate = useNavigate();
+  
  useEffect(() => {
     // Check if the user is logged in
     if (!state.isLoggedIn) {
