@@ -9,11 +9,24 @@ import useWindowSize from '../../hooks/useWindowSize';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import { ConfigContext } from '../../contexts/ConfigContext';
 import * as actionType from '../../store/actions';
+import { Navigate } from 'react-router-dom';
+import { AuthContext } from 'contexts/authContext';
 
 const AdminLayout = ({ children }) => {
+  const {state} = useContext(AuthContext);
+
+  const { isLoggedIn, user } = state;
+    console.log(isLoggedIn)
+  
+    if (!isLoggedIn) {
+      return <Navigate to="/login" replace />;
+    }
+
   const windowSize = useWindowSize();
   const ref = useRef();
   const configContext = useContext(ConfigContext);
+
+  
 
   const { collapseMenu, headerFixedLayout } = configContext.state;
   const { dispatch } = configContext;
