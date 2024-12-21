@@ -1,4 +1,4 @@
-import React, { useState, memo, useMemo } from 'react';
+import React, { useState, memo } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 
 const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChange, options = null, required = true}) => {
@@ -20,8 +20,8 @@ const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChang
             }}
           >
             {options.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
+              <option key={index} value={option.id}>
+                {option.name}
               </option>
             ))}
           </Form.Select>
