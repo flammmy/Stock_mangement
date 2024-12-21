@@ -160,11 +160,11 @@ const UsersPage = () => {
           phone: selectedUser.phone,
           role: selectedUser.role == 'operator' ? 2 : 3,
           password: selectedUser.password,
-          status: selectedUser.status == 'active' ? 1 : 0
+          status: selectedUser.status == 'active' ? 0 : 1
         },
         {
           headers: {
-            Authorization: Bearer `${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         }
@@ -359,8 +359,8 @@ const UsersPage = () => {
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 >
-                  <option value={1}>Active</option>
-                  <option value={0}>Inactive</option>
+                  <option value={0}>Active</option>
+                  <option value={1}>Inactive</option>
                 </Form.Select>
               </Form.Group>
             </Form>
