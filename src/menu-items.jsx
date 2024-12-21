@@ -108,6 +108,13 @@ const menuItems = {
           icon: 'feather icon-box',
           children: [
             {
+              id: 'list_stock',
+              title: 'List',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/invoices'
+            },
+            {
               id: 'add_invoice',
               title: 'Add Invoice',
               icon: 'feather icon-home',
