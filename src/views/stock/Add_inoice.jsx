@@ -90,7 +90,7 @@ const Add_inoice = () => {
       if (field === 'product_id') {
         const selectedProduct = products.find((product) => product.id == value);
         if (selectedProduct) {
-          updatedRows[index].shadeNo = value;
+          updatedRows[index].product_id = value;
           updatedRows[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
         } else {
           updatedRows[index].purchase_shadeNo = '';
@@ -335,7 +335,7 @@ const Add_inoice = () => {
                           <td>
                             <Form.Control
                               as="select"
-                              value={item.id}
+                              value={item.shadeNo}
                               onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
                             >
                               <option value="">Select Shade No.</option>

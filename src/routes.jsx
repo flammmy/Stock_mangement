@@ -129,6 +129,24 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/add-product/:id',
+        element: lazy(() => import('./views/stock/Add_product')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
         path: '/basic/badges',
         element: lazy(() => import('./views/ui-elements/basic/BasicBadges')),
         
