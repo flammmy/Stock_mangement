@@ -73,6 +73,12 @@ const routes = [
         exact: 'true',
         path: '/NavRight/profile-page',
         element: lazy(() => import('./layouts/AdminLayout/NavBar/NavRight/profile-page')),
+      },
+
+      {
+        exact: 'true',
+        path: '/NavRight/ForgetPassword',
+        element: lazy(() => import('./layouts/AdminLayout/NavBar/NavRight/changePassword')),
       }
 
     ]

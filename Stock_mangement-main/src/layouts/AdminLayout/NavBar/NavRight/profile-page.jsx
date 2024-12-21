@@ -421,6 +421,7 @@
 
 
 import React, { useState, useEffect } from 'react'; 
+import { Link } from 'react-router-dom';
 import Image from "../NavRight/image33.png"; // Assuming you have a placeholder image
 
 const LoginPage = () => {
@@ -507,7 +508,7 @@ const LoginPage = () => {
     },
     buttonShowMore: {
       display: 'inline-block',
-      padding: '1.2rem 1.8rem',
+      padding: '0.1rem 1.8rem',
       textAlign: 'center',
       textDecoration: 'none',
       background: 'linear-gradient(100deg, #1d8cf8 30%, #3358f4 100%)',
@@ -673,6 +674,9 @@ const LoginPage = () => {
     buttonShowMore_main: {
       width: "100%",
       textAlign: "center"
+    },
+    buttonShowMore_main :{
+     marginTop:"8px"
     }
   };
 
@@ -695,7 +699,7 @@ const LoginPage = () => {
               </div>
               <div style={styles.title}>
                 <h4>{user?.name}</h4>
-                <span>{user?.location || "Location"}</span>
+                <span style={{color:"black"}}>{user?.location || "Location"}</span>
               </div>
               <div style={styles.userInfo}>
                 <p>Username: {user?.username}</p>
@@ -703,7 +707,10 @@ const LoginPage = () => {
                 <p>Password: *****</p> {/* Masked password */}
                 <p>Phone: {user?.phone || "Not Provided"}</p>
               </div>
-              <div >
+              <Link to="/NavRight/ForgetPassword"  style={{color:"red",marginTop:"-5px"}} >
+                change password
+               </Link>
+              <div style={styles.buttonShowMore_main}>
                 <a href="/app/dashboard/default" style={styles.buttonShowMore}>
                   Go Back
                 </a>
