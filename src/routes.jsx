@@ -72,7 +72,6 @@ const routes = [
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
         allowedRoles:[1,2,3]
-
       },
       {
         exact: 'true',
@@ -137,6 +136,24 @@ const routes = [
         exact: 'true',
         path: '/add-invoice',
         element: lazy(() => import('./views/stock/Add_inoice')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/add-product/:id',
+        element: lazy(() => import('./views/stock/Add_product')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
         allowedRoles:[1,2,3]
       },
       {
