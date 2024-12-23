@@ -42,6 +42,7 @@ const Add_inoice = () => {
   });
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
+
   const handleAddRow = () => {
     setItems([
       ...items,
@@ -50,6 +51,7 @@ const Add_inoice = () => {
         purchase_shadeNo: '',
         hsn_sac_code: '',
         quantity: '',
+        product_type: '',
         total_product: '',
         unit: '',
         rate: '',
@@ -66,6 +68,7 @@ const Add_inoice = () => {
           purchase_shadeNo: '',
           hsn_sac_code: '',
           quantity: 0,
+          product_type: '',
           total_product: '',
           unit: '',
           rate: 0,
@@ -221,7 +224,7 @@ const Add_inoice = () => {
   return (
     <Container
       fluid
-      className="pt-4 px-5"
+      className="pt-1 px-2"
       style={{
         border: '3px dashed #14ab7f',
         borderRadius: '8px',
@@ -229,7 +232,7 @@ const Add_inoice = () => {
       }}
     >
       <Row className="justify-content-center">
-        <Col md={11} lg={11}>
+        <Col md={12} lg={12}>
           <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
             <div
               className="p-4 text-white text-center"
@@ -317,11 +320,12 @@ const Add_inoice = () => {
                       <tr>
                         <th>Shade Number</th>
                         <th>Pur. Shade No</th>
-                        <th>hsn_sac_code/SAC</th>
-                        <th>quantity</th>
                         <th>Total Product</th>
+                        <th>Product Type</th>
+                        <th>HSN/SAC</th>
+                        <th>Quantity</th>
                         <th>Unit</th>
-                        <th>rate</th>
+                        <th>Rate</th>
                         <th>Amount</th>
                         <th>Actions</th>
                       </tr>
@@ -334,6 +338,8 @@ const Add_inoice = () => {
                               as="select"
                               value={item.shadeNo}
                               onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
+                              className='px-1'
+
                             >
                               <option value="">Select Shade No.</option>
                               {products.map((product, idx) => (
@@ -349,21 +355,8 @@ const Add_inoice = () => {
                               type="text"
                               value={item.purchase_shadeNo}
                               onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
-                            />
-                          </td>
+                              className='px-1'
 
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.hsn_sac_code}
-                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.quantity}
-                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
                             />
                           </td>
                           <td>
@@ -371,15 +364,56 @@ const Add_inoice = () => {
                               type="text"
                               value={item.total_product}
                               onChange={(e) => handleRowChange(index, 'total_product', e.target.value)}
+                              className='px-1'
+
                             />
                           </td>
                           <td>
-                            <Form.Control type="text" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} />
+                            <Form.Control
+                              as="select"
+                              value={item.product_type}
+                              onChange={(e) => handleRowChange(index, 'product_type', e.target.value)}
+                              className='px-1'
+
+                              >
+                              <option value="" disabled>Select type</option>
+                              <option value="">Roll</option>
+                              <option value="">Box</option>
+
+                              
+                            </Form.Control>
+                          </td>
+
+                          <td>
+                            <Form.Control
+                              type="text"
+                              value={item.hsn_sac_code}
+                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
+                              className='px-1'
+
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.quantity}
+                              className='px-1'
+                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                            />
+                          </td>
+                         
+                          <td>
+                            <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
+                              <option value="" disabled>Select unit</option>
+                              <option value="">Sq.ft.</option>
+                              <option value="">Pcs.</option>
+                            </Form.Control>
                           </td>
                           <td>
                             <Form.Control
                               type="number"
                               value={item.rate}
+                              className='px-1'
                               onChange={(e) => handleRowChange(index, 'rate', e.target.value)}
                             />
                           </td>
@@ -387,6 +421,7 @@ const Add_inoice = () => {
                             <Form.Control
                               type="number"
                               value={item.amount}
+                              className='px-1'
                               onChange={(e) => handleRowChange(index, 'amount', e.target.value)}
                             />
                           </td>
