@@ -16,9 +16,9 @@ import {
 const AddBank = () => {
     const [formData, setFormData] = useState({
         name: '',
-        ifsc_code: '',
-        branch: '',
-        account_number: '',
+        shadeNo: '',
+        code: '',
+        purchase_shade_no: '',
         status: 'Active',
     });
 

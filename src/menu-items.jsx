@@ -54,6 +54,12 @@ const menuItems = {
               icon: 'feather icon-home',
               type: 'item',
               url: '/bank'
+            },{
+              id: 'Products',
+              title: 'Products',
+              icon: 'feather icon-home',
+              type: 'item',
+              url: '/products'
             }
             //,{
             //   id: 'button',

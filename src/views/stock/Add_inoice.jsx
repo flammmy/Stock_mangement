@@ -359,7 +359,7 @@ const Add_inoice = () => {
                             <Form.Control type="text" value={item.hsn_sac_code} onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)} />
                           </td>
                           <td>
-                            <Form.Control type="number" value={item.quantity} onChange={(e) => handleRowChange(index, 'quantity', e.target.value)} />
+                            <Form.Control type="number"  value={item.quantity} onChange={(e) => handleRowChange(index, 'quantity', e.target.value)} />
                           </td>
                           <td>
                             <Form.Control
