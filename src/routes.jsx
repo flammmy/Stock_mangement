@@ -113,6 +113,18 @@ const routes = [
         element: lazy(() => import('./views/bank/AddBank')),
         allowedRoles:[1,2,3]
 
+      },{
+        exact: 'true',
+        path: '/products',
+        element: lazy(() => import('./views/products/Index')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
+        path: '/Add-Product',
+        element: lazy(() => import('./views/products/AddProduct')),
+        allowedRoles:[1,2,3]
+
       },
       {
         exact: 'true',

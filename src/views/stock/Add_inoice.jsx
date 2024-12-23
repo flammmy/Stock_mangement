@@ -66,6 +66,7 @@ const Add_inoice = () => {
           purchase_shadeNo: '',
           hsn_sac_code: '',
           quantity: 0,
+          total_product: '',
           unit: '',
           rate: 0,
           amount: 0

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useMemo } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -23,7 +23,8 @@ const AddBank = () => {
     });
 
     const navigate = useNavigate();
-    const statuses = ['Active✅', 'Inactive❌'];
+    const statuses = useMemo(() => [{ id: '0', name: 'Active✅' }, { id: '0', name: 'Inactive❌' }], []);
+
     const mainColor = '#3f4d67';
 
     // Handle input changes
