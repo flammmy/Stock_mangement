@@ -3,6 +3,7 @@ import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import FormField from '../../components/FormField';
 import {
     FaUser,
     FaIdCard,
@@ -100,57 +101,6 @@ const AddReceiver = () => {
     };
 
     const mainColor = '#3f4d67';
-
-    const FormField = ({ icon: Icon, label, name, value, onChange, type = 'text', options = null, required = true }) => (
-        <Form.Group className="mb-3 position-relative">
-            <Form.Label className="d-flex align-items-center">
-                <Icon className="me-2" style={{ color: mainColor }} />
-                {label}
-            </Form.Label>
-            {options ? (
-                <Form.Select
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    required={required}
-                    style={{
-                        paddingLeft: '40px',
-                        borderColor: mainColor
-                    }}
-                >
-                    {options.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </Form.Select>
-            ) : (
-                <Form.Control
-                    type={type}
-                    placeholder={`Enter ${label.toLowerCase()}`}
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    required={required}
-                    className="form-control-icon"
-                    style={{
-                        paddingLeft: '40px',
-                        borderColor: mainColor
-                    }}
-                />
-            )}
-            <Icon
-                className="position-absolute"
-                style={{
-                    left: '10px',
-                    top: '38px',
-                    color: mainColor,
-                    opacity: 0.5
-                }}
-            />
-        </Form.Group>
-    );
-
     return (
         <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
             <Row className="justify-content-center">
