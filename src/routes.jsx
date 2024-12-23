@@ -72,7 +72,6 @@ const routes = [
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
         allowedRoles:[1,2,3]
-
       },
       {
         exact: 'true',

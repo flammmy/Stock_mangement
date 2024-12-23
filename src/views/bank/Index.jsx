@@ -32,19 +32,14 @@ const BanksPage = () => {
     fetchBank();
   }, []);
 
-  // Update filtered Banks when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = Banks.filter((Bank) => {
-      const statusText = Bank.status === 1 ? 'active' : 'inactive';
       return (
         Bank.name.toLowerCase().includes(lowercasedQuery) ||
-        Bank.code.toLowerCase().includes(lowercasedQuery) ||
-        Bank.gst_no.toLowerCase().includes(lowercasedQuery) ||
-        Bank.email.toLowerCase().includes(lowercasedQuery) ||
-        Bank.tel_no.toLowerCase().includes(lowercasedQuery) ||
-        Bank.owner_mobile.toLowerCase().includes(lowercasedQuery) ||
-        statusText.includes(lowercasedQuery)
+        Bank.ifsc_code.toLowerCase().includes(lowercasedQuery) ||
+        Bank.branch.toLowerCase().includes(lowercasedQuery) ||
+        Bank.account_number.toLowerCase().includes(lowercasedQuery)
       );
     });
     setFilteredBank(filtered);
@@ -69,88 +64,19 @@ const BanksPage = () => {
       sortable: true,
     },
     {
-      name: 'Code',
-      selector: (row) => row.code,
+      name: 'IFSC Code',
+      selector: (row) => row.ifsc_code,
       sortable: true,
     },
     {
-      name: 'GST No',
-      selector: (row) => row.gst_no,
+      name: 'Branch',
+      selector: (row) => row.branch,
       sortable: true,
     },
     {
-      name: 'CIN No',
-      selector: (row) => row.cin_no,
+      name: 'Account Number',
+      selector: (row) => row.account_number,
       sortable: true,
-    },
-    {
-      name: 'PAN No',
-      selector: (row) => row.pan_no,
-      sortable: true,
-    },
-    {
-      name: 'MSME No',
-      selector: (row) => row.msme_no,
-      sortable: true,
-    },
-    {
-      name: 'Phone',
-      selector: (row) => row.tel_no,
-      sortable: true,
-    },
-    {
-      name: 'Email',
-      selector: (row) => row.email,
-      sortable: true,
-    },
-    {
-      name: 'Owner Mobile',
-      selector: (row) => row.owner_mobile,
-      sortable: true,
-    },
-    {
-      name: 'Registered Address',
-      selector: (row) => row.reg_address,
-      sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
-    },
-    {
-      name: 'Work Address',
-      selector: (row) => row.work_address,
-      sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
-    },
-    {
-      name: 'Area',
-      selector: (row) => row.area,
-      sortable: true,
-    },
-    {
-      name: 'Logo',
-      cell: (row) => (
-        <img
-        src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
-          alt={`${row.name} logo`}
-          style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-        />
-      ),
-      sortable: false,
-    },
-    {
-      name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
-      sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return (
-          <span
-            className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'
-              }`}
-          >
-            {statusText}
-          </span>
-        );
-      },
     },
     {
       name: 'Action',
@@ -178,16 +104,15 @@ const BanksPage = () => {
 
   const handleDelete = async (userId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/Bank/${userId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
       });
 
-      // Check if the response indicates success
       if (response.status === 200) {
-        toast.success('User deleted successfully');
+        toast.success('Bank deleted successfully');
         setBank(Banks.filter((user) => user.id !== userId));
         setFilteredBank(filteredBanks.filter((user) => user.id !== userId));
       } else {
@@ -195,7 +120,7 @@ const BanksPage = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to delete user');
+      toast.error('Failed to delete bank');
     }
   };
 
@@ -203,17 +128,16 @@ const BanksPage = () => {
     setselectedBank(user);
     setShowEditModal(true);
   };
-  const handleUpdateUser = async () => {
+
+  const handleUpdateBank = async () => {
     try {
-      // Ensure the selectedBank is valid
       if (!selectedBank || !selectedBank.id) {
         toast.error('Invalid Bank selected for update!');
         return;
       }
 
-      // Perform the API call
       const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/Bank/${selectedBank.id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${selectedBank.id}`,
         selectedBank,
         {
           headers: {
@@ -223,21 +147,17 @@ const BanksPage = () => {
         }
       );
 
-      // Check the response status
       if (response.status === 200) {
         toast.success('Bank updated successfully!');
 
-        // Update the Banks list
         setBank((prev) =>
           prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup))
         );
 
-        // Update the filtered Banks list
         setFilteredBank((prev) =>
           prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup))
         );
 
-        // Close the modal
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
@@ -248,18 +168,17 @@ const BanksPage = () => {
     }
   };
 
-
-  const handleAddUser = () => {
+  const handleAddBank = () => {
     navigate('/add-Bank');
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedBank((prevUser) => ({
-      ...prevUser,
+    setselectedBank((prevBank) => ({
+      ...prevBank,
       [name]: value
     }));
   };
-
 
   const customStyles = {
     header: {
@@ -331,20 +250,14 @@ const BanksPage = () => {
           />
         </div>
         <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add User
+          <Button variant="primary" onClick={handleAddBank}>
+            <MdPersonAdd className="me-2" /> Add Bank
           </Button>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
-            {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Banks Management</h2>
-            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <DataTable
                 columns={columns}
@@ -360,7 +273,6 @@ const BanksPage = () => {
           </div>
         </div>
       </div>
-      {/* Edit User Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
@@ -380,115 +292,36 @@ const BanksPage = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Bank Code</Form.Label>
+                <Form.Label>IFSC Code</Form.Label>
                 <Form.Control
                   type="text"
-                  name="code"
-                  value={selectedBank.code || ''}
+                  name="ifsc_code"
+                  value={selectedBank.ifsc_code || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>GST Number</Form.Label>
+                <Form.Label>Branch</Form.Label>
                 <Form.Control
                   type="text"
-                  name="gst_no"
-                  value={selectedBank.gst_no || ''}
+                  name="branch"
+                  value={selectedBank.branch || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>CIN Number</Form.Label>
+                <Form.Label>Account Number</Form.Label>
                 <Form.Control
                   type="text"
-                  name="cin_no"
-                  value={selectedBank.cin_no || ''}
+                  name="account_number"
+                  value={selectedBank.account_number || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>PAN Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="pan_no"
-                  value={selectedBank.pan_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>MSME Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="msme_no"
-                  value={selectedBank.msme_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Registered Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="reg_address"
-                  value={selectedBank.reg_address || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Work Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="work_address"
-                  value={selectedBank.work_address || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="tel_no"
-                  value={selectedBank.tel_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Owner Mobile</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="owner_mobile"
-                  value={selectedBank.owner_mobile || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Select
-                  name="status"
-                  value={selectedBank.status || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                >
-                  <option value={1}>Active</option>
-                  <option value={0}>Inactive</option>
-                </Form.Select>
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -496,16 +329,14 @@ const BanksPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser}>
+            <Button variant="success" onClick={handleUpdateBank}>
               Update
             </Button>
           </Modal.Footer>
         </Modal>
-
       )}
     </div>
   );
 };
-
 
 export default BanksPage;

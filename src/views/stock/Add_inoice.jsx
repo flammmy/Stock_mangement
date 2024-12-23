@@ -98,24 +98,23 @@ const Add_inoice = () => {
       } else {
         updatedRows[index][field] = value;
       }
-  
+
       // Sync with formData
       setFormData((prevFormData) => {
         const updatedProducts = [...prevFormData.products];
         updatedProducts[index] = {
           ...updatedProducts[index],
-          ...updatedRows[index],
+          ...updatedRows[index]
         };
         return {
           ...prevFormData,
-          products: updatedProducts,
+          products: updatedProducts
         };
       });
-  
+
       return updatedRows;
     });
   };
-  
 
   const [receivers, setReceivers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -191,28 +190,22 @@ const Add_inoice = () => {
     fetchReceiverData();
   }, []);
 
-  
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name,value);
-    
+    console.log(name, value);
+
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
+      });
       toast.success('Invoice added successfully');
       // navigate('/users');
     } catch (error) {
@@ -220,7 +213,7 @@ const Add_inoice = () => {
       toast.error(errorMessage);
     }
 
-    console.log(formData)
+    console.log(formData);
   };
 
   const mainColor = '#3f4d67';
@@ -260,7 +253,14 @@ const Add_inoice = () => {
                       value={formData.invoice_no}
                       onChange={handleChange}
                     />
-                    <FormField icon={FaUser} label="Supplier" name="supplier_id" value={formData.supplier_id} onChange={handleChange} options={suppliers}/>
+                    <FormField
+                      icon={FaUser}
+                      label="Supplier"
+                      name="supplier_id"
+                      value={formData.supplier_id}
+                      onChange={handleChange}
+                      options={suppliers}
+                    />
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
                     <FormField
                       icon={FaMapMarkerAlt}
@@ -269,17 +269,16 @@ const Add_inoice = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                    <FormField icon={FaUsers} label="Receiver" name="receiver_id" value={formData.receiver_id} onChange={handleChange} options={receivers} />
+                    <FormField
+                      icon={FaUsers}
+                      label="Receiver"
+                      name="receiver_id"
+                      value={formData.receiver_id}
+                      onChange={handleChange}
+                      options={receivers}
+                    />
                     <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
                     <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
-                    <FormField
-                      icon={FaCalendarAlt}
-                      label="Ack Date"
-                      type="date"
-                      name="ack_date"
-                      value={formData.ack_date}
-                      onChange={handleChange}
-                    />
                   </Col>
                   <Col md={6}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
@@ -302,8 +301,6 @@ const Add_inoice = () => {
                       onChange={handleChange}
                       options={banks}
                     />
-
-                    <FormField icon={FaQrcode} type="file" label="QR Code" name="qr_code" value={formData.qr_code} onChange={handleChange} />
                   </Col>
                 </Row>
 
@@ -330,7 +327,6 @@ const Add_inoice = () => {
                     </thead>
                     <tbody>
                       {items.map((item, index) => (
-                        
                         <tr key={index}>
                           <td>
                             <Form.Control
@@ -356,10 +352,18 @@ const Add_inoice = () => {
                           </td>
 
                           <td>
-                            <Form.Control type="text" value={item.hsn_sac_code} onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)} />
+                            <Form.Control
+                              type="text"
+                              value={item.hsn_sac_code}
+                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
+                            />
                           </td>
                           <td>
-                            <Form.Control type="number" value={item.quantity} onChange={(e) => handleRowChange(index, 'quantity', e.target.value)} />
+                            <Form.Control
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                            />
                           </td>
                           <td>
                             <Form.Control
@@ -395,7 +399,7 @@ const Add_inoice = () => {
                     </tbody>
                   </Table>
                   <Row className="mt-4">
-                    <Col md={4}>
+                    <Col md={3}>
                       <FormField
                         icon={FaMoneyBillWave}
                         label="Total Amount"
@@ -404,7 +408,7 @@ const Add_inoice = () => {
                         onChange={handleChange}
                       />
                     </Col>
-                    <Col md={4}>
+                    <Col md={3}>
                       <FormField
                         icon={FaPercentage}
                         label="SGST(%)"
@@ -413,7 +417,7 @@ const Add_inoice = () => {
                         onChange={handleChange}
                       />
                     </Col>
-                    <Col md={4}>
+                    <Col md={3}>
                       <FormField
                         icon={FaPercentage}
                         label="SGST(%)"
@@ -421,27 +425,16 @@ const Add_inoice = () => {
                         value={formData.cgst_percentage}
                         onChange={handleChange}
                       />
-                    </Col>
-                    {/* <Col md={2}>
                       
-                    </Col> */}
-                    <Col md={6}>
-                      <FormField
-                        icon={FaSignature}
-                        type="file"
-                        label="Receiver Signature"
-                        name="receiver_signature"
-                        value={formData.receiver_signature}
-                        onChange={handleChange}
-                      />
                     </Col>
-                    <Col md={6}>
-                      <FormField
-                        icon={FaSignature}
-                        type="file"
-                        label="Authorised Signatory"
-                        name="authorised_signatory"
-                        value={formData.authorised_signatory}
+
+                    <Col md={3}>
+                    <FormField
+                        icon={FaCalendarAlt}
+                        label="Ack Date"
+                        type="date"
+                        name="ack_date"
+                        value={formData.ack_date}
                         onChange={handleChange}
                       />
                     </Col>
