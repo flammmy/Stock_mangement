@@ -40,10 +40,10 @@ const Show_product = () => {
       const lowercasedQuery = searchQuery.toLowerCase();
       const filtered = products.filter(
         (product) =>
-          product.productname.toLowerCase().includes(lowercasedQuery) ||
-          product.name.toLowerCase().includes(lowercasedQuery) ||
-          product.email.toLowerCase().includes(lowercasedQuery) ||
-          product.phone.toString().toLowerCase().includes(lowercasedQuery)
+          product.width.toLowerCase().includes(lowercasedQuery) ||
+          product.length.toLowerCase().includes(lowercasedQuery) ||
+          product.invoice_no.toLowerCase().includes(lowercasedQuery) ||
+          product.lot_no.toString().toLowerCase().includes(lowercasedQuery)
       );
       setFilteredProducts(filtered);
     }, [searchQuery, products]);
@@ -62,39 +62,52 @@ const Show_product = () => {
         width: '80px'
       },
       {
-        name: 'Username',
-        selector: (row) => row.username,
+        name: 'Lot No',
+        selector: (row) => row.lot_no,
         sortable: true
       },
       {
-        name: 'Name',
-        selector: (row) => row.name,
+        name: 'Invoice no',
+        selector: (row) => row.stock_invoice.invoice_no,
         sortable: true
       },
       {
-        name: 'Email',
-        selector: (row) => row.email,
+        name: 'Shade no',
+        selector: (row) => row.stock_product.shadeNo,
+        sortable: true
+      },
+      
+      {
+        name: 'Pur. Shade no',
+        selector: (row) => row.stock_product.purchase_shade_no,
         sortable: true
       },
       {
-        name: 'Phone',
-        selector: (row) => row.phone,
+        name: 'Length',
+        selector: (row) => row.length,
         sortable: true
       },
       {
-        name: 'Role',
-        selector: (row) => (row.role === 1 ? 'Admin' : row.role === 2 ? 'Operator' : row.role === 3 ? 'Supervisor' : 'Superadmin'),
+        name: 'width',
+        selector: (row) => row.width,
         sortable: true
       },
       {
-        name: 'Status',
-        selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
-        sortable: true,
-        cell: (row) => {
-          const statusText = row.status === 1 ? 'inactive' : 'active';
-          return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
-        }
+        name: 'Unit',
+        selector: (row) => row.unit,
+        sortable: true
       },
+      {
+        name: 'Quantity',
+        selector: (row) => row.qty,
+        sortable: true
+      },
+      {
+        name: 'Area',
+        selector: (row) => Number(row.length) * Number(row.width) * Number(row.qty),
+        sortable: true
+      },
+      
       {
         name: 'Action',
         cell: (row) => (
@@ -194,11 +207,7 @@ const Show_product = () => {
               style={{ borderRadius: '5px' }}
             />
           </div>
-          <div className="col-md-8 text-end">
-            <Button variant="primary" >
-              <MdPersonAdd className="me-2" /> Add User
-            </Button>
-          </div>
+         
         </div>
         <div className="row">
           <div className="col-12">

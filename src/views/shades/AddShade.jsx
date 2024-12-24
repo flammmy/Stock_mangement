@@ -1,4 +1,4 @@
-import React, { useState ,useMemo} from 'react';
+import React, { useState} from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -7,13 +7,11 @@ import FormField from '../../components/FormField';
 import {
     FaUser,
     FaIdCard,
-    FaUniversity,
-    FaMapMarkerAlt,
     FaCheckCircle,
     FaUserPlus,
 } from 'react-icons/fa';
 
-const AddBank = () => {
+const AddProduct = () => {
     const [formData, setFormData] = useState({
         name: '',
         shadeNo: '',
@@ -23,7 +21,6 @@ const AddBank = () => {
     });
 
     const navigate = useNavigate();
-    const statuses = useMemo(() => [{ id: '0', name: 'Active✅' }, { id: '0', name: 'Inactive❌' }], []);
     const mainColor = '#3f4d67';
 
     // Handle input changes
@@ -38,7 +35,7 @@ const AddBank = () => {
 
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/admin/bank`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/products`,
                 formData,
                 {
                     headers: {
@@ -47,11 +44,15 @@ const AddBank = () => {
                 }
             );
 
-            navigate('/bank');
-            toast.success('Bank added successfully');
+            if (response.status >= 200 && response.status < 300) {
+                navigate('/shades');
+                toast.success('Product added successfully'); 
+            } else {
+                throw new Error('Unexpected response status');
+            }
         } catch (error) {
-            console.error('Error adding bank:', error);
-            toast.error('Error adding bank');
+            console.error('Error adding product:', error);
+            toast.error('Error adding product'); 
         }
     };
 
@@ -76,7 +77,7 @@ const AddBank = () => {
                             }}
                         >
                             <FaUserPlus size={40} className="me-3" />
-                            <h2 className="m-0 text-white">Add New Bank</h2>
+                            <h2 className="m-0 text-white">Add New Product</h2>
                         </div>
                         <Card.Body className="p-5">
                             <Form onSubmit={handleSubmit}>
@@ -85,42 +86,34 @@ const AddBank = () => {
                                     <Col md={6}>
                                         <FormField
                                             icon={FaUser}
-                                            label="Bank Name"
+                                            label="Product Name"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
                                         />
                                         <FormField
-                                            icon={FaUniversity}
-                                            label="IFSC Code"
-                                            name="ifsc_code"
-                                            value={formData.ifsc_code}
+                                            icon={FaIdCard}
+                                            label="Shade Number"
+                                            name="shadeNo"
+                                            value={formData.shadeNo}
                                             onChange={handleChange}
                                         />
                                     </Col>
                                     {/* Second Column */}
                                     <Col md={6}>
                                         <FormField
-                                            icon={FaMapMarkerAlt}
-                                            label="Branch"
-                                            name="branch"
-                                            value={formData.branch}
+                                            icon={FaIdCard}
+                                            label="Product Code"
+                                            name="code"
+                                            value={formData.code}
                                             onChange={handleChange}
                                         />
                                         <FormField
                                             icon={FaIdCard}
-                                            label="Account Number"
-                                            name="account_number"
-                                            value={formData.account_number}
+                                            label="Purchase Shade Number"
+                                            name="purchase_shade_no"
+                                            value={formData.purchase_shade_no}
                                             onChange={handleChange}
-                                        />
-                                        <FormField
-                                            icon={FaCheckCircle}
-                                            label="Status"
-                                            name="status"
-                                            value={formData.status}
-                                            onChange={handleChange}
-                                            options={statuses}
                                         />
                                     </Col>
                                 </Row>
@@ -136,7 +129,7 @@ const AddBank = () => {
                                         width: '10rem',
                                     }}
                                 >
-                                    <FaUserPlus className="me-2" /> Add Bank
+                                    <FaUserPlus className="me-2" /> Add Product
                                 </Button>
                             </Form>
                         </Card.Body>
@@ -147,4 +140,4 @@ const AddBank = () => {
     );
 };
 
-export default AddBank;
+export default AddProduct;

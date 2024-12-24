@@ -167,6 +167,11 @@ const routes = [
         path: '/shades',
         element: lazy(() => import('./views/shades/Index')),
         allowedRoles:[1,2,3]
+      },{
+        exact: 'true',
+        path: '/add-shades',
+        element: lazy(() => import('./views/shades/AddShade')),
+        allowedRoles:[1,2,3]
       },
       {
         exact: 'true',

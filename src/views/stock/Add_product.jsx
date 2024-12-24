@@ -88,12 +88,12 @@ const Add_product = () => {
       if(field === 'product_id') {
         const selectedProduct = allProducts.find((product) => product.id == value);
         if(selectedProduct) {
-          updatedRows[0].product_id = value;
-          updatedRows[0].purchase_shadeNo = selectedProduct.purchase_shade_no;
+          updatedRows[index].product_id = value;
+          updatedRows[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
         }
       }
       else{
-        updatedRows[0][field] = value;
+        updatedRows[index][field] = value;
       }
       // Sync with formData
       setFormData((prevFormData) => {
@@ -218,7 +218,7 @@ const Add_product = () => {
                       <td>
                         <Form.Control
                           type="number"
-                          value={item.length}
+                          value={item.qty}
                           onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
                           className='px-1'
                         />

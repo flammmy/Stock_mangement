@@ -3,18 +3,21 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd } from 'react-icons/md';
-import { FaEye } from "react-icons/fa";
+import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import PdfPreview from 'components/PdfPreview';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]); // For search
   const [searchQuery, setSearchQuery] = useState(''); // Search query
-  const [selectedInvoices, setSelectedInvoices] = useState(null);
+  const [invoiceAllDetails, setInvoiceAllDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -26,7 +29,7 @@ const Index = () => {
           }
         });
         const invoicesDetails = response.data.data;
-
+        setInvoiceAllDetails(invoicesDetails);
         const filteredFields = (data) => {
           return invoicesDetails.map((invoice) => ({
             invoice_no: invoice.invoice_no,
@@ -57,7 +60,6 @@ const Index = () => {
         invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredInvoices(filtered);
-    console.log(filtered);
   }, [searchQuery, invoices]);
 
   const handleSearch = (e) => {
@@ -102,14 +104,17 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick = {() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
             <MdAdd />
           </Button>
-          <Button variant="outline-success" size="sm" className="me-2" >
+          <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
           </Button>
           <Button variant="outline-danger" size="sm">
             <MdDelete />
+          </Button>
+          <Button variant="outline-success" size="sm" onClick={() => {setSelectedInvoice(row.id);setShowPdfModal(true); console.log(row.id) }}>
+            <MdPrint />
           </Button>
         </div>
       )
@@ -265,6 +270,10 @@ const Index = () => {
           </div>
         </div>
       </div>
+      {
+        invoiceAllDetails && selectedInvoice &&
+        <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice}/>
+      }
     </div>
   );
 };

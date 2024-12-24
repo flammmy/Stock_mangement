@@ -8,15 +8,15 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const ShadesPage = () => {
-  const [shades, setSupplier] = useState([]);
-  const [filteredShades, setFilteredSupplier] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+const ProductsPage = () => {
+  const [products, setProducts] = useState([]); 
+  const [filteredProducts, setFilteredProducts] = useState([]); 
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    const fetchSupplier = async () => {
+    const fetchProducts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: {
@@ -24,31 +24,27 @@ const ShadesPage = () => {
             'Content-Type': 'application/json',
           },
         });
-        console.log(response);
-        setSupplier(response.data.data);
-        setFilteredSupplier(response.data.data); 
+        setProducts(response.data.data);
+        setFilteredProducts(response.data.data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching products:', error);
       }
     };
-    fetchSupplier();
+    fetchProducts();
   }, []);
 
-  // Update filtered Shades when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = shades.filter((supplier) => {
-      const statusText = supplier.status === 1 ? 'active' : 'inactive';
+    const filtered = products.filter((product) => {
       return (
-        supplier.name.toLowerCase().includes(lowercasedQuery) ||
-        supplier.shadeNo.toLowerCase().includes(lowercasedQuery) ||
-        supplier.code.toLowerCase().includes(lowercasedQuery) ||
-        supplier.purchase_shade_no.toLowerCase().includes(lowercasedQuery) ||
-        statusText.includes(lowercasedQuery)
+        product.name.toLowerCase().includes(lowercasedQuery) ||
+        product.shadeNo.toLowerCase().includes(lowercasedQuery) ||
+        product.code.toLowerCase().includes(lowercasedQuery) ||
+        product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)
       );
     });
-    setFilteredSupplier(filtered);
-  }, [searchQuery, shades]);
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -65,7 +61,7 @@ const ShadesPage = () => {
     },
     {
       name: 'Shade No',
-      selector: (row) => row.name,
+      selector: (row) => row.shadeNo,
       sortable: true,
     },
     {
@@ -75,8 +71,21 @@ const ShadesPage = () => {
     },
     {
       name: 'Purchase Shade No',
-      selector: (row) => row.gst_no,
+      selector: (row) => row.purchase_shade_no,
       sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      sortable: true,
+      cell: (row) => {
+        const statusText = row.status === 1 ? 'active' : 'inactive';
+        return (
+          <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>
+            {statusText}
+          </span>
+        );
+      }
     },
     {
       name: 'Action',
@@ -102,45 +111,43 @@ const ShadesPage = () => {
     },
   ];
 
-  const handleDelete = async (ProductId) => {
+  const handleDelete = async (productId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${ProductId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
       });
 
-      // Check if the response indicates success
       if (response.status === 200) {
         toast.success('Product deleted successfully');
-        setSupplier(shades.filter((Product) => Product.id !== ProductId));
-        setFilteredSupplier(filteredshades.filter((Product) => Product.id !== ProductId));
+        setProducts(products.filter((product) => product.id !== productId));
+        setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to delete Product');
+      toast.error('Failed to delete product');
     }
   };
 
-  const handleEdit = (Product) => {
-    setselectedSupplier(Product);
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
     setShowEditModal(true);
   };
+
   const handleUpdateProduct = async () => {
     try {
-      // Ensure the selectedSupplier is valid
-      if (!selectedSupplier || !selectedSupplier.id) {
-        toast.error('Invalid supplier selected for update!');
+      if (!selectedProduct || !selectedProduct.id) {
+        toast.error('Invalid product selected for update!');
         return;
       }
 
-      // Perform the API call
       const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`,
-        selectedSupplier,
+        `${import.meta.env.VITE_API_BASE_URL}/api/products/${selectedProduct.id}`,
+        selectedProduct,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -149,43 +156,35 @@ const ShadesPage = () => {
         }
       );
 
-      // Check the response status
       if (response.status === 200) {
-        toast.success('Supplier updated successfully!');
-
-        // Update the shades list
-        setSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
+        toast.success('Product updated successfully!');
+        setProducts((prev) =>
+          prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod))
         );
-
-        // Update the filtered shades list
-        setFilteredSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
+        setFilteredProducts((prev) =>
+          prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod))
         );
-
-        // Close the modal
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error('Error during update:', error);
-      toast.error('Error updating supplier!');
+      toast.error('Error updating product!');
     }
   };
 
-
   const handleAddProduct = () => {
-    navigate('/add-shade');
+    navigate('/add-shades');
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedSupplier((prevProduct) => ({
+    setSelectedProduct((prevProduct) => ({
       ...prevProduct,
-      [name]: value
+      [name]: value,
     }));
   };
-
 
   const customStyles = {
     header: {
@@ -243,13 +242,13 @@ const ShadesPage = () => {
   };
 
   return (
-    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
             type="text"
             placeholder="Search..."
-            id='search'
+            id="search"
             value={searchQuery}
             onChange={handleSearch}
             className="pe-5 ps-2 py-2"
@@ -265,16 +264,10 @@ const ShadesPage = () => {
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
-            {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">shades Management</h2>
-            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <DataTable
                 columns={columns}
-                data={filteredshades}
+                data={filteredProducts} // Use filteredProducts
                 pagination
                 highlightOnHover
                 striped
@@ -286,132 +279,61 @@ const ShadesPage = () => {
           </div>
         </div>
       </div>
+
       {/* Edit Product Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
-            <Modal.Title className="text-white">Edit Supplier</Modal.Title>
+            <Modal.Title className="text-white">Edit Product</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
               <Form.Group className="mb-3">
-                <Form.Label>Supplier Name</Form.Label>
+                <Form.Label>Product Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
-                  value={selectedSupplier.name || ''}
+                  value={selectedProduct.name || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Supplier Code</Form.Label>
+                <Form.Label>Shade No</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="shadeNo"
+                  value={selectedProduct.shadeNo || ''}
+                  onChange={handleChange}
+                  className="bg-white shadow-sm"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Code</Form.Label>
                 <Form.Control
                   type="text"
                   name="code"
-                  value={selectedSupplier.code || ''}
+                  value={selectedProduct.code || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>GST Number</Form.Label>
+                <Form.Label>Purchase Shade No</Form.Label>
                 <Form.Control
                   type="text"
-                  name="gst_no"
-                  value={selectedSupplier.gst_no || ''}
+                  name="purchase_shade_no"
+                  value={selectedProduct.purchase_shade_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>CIN Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="cin_no"
-                  value={selectedSupplier.cin_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>PAN Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="pan_no"
-                  value={selectedSupplier.pan_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>MSME Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="msme_no"
-                  value={selectedSupplier.msme_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Registered Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="reg_address"
-                  value={selectedSupplier.reg_address || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Work Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="work_address"
-                  value={selectedSupplier.work_address || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="tel_no"
-                  value={selectedSupplier.tel_no || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Owner Mobile</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="owner_mobile"
-                  value={selectedSupplier.owner_mobile || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>Status</Form.Label>
-                <Form.Select
-                  name="status"
-                  value={selectedSupplier.status || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                >
+                <Form.Select name="status" value={selectedProduct.status || ''} onChange={handleChange} className="bg-white shadow-sm">
                   <option value={1}>Active</option>
                   <option value={0}>Inactive</option>
                 </Form.Select>
@@ -427,11 +349,9 @@ const ShadesPage = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
       )}
     </div>
   );
 };
 
-
-export default shadesPage;
+export default ProductsPage;

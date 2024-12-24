@@ -38,7 +38,7 @@ const menuItems = {
             },{
               id: 'suppliers',
               title: 'Suppliers',
-              icon: 'feather icon-archive',
+              icon: 'feather icon-share-2',
               type: 'item',
               url: '/supplier'
             },
@@ -51,13 +51,13 @@ const menuItems = {
             },{
               id: 'banks',
               title: 'Banks',
-              icon: 'feather icon-map',
+              icon: 'feather icon-credit-card',
               type: 'item',
               url: '/bank'
             },{
               id: 'Products',
               title: 'Products',
-              icon: 'feather icon-box',
+              icon: 'feather icon-package',
               type: 'item',
               url: '/shades'
             }
