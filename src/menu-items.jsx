@@ -117,14 +117,14 @@ const menuItems = {
             {
               id: 'list_stock',
               title: 'List',
-              icon: 'feather icon-lock',
+              icon: 'feather icon-list',
               type: 'item',
               url: '/invoices'
             },
             {
               id: 'add_invoice',
               title: 'Add Invoice',
-              icon: 'feather icon-book',
+              icon: 'feather icon-file-plus',
               type: 'item',
               url: '/add-invoice'
             }

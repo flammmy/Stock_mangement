@@ -115,14 +115,6 @@ const AddBank = () => {
                                             value={formData.account_number}
                                             onChange={handleChange}
                                         />
-                                        <FormField
-                                            icon={FaCheckCircle}
-                                            label="Status"
-                                            name="status"
-                                            value={formData.status}
-                                            onChange={handleChange}
-                                            options={statuses}
-                                        />
                                     </Col>
                                 </Row>
 

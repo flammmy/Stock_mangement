@@ -27,7 +27,7 @@ const AddProduct = () => {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -52,8 +52,9 @@ const AddProduct = () => {
         width: '',
         length: '',
         unit: '',
-        type: '',
         qty: 1,
+        type: '',
+       
       }
     ]);
   };
