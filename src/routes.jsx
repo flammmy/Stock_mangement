@@ -46,6 +46,16 @@ const routes = [
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
+  {
+    exact: 'true',
+    path: '/signin/forgotPassword',
+    element: lazy(() => import('./views/auth/signin/forgotPassword'))
+  },
+  {
+    exact: 'true',
+    path: '/signin/resetPassword',
+    element: lazy(() => import('./views/auth/signin/resetPassword'))
+  },
   // {
   //   exact: 'true',
   //   path: '/auth/signin-1',
@@ -178,6 +188,16 @@ const routes = [
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />
+      },
+      {
+        exact: 'true',
+        path: '/NavLeft/profile-page',
+        element: lazy(() => import('./layouts/AdminLayout/NavBar/NavRight/profile-page'))
+      },
+      {
+        exact: 'true',
+        path: '/NavRight/changePassword',
+        element: lazy(() => import('./layouts/AdminLayout/NavBar/NavRight/changePassword'))
       }
     ]
   }

@@ -26,7 +26,7 @@ const Navigation = () => {
 
   let navContent = (
     <div className={navBarClass.join(' ')}>
-      <h3 className='ms-5 mt-3 text-white font-weight-bold text-decoration-underline'>the Stocks</h3>
+      <h3 className='ms-5 mt-3 text-white font-weight-bold '>The Stocks</h3>
       <NavContent navigation={navigation.items} />
     </div>
   );
