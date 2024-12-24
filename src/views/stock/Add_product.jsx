@@ -134,8 +134,8 @@ const AddProduct = () => {
                       <th>Width</th>
                       <th>Length</th>
                       <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                      <th>Quantity</th>
                       <th>&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      <th>Quantity</th>
                       <th>Actions</th>
                     </tr>
                   </thead>

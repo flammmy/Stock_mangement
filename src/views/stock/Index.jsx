@@ -73,7 +73,6 @@ const Index = () => {
       name: 'Invoice Number',
       selector: (row) => row.invoice_no,
       sortable: true,
-      width: '80px'
     },
     {
       name: 'Supplier Name',
@@ -104,16 +103,16 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
+          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
             <MdAdd />
           </Button>
           <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
           </Button>
-          <Button variant="outline-danger" size="sm">
+          {/* <Button variant="outline-danger" size="sm">
             <MdDelete />
-          </Button>
-          <Button variant="outline-success" size="sm" onClick={() => {setSelectedInvoice(row.id);setShowPdfModal(true); console.log(row.id) }}>
+          </Button> */}
+          <Button variant="outline-primary" size="sm" onClick={() => {setSelectedInvoice(row.id);setShowPdfModal(true); console.log(row.id) }}>
             <MdPrint />
           </Button>
         </div>
@@ -188,7 +187,7 @@ const Index = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '16px',
+        fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px'

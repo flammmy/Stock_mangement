@@ -56,7 +56,6 @@ const BanksPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '80px',
     },
     {
       name: 'Bank Name',
@@ -206,7 +205,7 @@ const BanksPage = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '16px',
+        fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
