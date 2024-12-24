@@ -1,4 +1,4 @@
-import React, { useState,useMemo } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -16,15 +16,14 @@ import {
 const AddBank = () => {
     const [formData, setFormData] = useState({
         name: '',
-        ifsc_code: '',
-        branch: '',
-        account_number: '',
+        shadeNo: '',
+        code: '',
+        purchase_shade_no: '',
         status: 'Active',
     });
 
     const navigate = useNavigate();
-    const statuses = useMemo(() => [{ id: '0', name: 'Active✅' }, { id: '0', name: 'Inactive❌' }], []);
-
+    const statuses = ['Active✅', 'Inactive❌'];
     const mainColor = '#3f4d67';
 
     // Handle input changes

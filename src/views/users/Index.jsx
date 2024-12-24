@@ -209,7 +209,7 @@ const UsersPage = () => {
           phone: selectedUser.phone,
           role: selectedUser.role == 'operator' ? 2 : 3,
           password: selectedUser.password,
-          status: selectedUser.status == 'active' ? 1 : 0
+          status: selectedUser.status == 'active' ? 0 : 1
         },
         {
           headers: {

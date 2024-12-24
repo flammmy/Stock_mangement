@@ -81,57 +81,96 @@ const routes = [
         exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
-        allowedRoles:[1]
-
+        allowedRoles:[1,2,3]
       },
       {
         exact: 'true',
         path: '/add-user',
         element: lazy(() => import('./views/users/AddUser')),
-        allowedRoles:[1]
-
+        allowedRoles:[1,2,3]
       }, {
         exact: 'true',
         path: '/Supplier',
         element: lazy(() => import('./views/supplier/Index')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
       },{
         exact: 'true',
         path: '/add-Supplier',
         element: lazy(() => import('./views/supplier/AddSupplier')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
 
       },{
         exact: 'true',
         path: '/receiver',
         element: lazy(() => import('./views/receiver/Index')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
 
       },{
         exact: 'true',
         path: '/add-Receiver',
         element: lazy(() => import('./views/receiver/AddReceiver')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
 
       },{
         exact: 'true',
         path: '/bank',
         element: lazy(() => import('./views/bank/Index')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
 
       },{
         exact: 'true',
         path: '/add-Bank',
         element: lazy(() => import('./views/bank/AddBank')),
-        allowedRoles:[]
+        allowedRoles:[1,2,3]
 
+      },{
+        exact: 'true',
+        path: '/products',
+        element: lazy(() => import('./views/products/Index')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
+        path: '/Add-Product',
+        element: lazy(() => import('./views/products/AddProduct')),
+        allowedRoles:[1,2,3]
+
+      },
+      {
+        exact: 'true',
+        path: '/stocks',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
       },
       {
         exact: 'true',
         path: '/add-invoice',
         element: lazy(() => import('./views/stock/Add_inoice')),
-        allowedRoles:[1]
-
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/add-product/:id/:no',
+        element: lazy(() => import('./views/stock/Add_product')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/show-product/:id',
+        element: lazy(() => import('./views/stock/Show_product')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoices',
+        element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
       },
       {
         exact: 'true',

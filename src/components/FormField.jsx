@@ -14,6 +14,7 @@ const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChang
             value={value}
             onChange={onChange}
             required={required}
+            className='py-2'
             style={{
               paddingLeft: '40px',
               borderColor: '#3f4d67',

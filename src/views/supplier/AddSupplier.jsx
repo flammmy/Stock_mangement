@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useMemo } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import FormField from '../../components/FormField';
+
 import {
     FaUser,
     FaIdCard,
@@ -17,7 +19,6 @@ import {
 const AddSupplier = () => {
     const [formData, setFormData] = useState({
         name: '',
-        code: '',
         gst_no: '',
         cin_no: '',
         pan_no: '',
@@ -33,7 +34,8 @@ const AddSupplier = () => {
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
-    const statuses = ['Active✅', 'Inactive❌'];
+    const statuses = useMemo(() => [{id:'0',name:'Active✅'}, {id:'0',name:'Inactive❌'}], []);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,7 +63,6 @@ const AddSupplier = () => {
         // Create a FormData object for file upload
         const submitData = new FormData();
         submitData.append('name', formData.name);
-        submitData.append('code', formData.code);
         submitData.append('gst_no', formData.gst_no);
         submitData.append('cin_no', formData.cin_no);
         submitData.append('pan_no', formData.pan_no);
@@ -101,56 +102,6 @@ const AddSupplier = () => {
 
     const mainColor = '#3f4d67';
 
-    const FormField = ({ icon: Icon, label, name, value, onChange, type = 'text', options = null, required = true }) => (
-        <Form.Group className="mb-3 position-relative">
-            <Form.Label className="d-flex align-items-center">
-                <Icon className="me-2" style={{ color: mainColor }} />
-                {label}
-            </Form.Label>
-            {options ? (
-                <Form.Select
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    required={required}
-                    style={{
-                        paddingLeft: '40px',
-                        borderColor: mainColor
-                    }}
-                >
-                    {options.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </Form.Select>
-            ) : (
-                <Form.Control
-                    type={type}
-                    placeholder={`Enter ${label.toLowerCase()}`}
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    required={required}
-                    className="form-control-icon"
-                    style={{
-                        paddingLeft: '40px',
-                        borderColor: mainColor
-                    }}
-                />
-            )}
-            <Icon
-                className="position-absolute"
-                style={{
-                    left: '10px',
-                    top: '38px',
-                    color: mainColor,
-                    opacity: 0.5
-                }}
-            />
-        </Form.Group>
-    );
-
     return (
         <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
             <Row className="justify-content-center">
@@ -186,15 +137,6 @@ const AddSupplier = () => {
                                             value={formData.name}
                                             onChange={handleChange}
                                         />
-
-                                        <FormField
-                                            icon={FaIdCard}
-                                            label="Supplier Code"
-                                            name="code"
-                                            value={formData.code}
-                                            onChange={handleChange}
-                                        />
-
                                         <FormField
                                             icon={FaIdCard}
                                             label="GST Number"
