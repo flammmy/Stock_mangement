@@ -16,6 +16,30 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const handleToggleStatus = async (userId, currentStatus) => {
+        try {
+          const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+          await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`,
+            { status: updatedStatus },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          toast.success('Status updated successfully!');
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === userId ? { ...user, status: updatedStatus } : user
+            )
+          );
+        } catch (error) {
+          toast.error('Failed to update status!');
+        }
+      };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -93,10 +117,53 @@ const UsersPage = () => {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'inactive' : 'active';
-        return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
-      }
+      cell: (row) => (
+        
+        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+          <div style={{marginLeft:"45px",marginTop:"-4px"}}>
+          <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{ padding: '5px 10px', borderRadius: '8px' }}
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
+          </div>
+           
+          <input
+            type="checkbox"
+            checked={row.status === 0} // Active if 0
+            onChange={() => handleToggleStatus(row.id, row.status)}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+              transition: '0.4s',
+              borderRadius: '20px'
+            }}
+          ></span>
+          <span
+            style={{
+              position: 'absolute',
+              content: "",
+              height: '14px',
+              width: '14px',
+              left: row.status === 0 ? '18px' : '3px',
+              bottom: '3px',
+              backgroundColor: 'white',
+              transition: '0.4s',
+              borderRadius: '50%'
+            }}
+          ></span>
+        </label>
+      )
+    
     },
     {
       name: 'Action',
@@ -360,3 +427,171 @@ const UsersPage = () => {
 };
 
 export default UsersPage;
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import DataTable from 'react-data-table-component';
+// import { Button } from 'react-bootstrap';
+// import { MdEdit, MdDelete } from 'react-icons/md';
+
+// const UsersPage = () => {
+//   const [users, setUsers] = useState([]);
+
+//   useEffect(() => {
+//     // Simulated API call to fetch users
+//     const fetchUsers = async () => {
+//       const mockData = [
+//         { id: 1, username: 'john_doe', name: 'John Doe', email: 'john@example.com', phone: '1234567890', role: 1, status: 0 },
+//         { id: 2, username: 'jane_doe', name: 'Jane Doe', email: 'jane@example.com', phone: '0987654321', role: 2, status: 1 },
+//       ];
+//       setUsers(mockData);
+//     };
+//     fetchUsers();
+//   }, []);
+
+//   const handleToggleStatus = (id, currentStatus) => {
+//     const updatedUsers = users.map((user) =>
+//       user.id === id ? { ...user, status: currentStatus === 0 ? 1 : 0 } : user
+//     );
+//     setUsers(updatedUsers);
+//   };
+
+//   const handleEdit = (user) => {
+//     console.log('Edit user:', user);
+//     // Implement edit functionality
+//   };
+
+//   const handleDelete = (id) => {
+//     const updatedUsers = users.filter((user) => user.id !== id);
+//     setUsers(updatedUsers);
+//   };
+
+//   const columns = [
+//     {
+//       name: 'Sr No',
+//       selector: (_, index) => index + 1,
+//       sortable: true,
+//       width: '80px',
+//     },
+//     {
+//       name: 'Username',
+//       selector: (row) => row.username,
+//       sortable: true,
+//     },
+//     {
+//       name: 'Name',
+//       selector: (row) => row.name,
+//       sortable: true,
+//     },
+//     {
+//       name: 'Email',
+//       selector: (row) => row.email,
+//       sortable: true,
+//     },
+//     {
+//       name: 'Phone',
+//       selector: (row) => row.phone,
+//       sortable: true,
+//     },
+//     {
+//       name: 'Role',
+//       selector: (row) =>
+//         row.role === 1
+//           ? 'Admin'
+//           : row.role === 2
+//           ? 'Operator'
+//           : row.role === 3
+//           ? 'Supervisor'
+//           : 'Superadmin',
+//       sortable: true,
+//     },
+//     {
+//       name: 'Status',
+//       selector: (row) => (row.status === 1 ? 'Inactive' : 'Active'),
+//       sortable: true,
+//       cell: (row) => (
+//         <div>
+//           <span
+//             className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+//             style={{ padding: '5px 10px', borderRadius: '8px' }}
+//           >
+//             {row.status === 0 ? 'Active' : 'Inactive'}
+//           </span>
+//           <label
+//             style={{
+//               position: 'relative',
+//               display: 'inline-block',
+//               width: '34px',
+//               height: '20px',
+//               marginLeft: '10px',
+//             }}
+//           >
+//             <input
+//               type="checkbox"
+//               checked={row.status === 0} // Active if 0
+//               onChange={() => handleToggleStatus(row.id, row.status)}
+//               style={{ opacity: 0, width: 0, height: 0 }}
+//             />
+//             <span
+//               style={{
+//                 position: 'absolute',
+//                 cursor: 'pointer',
+//                 top: 0,
+//                 left: 0,
+//                 right: 0,
+//                 bottom: 0,
+//                 backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+//                 transition: '0.4s',
+//                 borderRadius: '20px',
+//               }}
+//             ></span>
+//             <span
+//               style={{
+//                 position: 'absolute',
+//                 height: '14px',
+//                 width: '14px',
+//                 left: row.status === 0 ? '18px' : '3px',
+//                 bottom: '3px',
+//                 backgroundColor: 'white',
+//                 transition: '0.4s',
+//                 borderRadius: '50%',
+//               }}
+//             ></span>
+//           </label>
+//         </div>
+//       ),
+//     },
+//     {
+//       name: 'Action',
+//       cell: (row) => (
+//         <div className="d-flex">
+//           <Button
+//             variant="outline-success"
+//             size="sm"
+//             className="me-2"
+//             onClick={() => handleEdit(row)}
+//           >
+//             <MdEdit />
+//           </Button>
+//           <Button
+//             variant="outline-danger"
+//             size="sm"
+//             onClick={() => handleDelete(row.id)}
+//           >
+//             <MdDelete />
+//           </Button>
+//         </div>
+//       ),
+//     },
+//   ];
+
+//   return (
+//     <div className="container mt-5">
+//       <h2>User Management</h2>
+//       <DataTable columns={columns} data={users} pagination highlightOnHover />
+//     </div>
+//   );
+// };
+
+// export default UsersPage;
