@@ -59,7 +59,6 @@ const Show_product = () => {
         name: 'Sr No',
         selector: (_, index) => index + 1,
         sortable: true,
-        width: '80px'
       },
       {
         name: 'Lot No',
@@ -103,11 +102,38 @@ const Show_product = () => {
         sortable: true
       },
       {
-        name: 'Area',
+        name: 'Area(m.sq.)',
         selector: (row) => Number(row.length) * Number(row.width) * Number(row.qty),
         sortable: true
       },
+      {
+        name: 'Area(sq.ft.)',
+        selector: (row) => {
+          // Convert length to feet
+          // const lengthInFeet = row.unit === 'meter'
+          //   ? Number(row.length) * 3.28084 
+          //   : row.lengthUnit === 'inch'
+          //   ? Number(row.length) / 12 
+          //   : Number(row.length); 
       
+          // // Convert width to feet
+          // const widthInFeet = row.widthUnit === 'meter'
+          //   ? Number(row.width) * 3.28084 
+          //   : row.widthUnit === 'inch'
+          //   ? Number(row.width) / 12 
+          //   : Number(row.width); 
+
+            if(row.unit === 'meter'){
+              return Number(row.length) * 3.23084 * Number(row.width) * 3.28084 * Number(row.qty);
+            }
+            else{
+              return (Number(row.length) / 12) * (Number(row.width) /12)* Number(row.qty);
+
+            }
+        },
+        sortable: true
+      }
+      ,
       {
         name: 'Action',
         cell: (row) => (
@@ -164,7 +190,7 @@ const Show_product = () => {
         style: {
           backgroundColor: '#20B2AA',
           color: '#fff',
-          fontSize: '16px',
+          fontSize: '12px',
           fontWeight: 'bold',
           textTransform: 'uppercase',
           padding: '15px'
