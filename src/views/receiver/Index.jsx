@@ -61,7 +61,6 @@ const ReceiversPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '80px',
     },
     {
       name: 'Receiver Name',
@@ -287,7 +286,7 @@ const ReceiversPage = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '16px',
+        fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
