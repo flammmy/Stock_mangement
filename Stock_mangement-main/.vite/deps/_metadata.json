@@ -1,0 +1,82 @@
+{
+  "hash": "bf22c797",
+  "configHash": "044fa5e3",
+  "lockfileHash": "7528f449",
+  "browserHash": "c5da8d77",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "08f2e2a7",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "9c7f38a1",
+      "needsInterop": true
+    },
+    "prop-types": {
+      "src": "../../node_modules/prop-types/index.js",
+      "file": "prop-types.js",
+      "fileHash": "f8ce371c",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "49b904a3",
+      "needsInterop": false
+    },
+    "web-vitals": {
+      "src": "../../node_modules/web-vitals/dist/web-vitals.js",
+      "file": "web-vitals.js",
+      "fileHash": "86e5e455",
+      "needsInterop": false
+    },
+    "react-bootstrap": {
+      "src": "../../node_modules/react-bootstrap/esm/index.js",
+      "file": "react-bootstrap.js",
+      "fileHash": "21a86d00",
+      "needsInterop": false
+    },
+    "@tanem/react-nprogress": {
+      "src": "../../node_modules/@tanem/react-nprogress/dist/react-nprogress.esm.js",
+      "file": "@tanem_react-nprogress.js",
+      "fileHash": "38a9a2ee",
+      "needsInterop": false
+    },
+    "react-perfect-scrollbar": {
+      "src": "../../node_modules/react-perfect-scrollbar/lib/index.js",
+      "file": "react-perfect-scrollbar.js",
+      "fileHash": "e160036e",
+      "needsInterop": true
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "3783e4ae",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-WXSKVWTA": {
+      "file": "chunk-WXSKVWTA.js"
+    },
+    "chunk-CRS3CFTV": {
+      "file": "chunk-CRS3CFTV.js"
+    },
+    "chunk-4DIDPAPR": {
+      "file": "chunk-4DIDPAPR.js"
+    },
+    "chunk-CMK54ICT": {
+      "file": "chunk-CMK54ICT.js"
+    },
+    "chunk-4JI2AD7N": {
+      "file": "chunk-4JI2AD7N.js"
+    },
+    "chunk-CEQRFMJQ": {
+      "file": "chunk-CEQRFMJQ.js"
+    }
+  }
+}
