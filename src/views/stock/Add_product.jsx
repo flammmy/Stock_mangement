@@ -1,141 +1,119 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
-import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
-
+import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { FaPlus, FaTrash, FaUserPlus } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import FormField from '../../components/FormField';
-const Add_product = () => {
-  const { id,no } = useParams();
-  const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({
-    invoice_no: '',
-    lot_no: '',
-    product_id:'',
-    purchase_shadeNo: '',
-    invoice_id: '',
-    width: '',
-    length: '',
-    unit: '',
-    type: ''
 
-  });
-  const [items, setItems] = useState([]);
-
+const AddProduct = () => {
+  const { id, no } = useParams();
+  const [items, setItems] = useState([
+    {
+      invoice_no: no,
+      lot_no: '',
+      product_id: '',
+      purchase_shadeNo: '',
+      width: '',
+      length: '',
+      unit: '',
+      type: '',
+      qty: 1,
+    }
+  ]);
   const [allProducts, setAllProducts] = useState([]);
   const mainColor = '#3f4d67';
 
+  // Fetch all products for dropdown
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setProducts(response.data.data);
-        // console.log(response.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchProductData();
-  }, []);
-
-  useEffect(() => {
-    const fetchProductData = async () => {
+    const fetchAllProducts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
         setAllProducts(response.data.data);
-        console.log(response.data.data);
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error(error);
       }
     };
-    fetchProductData();
+    fetchAllProducts();
   }, []);
+
+  // Add a new row
   const handleAddRow = () => {
-    setItems([
-      ...items,
+    setItems((prevItems) => [
+      ...prevItems,
       {
-        invoice_no: '',
+        invoice_no: no,
         lot_no: '',
-        shade_no:'',
+        product_id: '',
         purchase_shadeNo: '',
-        invoice_id: '',
         width: '',
         length: '',
         unit: '',
-        type: ''
+        type: '',
+        qty: 1,
       }
     ]);
   };
+
+  // Delete a row
   const handleDeleteRow = (index) => {
-    setItems(items.filter((_, i) => i !== index));
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
   };
 
+  // Handle changes to row fields
   const handleRowChange = (index, field, value) => {
-    setItems((prevRows) => {
-      const updatedRows = [...prevRows];
-      if(field === 'product_id') {
-        const selectedProduct = allProducts.find((product) => product.id == value);
-        if(selectedProduct) {
-          updatedRows[index].product_id = value;
-          updatedRows[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
+    setItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      if (field === 'product_id') {
+        const selectedProduct = allProducts.find((product) => product.id === parseInt(value));
+        if (selectedProduct) {
+          updatedItems[index].product_id = value;
+          updatedItems[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
         }
+      } else {
+        updatedItems[index][field] = value;
       }
-      else{
-        updatedRows[index][field] = value;
-      }
-      // Sync with formData
-      setFormData((prevFormData) => {
-        console.log(field)
-        const updatedData = prevFormData;
-        updatedData[field] = value;
-        return updatedData;
-      });
-
-      return updatedRows;
+      return updatedItems;
     });
   };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    formData['invoice_id'] = id;
-    formData['invoice_no'] = no;
+
+    const payload = items.map((item) => ({
+      ...item,
+      invoice_id: id, // Attach invoice_id for all items
+      invoice_no: no
+    }));
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       toast.success('Stock added successfully');
-      // navigate('/users');
+      console.log(response.data);
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
       toast.error(errorMessage);
+      console.error(error);
     }
-
-    console.log(formData);
   };
+
   return (
-    <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <Container
+      fluid
+      className="pt-4 px-2"
+      style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}
+    >
       <Row className="justify-content-center">
         <Col md={12} lg={12}>
-          
           <div className="card shadow-lg border-0 rounded-lg" style={{ borderRadius: '10px' }}>
             <div className="card-body p-5" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-between">
@@ -144,115 +122,105 @@ const Add_product = () => {
                   <FaPlus /> Add Item
                 </Button>
               </div>
-              <form  onSubmit={handleSubmit}>
-              <Table bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>Invoice No</th>
-                    <th>Shade No</th>
-                    <th>Pur.Shade No</th>
-                    <th>LOT No</th>
-                    <th>Width</th>
-                    <th>Length</th>
-                    <th>Qty</th>
-                    <th>Unit</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, index) => (
-                    <tr key={index}>
-                      <td>
-                        <Form.Control type="text" value={no} disabled className='px-1' />
-                      </td>
-                      <td>
-                        <Form.Control
-                          as="select"
-                          value={item.shadeNo}
-                          onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
-                          className="px-1"
-                        >
-                          <option value="">Select Shade No.</option>
-                          {allProducts.map((product, idx) => (
-                            <option key={product.id} value={product.id}>
-                              {product.shadeNo}
-                            </option>
-                          ))}
-                        </Form.Control>
-                      </td>
-
-                      <td>
-                        <Form.Control
-                          type="text"
-                          value={item.purchase_shadeNo}
-                          onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
-                          className="px-1"
-                        />
-                      </td>
-
-                      <td>
-                        <Form.Control
-                          type="text"
-                          value={item.lot_no}
-                          onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)}
-                          className='px-1'
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.width}
-                          onChange={(e) => handleRowChange(index, 'width', e.target.value)}
-                          className='px-1'
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="text"
-                          value={item.length}
-                          onChange={(e) => handleRowChange(index, 'length', e.target.value)}
-                          className='px-1'
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.qty}
-                          onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
-                          className='px-1'
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          as="select"
-                          value={item.type}
-                          onChange={(e) => handleRowChange(index, 'type', e.target.value)}
-                          className='px-1'
-                        >
-                          <option value="" disabled>Select type</option>
-                          <option value="roll">Roll</option>
-                          <option value="box">Box</option>
-                        </Form.Control>
-                      </td>
-                      <td>
-                        <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
-                          <option value="" disabled>Select Unit</option>
-                          <option value="meter">meter</option>
-                          <option value="inch">inch</option>
-                        </Form.Control>
-                      </td>
-
-                      <td>
-                        <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
-                          <FaTrash />
-                        </Button>
-                      </td>
+              <form onSubmit={handleSubmit}>
+                <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset'}}>
+                  <thead>
+                    <tr className='text-white'>
+                      <th>Invoice No</th>
+                      <th>Shade No</th>
+                      <th>Pur. Shade No</th>
+                      <th>LOT No</th>
+                      <th>Width</th>
+                      <th>Length</th>
+                      <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      <th>Quantity</th>
+                      <th>&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <Button
+                  </thead>
+                  <tbody>
+                    {items.map((item, index) => (
+                      <tr key={index}>
+                        <td>
+                          <Form.Control type="text" value={no} disabled />
+                        </td>
+                        <td>
+                          <Form.Control
+                            as="select"
+                            value={item.product_id}
+                            onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
+                          >
+                            <option value="">Select Shade No.</option>
+                            {allProducts.map((product) => (
+                              <option key={product.id} value={product.id}>
+                                {product.shadeNo}
+                              </option>
+                            ))}
+                          </Form.Control>
+                        </td>
+                        <td>
+                          <Form.Control type="text" value={item.purchase_shadeNo} disabled />
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            value={item.lot_no}
+                            onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="number"
+                            value={item.width}
+                            onChange={(e) => handleRowChange(index, 'width', e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="number"
+                            value={item.length}
+                            onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            as="select"
+                            value={item.unit}
+                            onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
+                          >
+                            <option value="">Select Unit</option>
+                            <option value="meter">Meter</option>
+                            <option value="inch">Inch</option>
+                          </Form.Control>
+                        </td>
+                        <td>
+                          <Form.Control
+                            as="select"
+                            value={item.type}
+                            onChange={(e) => handleRowChange(index, 'type', e.target.value)}
+                          >
+                            <option value="">Select Type</option>
+                            <option value="roll">Roll</option>
+                            <option value="box">Box</option>
+                          </Form.Control>
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="number"
+                            value={item.qty}
+                            onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
+                            <FaTrash />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                <Button
                   variant="primary"
                   type="submit"
                   className="mt-5 d-block m-auto"
@@ -265,7 +233,6 @@ const Add_product = () => {
                   <FaUserPlus className="me-2" /> Add Stock
                 </Button>
               </form>
-
             </div>
           </div>
         </Col>
@@ -274,4 +241,4 @@ const Add_product = () => {
   );
 };
 
-export default Add_product;
+export default AddProduct;
