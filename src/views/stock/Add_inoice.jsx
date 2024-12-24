@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fa'; // Import suitable icons
 import FormField from '../../components/FormField';
 import { error } from 'jquery';
+import { color } from 'd3';
 
 const Add_inoice = () => {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ const Add_inoice = () => {
   });
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
-
+  const [totalAmount, setTotalAmount] = useState(0);
   const handleAddRow = () => {
     setItems([
       ...items,
@@ -99,10 +100,16 @@ const Add_inoice = () => {
         } else {
           updatedRows[index].purchase_shadeNo = '';
         }
-      } else {
+      }
+      else {
         updatedRows[index][field] = value;
       }
 
+      if (field === 'amount') {
+        const totalAmount = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        formData.total_amount = totalAmount;
+      }
+      
       // Sync with formData
       setFormData((prevFormData) => {
         const updatedProducts = [...prevFormData.products];
@@ -249,7 +256,7 @@ const Add_inoice = () => {
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
                 <Row>
-                  <Col md={6}>
+                  <Col md={4}>
                     <FormField
                       icon={FaFileInvoice}
                       label="Invoice_no"
@@ -281,14 +288,18 @@ const Add_inoice = () => {
                       onChange={handleChange}
                       options={receivers}
                     />
-                    <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
-                    <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
                   </Col>
-                  <Col md={6}>
+                  <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
                     <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
                     <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
+                    <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
+                   
+                  </Col>
+
+                  <Col md={4}>
+                  <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
                     <FormField icon={FaTruck} label="Transport" name="transport" value={formData.transport} onChange={handleChange} />
                     <FormField
                       icon={FaKey}
@@ -315,9 +326,9 @@ const Add_inoice = () => {
                       <FaPlus /> Add Item
                     </Button>
                   </div>
-                  <Table bordered hover responsive>
-                    <thead>
-                      <tr>
+                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset'}}>
+                    <thead >
+                      <tr className='text-white'>
                         <th>Shade Number</th>
                         <th>Pur. Shade No</th>
                         <th>Total Product</th>
@@ -377,8 +388,8 @@ const Add_inoice = () => {
 
                               >
                               <option value="" disabled>Select type</option>
-                              <option value="">Roll</option>
-                              <option value="">Box</option>
+                              <option value="roll">Roll</option>
+                              <option value="box">Box</option>
 
                               
                             </Form.Control>
@@ -405,8 +416,8 @@ const Add_inoice = () => {
                           <td>
                             <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
                               <option value="" disabled>Select unit</option>
-                              <option value="">Sq.ft.</option>
-                              <option value="">Pcs.</option>
+                              <option value="sqft">Sq.ft.</option>
+                              <option value="pcs">Pcs.</option>
                             </Form.Control>
                           </td>
                           <td>

@@ -146,8 +146,14 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/add-product/:id',
+        path: '/add-product/:id/:no',
         element: lazy(() => import('./views/stock/Add_product')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/show-product/:id',
+        element: lazy(() => import('./views/stock/Show_product')),
         allowedRoles:[1,2,3]
       },
       {

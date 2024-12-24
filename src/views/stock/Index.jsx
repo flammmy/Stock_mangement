@@ -4,6 +4,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd } from 'react-icons/md';
+import { FaEye } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -28,6 +29,7 @@ const Index = () => {
 
         const filteredFields = (data) => {
           return invoicesDetails.map((invoice) => ({
+            invoice_no: invoice.invoice_no,
             id: invoice.id,
             supplier_name: invoice.supplier.name,
             receiver_name: invoice.receiver.name,
@@ -67,7 +69,7 @@ const Index = () => {
   const columns = [
     {
       name: 'Invoice Number',
-      selector: (_, index) => index + 1,
+      selector: (row) => row.invoice_no,
       sortable: true,
       width: '80px'
     },
@@ -100,11 +102,11 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick = {() => navigate(`/add-product/${row.id}`)}>
+          <Button variant="outline-success" size="sm" className="me-2" onClick = {() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
             <MdAdd />
           </Button>
           <Button variant="outline-success" size="sm" className="me-2" >
-            <MdEdit />
+            <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
           </Button>
           <Button variant="outline-danger" size="sm">
             <MdDelete />

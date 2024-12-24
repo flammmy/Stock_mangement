@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { ConfigContext } from '../../../contexts/ConfigContext';
 import useWindowSize from '../../../hooks/useWindowSize';
-import { AiOutlineStock } from "react-icons/ai";
+
 import NavLogo from './NavLogo';
 import NavContent from './NavContent';
 import navigation from '../../../menu-items';
@@ -26,7 +26,7 @@ const Navigation = () => {
 
   let navContent = (
     <div className={navBarClass.join(' ')}>
-      <h3 className='ms-5 mt-3 text-white font-weight-bold text-decoration-underline'>the Stocks</h3>
+      <NavLogo />
       <NavContent navigation={navigation.items} />
     </div>
   );
