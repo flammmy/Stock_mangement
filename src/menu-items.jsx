@@ -32,34 +32,34 @@ const menuItems = {
             {
               id: 'users',
               title: 'Users',
-              icon: 'feather icon-home',
+              icon: 'feather icon-user',
               type: 'item',
               url: '/users'
             },{
               id: 'suppliers',
               title: 'Suppliers',
-              icon: 'feather icon-home',
+              icon: 'feather icon-archive',
               type: 'item',
               url: '/supplier'
             },
             {
               id: 'receivers',
               title: 'Receivers',
-              icon: 'feather icon-home',
+              icon: 'feather icon-users',
               type: 'item',
               url: '/receiver'
             },{
               id: 'banks',
               title: 'Banks',
-              icon: 'feather icon-home',
+              icon: 'feather icon-map',
               type: 'item',
               url: '/bank'
             },{
               id: 'Products',
               title: 'Products',
-              icon: 'feather icon-home',
+              icon: 'feather icon-box',
               type: 'item',
-              url: '/products'
+              url: '/shades'
             }
             //,{
             //   id: 'button',
@@ -101,6 +101,7 @@ const menuItems = {
         }
       ]
     },
+    
     {
       id: 'stock',
       title: 'Stock',
@@ -116,14 +117,14 @@ const menuItems = {
             {
               id: 'list_stock',
               title: 'List',
-              icon: 'feather icon-home',
+              icon: 'feather icon-lock',
               type: 'item',
               url: '/invoices'
             },
             {
               id: 'add_invoice',
               title: 'Add Invoice',
-              icon: 'feather icon-home',
+              icon: 'feather icon-book',
               type: 'item',
               url: '/add-invoice'
             }

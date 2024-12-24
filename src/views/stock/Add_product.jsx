@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
+
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
-import { FaPlus, FaTrash } from 'react-icons/fa';
 const Add_product = () => {
-  const { id } = useParams();
+  const { id,no } = useParams();
   const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    invoice_no: '',
+    lot_no: '',
+    product_id:'',
+    purchase_shadeNo: '',
+    invoice_id: '',
+    width: '',
+    length: '',
+    unit: '',
+    type: ''
+
+  });
   const [items, setItems] = useState([]);
 
+  const [allProducts, setAllProducts] = useState([]);
+  const mainColor = '#3f4d67';
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -23,6 +37,24 @@ const Add_product = () => {
           }
         });
         setProducts(response.data.data);
+        // console.log(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchProductData();
+  }, []);
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setAllProducts(response.data.data);
         console.log(response.data.data);
       } catch (err) {
         console.log(err);
@@ -34,12 +66,15 @@ const Add_product = () => {
     setItems([
       ...items,
       {
+        invoice_no: '',
         lot_no: '',
-        stock_details_Id: '',
+        shade_no:'',
+        purchase_shadeNo: '',
         invoice_id: '',
         width: '',
         length: '',
-        unit: ''
+        unit: '',
+        type: ''
       }
     ]);
   };
@@ -47,68 +82,60 @@ const Add_product = () => {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const handleRowChange = (index, field, value) => {};
+  const handleRowChange = (index, field, value) => {
+    setItems((prevRows) => {
+      const updatedRows = [...prevRows];
+      if(field === 'product_id') {
+        const selectedProduct = allProducts.find((product) => product.id == value);
+        if(selectedProduct) {
+          updatedRows[0].product_id = value;
+          updatedRows[0].purchase_shadeNo = selectedProduct.purchase_shade_no;
+        }
+      }
+      else{
+        updatedRows[0][field] = value;
+      }
+      // Sync with formData
+      setFormData((prevFormData) => {
+        console.log(field)
+        const updatedData = prevFormData;
+        updatedData[field] = value;
+        return updatedData;
+      });
+
+      return updatedRows;
+    });
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    formData['invoice_id'] = id;
+    formData['invoice_no'] = no;
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      toast.success('Stock added successfully');
+      // navigate('/users');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Error adding stock';
+      toast.error(errorMessage);
+    }
+
+    console.log(formData);
   };
   return (
     <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
         <Col md={12} lg={12}>
-          {/* <Col md={12} lg={12}>
-          <Card
-            className="shadow-lg border-0"
-            style={{
-              borderRadius: '15px',
-              overflow: 'hidden'
-            }}
-          >
-            <div
-              className="p-4 text-white text-center"
-              style={{
-                backgroundColor: '#20B2AA',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <FaUserPlus size={40} className="me-3" />
-              <h2 className="m-0 text-white">Add Product</h2>
-            </div>
-            <Card.Body className="p-5">
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <FormField icon={FaUser} label="LOT No" name="lot_no" value={formData.name} onChange={handleChange} />
-                    <FormField icon={FaIdCard} label="Stock Invoice Detail ID" name="stock_detail_id" value={formData.code} onChange={handleChange} />
-                    <FormField icon={FaIdCard} label="Invoice ID" name="invoice_id" value={formData.gst_no} onChange={handleChange} />
-                  
-                  </Col>
-                  <Col md={6}>
-                  <FormField icon={FaIdCard} label="Width" name="width" value={formData.cin_no} onChange={handleChange} />
-                    <FormField icon={FaIdCard} label="Length" name="length" value={formData.pan_no} onChange={handleChange} />
-                    <FormField icon={FaPhone} label="Unit" name="Qty" value={formData.tel_no} onChange={handleChange} />
-                  </Col>
-
-                </Row>
-
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="mt-4 d-block m-auto"
-                  style={{
-                    backgroundColor: '#3f4d67',
-                    borderColor: '#3f4d67',
-                    width: '10rem'
-                  }}
-                >
-                  <FaUserPlus className="me-2" /> Add Product
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col> */}
+          
           <div className="card shadow-lg border-0 rounded-lg" style={{ borderRadius: '10px' }}>
             <div className="card-body p-5" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-between">
@@ -117,15 +144,19 @@ const Add_product = () => {
                   <FaPlus /> Add Item
                 </Button>
               </div>
+              <form  onSubmit={handleSubmit}>
               <Table bordered hover responsive>
                 <thead>
                   <tr>
                     <th>Invoice No</th>
-                    <th>Stock Invoice Detail ID</th>
+                    <th>Shade No</th>
+                    <th>Pur.Shade No</th>
                     <th>LOT No</th>
                     <th>Width</th>
                     <th>Length</th>
+                    <th>Qty</th>
                     <th>Unit</th>
+                    <th>Type</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -133,44 +164,83 @@ const Add_product = () => {
                   {items.map((item, index) => (
                     <tr key={index}>
                       <td>
-                      <Form.Control
-                          type="text"
-                          value={id}
-                          disabled
-                        />
+                        <Form.Control type="text" value={no} disabled className='px-1' />
                       </td>
                       <td>
                         <Form.Control
                           as="select"
-                          value={item.stock_details_Id}
-                          onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
+                          value={item.shadeNo}
+                          onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
+                          className="px-1"
+                        >
+                          <option value="">Select Shade No.</option>
+                          {allProducts.map((product, idx) => (
+                            <option key={product.id} value={product.id}>
+                              {product.shadeNo}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </td>
 
+                      <td>
+                        <Form.Control
+                          type="text"
+                          value={item.purchase_shadeNo}
+                          onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
+                          className="px-1"
                         />
                       </td>
 
                       <td>
                         <Form.Control
                           type="text"
-                          value={item.hsn_sac_code}
-                          onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
+                          value={item.lot_no}
+                          onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)}
+                          className='px-1'
                         />
                       </td>
                       <td>
                         <Form.Control
                           type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                          value={item.width}
+                          onChange={(e) => handleRowChange(index, 'width', e.target.value)}
+                          className='px-1'
                         />
                       </td>
                       <td>
                         <Form.Control
                           type="text"
-                          value={item.total_product}
-                          onChange={(e) => handleRowChange(index, 'total_product', e.target.value)}
+                          value={item.length}
+                          onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                          className='px-1'
                         />
                       </td>
                       <td>
-                        <Form.Control type="text" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} />
+                        <Form.Control
+                          type="number"
+                          value={item.length}
+                          onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
+                          className='px-1'
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          as="select"
+                          value={item.type}
+                          onChange={(e) => handleRowChange(index, 'type', e.target.value)}
+                          className='px-1'
+                        >
+                          <option value="" disabled>Select type</option>
+                          <option value="roll">Roll</option>
+                          <option value="box">Box</option>
+                        </Form.Control>
+                      </td>
+                      <td>
+                        <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
+                          <option value="" disabled>Select Unit</option>
+                          <option value="meter">meter</option>
+                          <option value="inch">inch</option>
+                        </Form.Control>
                       </td>
 
                       <td>
@@ -182,6 +252,20 @@ const Add_product = () => {
                   ))}
                 </tbody>
               </Table>
+              <Button
+                  variant="primary"
+                  type="submit"
+                  className="mt-5 d-block m-auto"
+                  style={{
+                    backgroundColor: mainColor,
+                    borderColor: mainColor,
+                    width: '10rem'
+                  }}
+                >
+                  <FaUserPlus className="me-2" /> Add Stock
+                </Button>
+              </form>
+
             </div>
           </div>
         </Col>
