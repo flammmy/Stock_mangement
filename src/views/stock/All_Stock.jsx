@@ -3,6 +3,11 @@ import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -102,6 +107,20 @@ const ShowProduct = () => {
       sortable: true,
     },
   ];
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredProducts);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'stocks_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('stocks List', 20, 10);
+    doc.autoTable({
+      head: [['Sr No', 'Lot No', 'Invoice No', 'Shade No', 'Pur. Shade No', 'Length', 'Width', 'Unit', 'Quantity', 'Area (m²)', 'Area (sq. ft.)']],
+      body: filteredProducts.map((row) => [row.index, row.lot_no, row.stock_invoice?.invoice_no || 'N/A', row.stock_product?.shadeNo || 'N/A', row.stock_product?.purchase_shade_no || 'N/A', row.length, row.width, row.unit, row.qty, row.area, row.area_sq_ft]),
+    });
+    doc.save('stocks_list.pdf');
+  };
 
   const customStyles = {
     header: {
@@ -177,6 +196,14 @@ const ShowProduct = () => {
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
+            <div className="d-flex justify-content-end">
+              <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                Export as CSV
+              </button>
+              <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                Export as PDF
+              </button>
+            </div>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -192,6 +219,7 @@ const ShowProduct = () => {
               </div>
             ) : (
               <div className="card-body p-0">
+
                 <DataTable
                   columns={columns}
                   data={filteredProducts}
