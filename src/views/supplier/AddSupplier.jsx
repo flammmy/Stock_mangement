@@ -30,7 +30,6 @@ const AddSupplier = () => {
         email: '',
         owner_mobile: '',
         logo: null,
-        status: 'Active',
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
@@ -73,7 +72,6 @@ const AddSupplier = () => {
         submitData.append('tel_no', formData.tel_no);
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
-        submitData.append('status', formData.status === 'Active✅' ? 1 : 0);
 
         // Append logo if it exists
         if (formData.logo) {
@@ -261,17 +259,7 @@ const AddSupplier = () => {
                                             onChange={handleChange}
                                         />
 
-                                        {/* Status and Logo */}
-                                        <FormField
-                                            icon={FaCheckCircle}
-                                            label="Status"
-                                            name="status"
-                                            value={formData.status}
-                                            onChange={handleChange}
-                                            options={statuses}
-                                        />
-
-                                        {/* Image Upload Field */}
+                                      
                                     </Col>
                                 </Row>
 
@@ -285,6 +273,7 @@ const AddSupplier = () => {
                                         borderColor: mainColor,
                                         width: '10rem',
                                     }}
+                                    
                                 >
                                     <FaUserPlus className="me-2" /> Add Supplier
                                 </Button>

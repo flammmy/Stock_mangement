@@ -286,7 +286,7 @@ const ReceiversPage = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '12px',
+        fontSize: '16px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
@@ -331,7 +331,7 @@ const ReceiversPage = () => {
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add User
+            <MdPersonAdd className="me-2" /> Add Receiver
           </Button>
         </div>
       </div>
