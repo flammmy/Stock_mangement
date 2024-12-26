@@ -111,7 +111,7 @@ const AddProduct = () => {
           },
         }
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast.success("Stock added successfully");
         setFile(null); // Reset file after successful upload
       }

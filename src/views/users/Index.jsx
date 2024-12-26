@@ -8,6 +8,11 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]); // For search
@@ -61,7 +66,7 @@ const UsersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Username',
@@ -111,6 +116,7 @@ const UsersPage = () => {
       )
     }
   ];
+
   const handleDelete = async (userId) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`, {
@@ -225,6 +231,21 @@ const UsersPage = () => {
     }
   };
 
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredUsers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'user_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('User List', 20, 10);
+    doc.autoTable({
+      head: [['Username', 'Name','Email','Phone','Role','Status']],
+      body: filteredUsers.map((row) => [row.username, row.name, row.email,row.phone, row.role, row.status === 1 ? 'Active' : 'Inactive'])
+    });
+    doc.save('user_list.pdf');
+  };
+
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -247,7 +268,7 @@ const UsersPage = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card rounded-lg" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -263,6 +284,14 @@ const UsersPage = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                <div className="d-flex justify-content-end">
+                  <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                    Export as CSV
+                  </button>
+                  <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                    Export as PDF
+                  </button>
+                </div>
                 <DataTable
                   columns={columns}
                   data={filteredUsers}
