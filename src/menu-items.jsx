@@ -27,7 +27,7 @@ const menuItems = {
           id: 'Users',
           title: 'People',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'feather icon-users',
           children: [
             {
               id: 'users',
@@ -117,16 +117,22 @@ const menuItems = {
             {
               id: 'list_stock',
               title: 'List',
-              icon: 'feather icon-lock',
+              icon: 'feather icon-list',
               type: 'item',
               url: '/invoices'
             },
             {
               id: 'add_invoice',
               title: 'Add Invoice',
-              icon: 'feather icon-book',
+              icon: 'feather icon-file-plus',
               type: 'item',
               url: '/add-invoice'
+            }, {
+              id: 'all_stocks',
+              title: 'All Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/all-stocks'
             }
           ]
         }

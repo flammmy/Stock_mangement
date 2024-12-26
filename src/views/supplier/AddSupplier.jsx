@@ -33,9 +33,6 @@ const AddSupplier = () => {
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
-    const statuses = useMemo(() => [{id:'0',name:'Active✅'}, {id:'0',name:'Inactive❌'}], []);
-    
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -72,7 +69,6 @@ const AddSupplier = () => {
         submitData.append('tel_no', formData.tel_no);
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
-
         // Append logo if it exists
         if (formData.logo) {
             submitData.append('logo', formData.logo);

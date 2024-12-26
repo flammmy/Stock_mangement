@@ -217,7 +217,7 @@ const AddProduct = () => {
                           >
                             <option value="">Select Shade No.</option>
                             {allProducts.map((product) => (
-                              <option key={product.id} value={product.id}>
+                              <option key={product.id} value={product.shadeNo}>
                                 {product.shadeNo}
                               </option>
                             ))}
@@ -251,7 +251,7 @@ const AddProduct = () => {
                           <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)}>
                             <option value="">Select Unit</option>
                             <option value="meter">Meter</option>
-                            <option value="inch">Inch</option>
+                            <option value="mm">MiliMeter</option>
                           </Form.Control>
                         </td>
                         <td>
