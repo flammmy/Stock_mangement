@@ -27,7 +27,7 @@ const menuItems = {
           id: 'Users',
           title: 'People',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'feather icon-users',
           children: [
             {
               id: 'users',
@@ -128,9 +128,9 @@ const menuItems = {
               type: 'item',
               url: '/add-invoice'
             }, {
-              id: 'add_invoice',
+              id: 'all_stocks',
               title: 'All Stocks',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-clipboard',
               type: 'item',
               url: '/all-stocks'
             }

@@ -30,7 +30,6 @@ const AddSupplier = () => {
         email: '',
         owner_mobile: '',
         logo: null,
-        status: 'Active',
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
@@ -255,6 +254,8 @@ const AddSupplier = () => {
                                             value={formData.owner_mobile}
                                             onChange={handleChange}
                                         />
+
+                                      
                                     </Col>
                                 </Row>
 
@@ -268,6 +269,7 @@ const AddSupplier = () => {
                                         borderColor: mainColor,
                                         width: '10rem',
                                     }}
+                                    
                                 >
                                     <FaUserPlus className="me-2" /> Add Supplier
                                 </Button>
