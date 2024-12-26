@@ -217,7 +217,7 @@ const AddProduct = () => {
                           >
                             <option value="">Select Shade No.</option>
                             {allProducts.map((product) => (
-                              <option key={product.id} value={product.shadeNo}>
+                              <option key={product.id} value={product.id}>
                                 {product.shadeNo}
                               </option>
                             ))}
@@ -251,7 +251,7 @@ const AddProduct = () => {
                           <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)}>
                             <option value="">Select Unit</option>
                             <option value="meter">Meter</option>
-                            <option value="mm">MiliMeter</option>
+                            <option value="inch">Milimeter</option>
                           </Form.Control>
                         </td>
                         <td>
@@ -282,6 +282,7 @@ const AddProduct = () => {
                     borderColor: mainColor,
                     width: '10rem'
                   }}
+
                 >
                   <FaUserPlus className="me-2" /> Add Stock
                 </Button>

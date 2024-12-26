@@ -103,14 +103,14 @@ const menuItems = {
     },
     
     {
-      id: 'stock',
-      title: 'Stock',
+      id: 'stockin',
+      title: 'Stock In',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocks',
-          title: 'Stocks',
+          title: 'Stocks In',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
@@ -133,6 +133,30 @@ const menuItems = {
               icon: 'feather icon-clipboard',
               type: 'item',
               url: '/all-stocks'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'stockout',
+      title: 'Stock Out',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'stocksout',
+          title: 'Stocks Out',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+           
+            {
+              id: 'invoice_out',
+              title: 'Invoice',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/invoice-out'
             }
           ]
         }

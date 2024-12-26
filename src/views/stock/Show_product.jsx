@@ -62,7 +62,7 @@ const Show_product = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Lot No',
@@ -83,6 +83,11 @@ const Show_product = () => {
     {
       name: 'Pur. Shade no',
       selector: (row) => row.stock_product.purchase_shade_no,
+      sortable: true
+    },
+    {
+      name: 'type',
+      selector: (row) => row.type,
       sortable: true
     },
     {
@@ -114,8 +119,7 @@ const Show_product = () => {
       name: 'Area(sq.ft.)',
       selector: (row) => row.area_sq_ft,
       sortable: true
-    }
-    ,
+    },
     {
       name: 'Action',
       cell: (row) => (
@@ -149,7 +153,6 @@ const Show_product = () => {
       toast.error('Failed to delete user');
     }
   };
-
 
   const customStyles = {
     header: {
@@ -190,6 +193,12 @@ const Show_product = () => {
         padding: '12px'
       }
     },
+    footer: {
+      style: {
+        fontWeight: 'bold',
+        textAlign: 'right'
+      }
+    },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
@@ -205,6 +214,9 @@ const Show_product = () => {
       }
     }
   };
+  
+  const totalArea = filteredProducts.reduce((acc, product) => acc + (Number(product.area) || 0), 0);
+  const totalAreaSqFt = filteredProducts.reduce((acc, product) => acc + (Number(product.area_sq_ft) || 0), 0);
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -220,7 +232,6 @@ const Show_product = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-
       </div>
       <div className="row">
         <div className="col-12">
@@ -250,6 +261,10 @@ const Show_product = () => {
                   customStyles={customStyles}
                   defaultSortFieldId={1}
                 />
+                <div className="d-flex justify-content-between p-3 bg-light border-top">
+                  <span>Total Area (m.sq.): {totalArea.toFixed(2)}</span>
+                  <span>Total Area (sq.ft.): {totalAreaSqFt.toFixed(2)}</span>
+                </div>
               </div>
             )}
           </div>
@@ -257,6 +272,6 @@ const Show_product = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Show_product
+export default Show_product;
