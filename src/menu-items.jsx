@@ -127,6 +127,12 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/add-invoice'
+            }, {
+              id: 'add_invoice',
+              title: 'All Stocks',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/all-stocks'
             }
           ]
         }

@@ -175,6 +175,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/all-stocks',
+        element: lazy(() => import('./views/stock/All_Stock')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
         path: '/basic/badges',
         element: lazy(() => import('./views/ui-elements/basic/BasicBadges')),
         
