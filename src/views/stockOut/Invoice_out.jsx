@@ -16,14 +16,13 @@ import {
   FaCity,
   FaSignature,
   FaQrcode
-} from 'react-icons/fa'; // Import suitable icons
+} from 'react-icons/fa'; 
 import FormField from '../../components/FormField';
 import { error } from 'jquery';
 import { color } from 'd3';
 
 const Invoice_out = () => {
   const [formData, setFormData] = useState({
-    invoice_no: '',
     place_of_supply: '',
     receiver_id: '1',
     supplier_id: '1',

@@ -48,6 +48,13 @@ const menuItems = {
               icon: 'feather icon-users',
               type: 'item',
               url: '/receiver'
+            },
+            {
+              id: 'customers',
+              title: 'Customers',
+              icon: 'feather icon-user-check',
+              type: 'item',
+              url: '/customers'
             },{
               id: 'banks',
               title: 'Banks',

@@ -32,17 +32,16 @@ const UsersPage = () => {
         });
 
         setUsers(response.data.data);
-        setFilteredUsers(response.data.data); // Initialize filtered users
+        setFilteredUsers(response.data.data); 
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false); 
       }
     };
     fetchUsers();
   }, []);
 
-  // Update filtered users when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = users.filter(

@@ -103,6 +103,18 @@ const routes = [
 
       },{
         exact: 'true',
+        path: '/customers',
+        element: lazy(() => import('./views/customer/Index')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
+        path: '/add-Customer',
+        element: lazy(() => import('./views/customer/AddCustomer')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
         path: '/bank',
         element: lazy(() => import('./views/bank/Index')),
         allowedRoles:[1,2,3]
