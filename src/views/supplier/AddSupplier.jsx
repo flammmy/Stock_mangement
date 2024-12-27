@@ -73,7 +73,7 @@ const AddSupplier = () => {
         submitData.append('tel_no', formData.tel_no);
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
-        submitData.append('status', formData.status === 'Active✅' ? 1 : 0);
+        submitData.append('status', formData.status === 1 ? 'inactive' : 'active').includes(lowercasedQuery)
 
         // Append logo if it exists
         if (formData.logo) {
