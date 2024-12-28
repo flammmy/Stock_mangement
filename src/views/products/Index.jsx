@@ -7,13 +7,43 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import Swal from 'sweetalert2';
+
+
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
   const [filteredSuppliers, setFilteredSupplier] = useState([]); 
   const [searchQuery, setSearchQuery] = useState(''); 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const handleToggleStatus = async (productsId, currentStatus) => {
+        try {
+          const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+          await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/supplier${productsId}`,
+            { status: updatedStatus },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          toast.success('Status updated successfully!');
+          setUsers((prevProducts) =>
+            prevProducts).map((products) =>
+              products.id === userId ? { ...user, status: updatedStatus } : user
+            
+       );
+                 } catch (error) {
+                   toast.error('Failed to update status!');
+                 }
+      };
+
+
 
   useEffect(() => {
     const fetchSupplier = async () => {
@@ -142,62 +172,112 @@ const SuppliersPage = () => {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return (
+
+      cell: (row) => (
+        
+        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+          <div style={{marginLeft:"45px",marginTop:"-4px"}}>
           <span
-            className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'
-              }`}
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{ padding: '5px 10px', borderRadius: '8px' }}
           >
-            {statusText}
+            {row.status === 0 ? 'Active' : 'Inactive'}
           </span>
-        );
-      },
+          </div>
+           
+          <input
+            type="checkbox"
+            checked={row.status === 0} // Active if 0
+            onChange={() => handleToggleStatus(row.id, row.status)}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+              transition: '0.4s',
+              borderRadius: '20px'
+            }}
+          ></span>
+          <span
+            style={{
+              position: 'absolute',
+              content: "",
+              height: '14px',
+              width: '14px',
+              left: row.status === 0 ? '18px' : '3px',
+              bottom: '3px',
+              backgroundColor: 'white',
+              transition: '0.4s',
+              borderRadius: '50%'
+            }}
+          ></span>
+        </label>
+      )
     },
     {
       name: 'Action',
-      cell: (row) => (
-        <div className="d-flex">
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => handleEdit(row)}
-          >
-            <MdEdit />
-          </Button>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => handleDelete(row.id)}
-          >
-            <MdDelete />
-          </Button>
-        </div>
-      ),
+       cell: (row) => (
+                            <div className="d-flex">
+                              <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+                                <MdEdit />
+                              </Button>
+                              <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                                <MdDelete />
+                              </Button>
+                            </div>
+                          ),
     },
   ];
 
-  const handleDelete = async (ProductId) => {
+  const handleDelete = async (supplierId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${ProductId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
       });
-
-      // Check if the response indicates success
-      if (response.status === 200) {
-        toast.success('Product deleted successfully');
-        setSupplier(suppliers.filter((Product) => Product.id !== ProductId));
-        setFilteredSupplier(filteredSuppliers.filter((Product) => Product.id !== ProductId));
-      } else {
-        throw new Error('Unexpected response status');
+  
+      if (result.isConfirmed) {
+        // Attempt to delete supplier
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${supplierId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+  
+        // Update state on successful deletion
+        setSupplier((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
+        setFilteredSupplier((prevFilteredSuppliers) =>
+          prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId)
+        );
+  
+        toast.success('Supplier deleted successfully');
+        Swal.fire('Deleted!', 'The supplier has been deleted.', 'success');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete Product');
+      // Log error for debugging and notify user
+      console.error('Error deleting supplier:', error);
+  
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the supplier.');
+      }
+  
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the supplier.', 'error');
     }
   };
 
@@ -256,7 +336,7 @@ const SuppliersPage = () => {
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedSupplier((prevProduct) => ({
+    setSelectedProducts((prevProduct) => ({
       ...prevProduct,
       [name]: value
     }));

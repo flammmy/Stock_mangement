@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const ReceiversPage = () => {
   const [Receivers, setReceiver] = useState([]);
@@ -12,6 +14,45 @@ const ReceiversPage = () => {
   const [searchQuery, setSearchQuery] = useState(''); 
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedReceiver, setselectedReceiver] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const handleToggleStatus = async (receiverId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+  
+      // Make the API call to update status
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      toast.success('Status updated successfully!');
+  
+      // Update state for both Receivers and filteredReceivers
+      setReceiver((prevReceivers) =>
+        prevReceivers.map((receiver) =>
+          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
+        )
+      );
+  
+      setFilteredReceiver((prevFilteredReceivers) =>
+        prevFilteredReceivers.map((receiver) =>
+          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
+        )
+      );
+    } catch (error) {
+      toast.error('Failed to update status!');
+      console.error(error);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchReceiver = async () => {
@@ -22,13 +63,17 @@ const ReceiversPage = () => {
             'Content-Type': 'application/json',
           },
         });
-        console.log(response);
+        console.log(response.data.data);
         setReceiver(response.data.data);
         setFilteredReceiver(response.data.data); 
       } catch (error) {
         console.error(error);
       }
+      finally {
+        setLoading(false); // Stop loading
+      }
     };
+
     fetchReceiver();
   }, []);
 
@@ -138,66 +183,116 @@ const ReceiversPage = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return (
+      cell: (row) => (
+        
+        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+          <div style={{marginLeft:"45px",marginTop:"-4px"}}>
           <span
-            className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'
-              }`}
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{ padding: '5px 10px', borderRadius: '8px' }}
           >
-            {statusText}
+            {row.status === 0 ? 'Active' : 'Inactive'}
           </span>
-        );
-      },
+          </div>
+           
+          <input
+            type="checkbox"
+            checked={row.status === 0} // Active if 0
+            onChange={() => handleToggleStatus(row.id, row.status)}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+              transition: '0.4s',
+              borderRadius: '20px'
+            }}
+          ></span>
+          <span
+            style={{
+              position: 'absolute',
+              content: "",
+              height: '14px',
+              width: '14px',
+              left: row.status === 0 ? '18px' : '3px',
+              bottom: '3px',
+              backgroundColor: 'white',
+              transition: '0.4s',
+              borderRadius: '50%'
+            }}
+          ></span>
+        </label>
+      )
     },
     {
       name: 'Action',
       cell: (row) => (
-        <div className="d-flex">
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => handleEdit(row)}
-          >
-            <MdEdit />
-          </Button>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => handleDelete(row.id)}
-          >
-            <MdDelete />
-          </Button>
-        </div>
-      ),
+                      <div className="d-flex">
+                        <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+                          <MdEdit />
+                        </Button>
+                        <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                          <MdDelete />
+                        </Button>
+                      </div>
+                    ),
     },
   ];
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async (receiverId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
       });
-
-      // Check if the response indicates success
-      if (response.status === 200) {
-        toast.success('User deleted successfully');
-        setReceiver(Receivers.filter((user) => user.id !== userId));
-        setFilteredReceiver(filteredReceivers.filter((user) => user.id !== userId));
-      } else {
-        throw new Error('Unexpected response status');
+  
+      if (result.isConfirmed) {
+        // Attempt to delete supplier
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+  
+        // Update state on successful deletion
+        setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
+        setFilteredReceiver((prevFilteredReceivers) =>
+          prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId)
+        );
+  
+        toast.success('Receiver deleted successfully');
+        Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete user');
+      // Log error for debugging and notify user
+      console.error('Error deleting Receiver:', error);
+  
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the Receiver.');
+      }
+  
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
     }
   };
+  
 
   const handleEdit = (user) => {
     setselectedReceiver(user);
@@ -315,6 +410,7 @@ const ReceiversPage = () => {
       },
     },
   };
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

@@ -303,7 +303,7 @@ const ProfilePage = () => {
               </div>
               <div style={styles.userInfo}>
                 <p style={{fontWeight:"bold",fontSize:"16px"}}>Email: {user?.email}</p>
-                <p style={{fontWeight:"bold",fontSize:"16px"}}>Password: {user?.password}</p> {/* Masked password */}
+                {/* <p style={{fontWeight:"bold",fontSize:"16px"}}>Password: {user?.password}</p> Masked password */}
                 <p style={{fontWeight:"bold",fontSize:"16px"}}>Username: {user?.username || "Not Provided"}</p>
                 <p style={{fontWeight:"bold",fontSize:"16px"}}>Phone: {user?.phone || "Not Provided"}</p>
               </div>
