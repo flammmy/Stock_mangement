@@ -6,6 +6,11 @@ import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 const BanksPage = () => {
   const [Banks, setBank] = useState([]);
   const [filteredBanks, setFilteredBank] = useState([]); 
@@ -233,6 +238,20 @@ const BanksPage = () => {
       },
     },
   };
+   const exportToCSV = () => {
+        const csv = Papa.unparse(filteredBanks);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, 'supplier_list.csv');
+      };
+      const exportToPDF = () => {
+        const doc = new jsPDF();
+        doc.text('Banks List', 20, 10);
+        doc.autoTable({
+          head: [['Bank Name', 'IFSC Code','Branch','Account Number']],
+          body: filteredBanks.map((row) => [row.name, row.ifsc_code, row.branch, row.account_number]),
+        });
+        doc.save('Banks_list.pdf');
+      };
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -256,8 +275,16 @@ const BanksPage = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+            <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredBanks}

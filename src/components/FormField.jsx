@@ -13,15 +13,17 @@ const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChang
         {options ? (
           <Form.Select
             name={name}
-            value={value}
+            // value={value}
             onChange={onChange}
             required={required}
             className='py-2'
+            defaultValue={'default'}
             style={{
               paddingLeft: '40px',
               borderColor: '#3f4d67',
             }}
           >
+            <option value="default" disabled>Select {label}</option>
             {options.map((option, index) => (
               <option key={index} value={option.id}>
                 {option.name}
