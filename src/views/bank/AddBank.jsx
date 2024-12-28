@@ -52,7 +52,7 @@ const AddBank = () => {
             toast.success('Bank added successfully');
         } catch (error) {
             console.error('Error adding bank:', error);
-            toast.error('Error adding bank');
+            toast.error(`Error adding Bank: ${error.response.data.message}`);
         }
     };
 

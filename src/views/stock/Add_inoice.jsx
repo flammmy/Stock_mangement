@@ -222,6 +222,7 @@ const Add_inoice = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
+      
     }
 
     console.log(formData);

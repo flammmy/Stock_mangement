@@ -73,7 +73,7 @@ const AddCustomer = () => {
             toast.success('Customer added successfully');
         } catch (error) {
             console.error('Error adding Customer:', error);
-            toast.error('Error adding Customer');
+            toast.error(`Error adding Customer: ${error.response.data.message}`);
         }
     };
 
