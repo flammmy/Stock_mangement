@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 
@@ -19,6 +21,90 @@ const SuppliersPage = () => {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
+  const downloadPDF = () => {
+    if (!filteredSuppliers || filteredSuppliers.length === 0) {
+      toast.error("No supplier data available to download.");
+      return;
+    }
+  
+    const doc = new jsPDF('landscape');
+    const tableColumn = [
+      "Sr No",
+      "Name",
+      "Code",
+      "GST No",
+      "CIN No",
+      "PAN No",
+      "MSME No",
+      "Phone",
+      "Email",
+      "Owner Mobile",
+      "Registered Address",
+      "Work Address",
+      "Area",
+      "Status",
+    ];
+  
+    const tableRows = [];
+  
+    filteredSuppliers.forEach((supplier, index) => {
+      const supplierData = [
+        index + 1,
+        supplier.name,
+        supplier.code,
+        supplier.gst_no,
+        supplier.cin_no,
+        supplier.pan_no,
+        supplier.msme_no,
+        supplier.tel_no,
+        supplier.email,
+        supplier.owner_mobile,
+        supplier.reg_address.replace('\n', ', '),
+        supplier.work_address.replace('\n', ', '),
+        supplier.area,
+        supplier.status === 0 ? "Active" : "Inactive",
+      ];
+      tableRows.push(supplierData);
+    });
+  
+    doc.text("products Data", 14, 10);
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 15,
+      theme: "grid",
+      styles: {
+        fontSize: 8,
+      },
+      headStyles: {
+        fillColor: [46, 139, 87],
+        textColor: 255,
+        fontSize: 9,
+      },
+      columnStyles: {
+        0: { cellWidth: 10 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 25 },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 40 },
+        9: { cellWidth: 20 },
+        10: { cellWidth: 50 },
+        11: { cellWidth: 50 },
+        12: { cellWidth: 15 },
+        13: { cellWidth: 15 },
+      },
+      margin: { top: 10, left: 10, right: 10 },
+      pageBreak: "auto",
+    });
+  
+    doc.save("Product_data.pdf");
+  };
+  
   const handleToggleStatus = async (productsId, currentStatus) => {
         try {
           const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
@@ -367,9 +453,9 @@ const SuppliersPage = () => {
     },
     headCells: {
       style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
@@ -384,8 +470,8 @@ const SuppliersPage = () => {
     },
     pagination: {
       style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
+        // backgroundColor: '#3f4d67',
+        color: 'black',
         borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
@@ -416,17 +502,14 @@ const SuppliersPage = () => {
           <Button variant="primary" onClick={handleAddProduct}>
             <MdPersonAdd className="me-2" /> Add Product
           </Button>
+          <Button variant="success" onClick={downloadPDF} className="ms-2">
+            Download PDF
+          </Button>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
-            {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Suppliers Management</h2>
-            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <DataTable
                 columns={columns}

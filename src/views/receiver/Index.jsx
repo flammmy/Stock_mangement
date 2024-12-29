@@ -7,6 +7,9 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 
 const ReceiversPage = () => {
   const [Receivers, setReceiver] = useState([]);
@@ -17,6 +20,86 @@ const ReceiversPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
+  const downloadPDF = () => {
+    const doc = new jsPDF('landscape'); // Use landscape orientation for more space
+    const tableColumn = [
+      "Sr No",
+      "Name",
+      "Code",
+      "GST No",
+      "CIN No",
+      "PAN No",
+      "MSME No",
+      "Phone",
+      "Email",
+      "Owner Mobile",
+      "Registered Address",
+      "Work Address",
+      "Area",
+      "Status",
+    ];
+    const tableRows = [];
+  
+    filteredReceivers.forEach((receiver, index) => {
+      const receiverData = [
+        index + 1,
+        receiver.name,
+        receiver.code,
+        receiver.gst_no,
+        receiver.cin_no,
+        receiver.pan_no,
+        receiver.msme_no,
+        receiver.tel_no,
+        receiver.email,
+        receiver.owner_mobile,
+        receiver.reg_address.replace('\n', ', '),
+        receiver.work_address.replace('\n', ', '),
+        receiver.area,
+        receiver.status === 0 ? "Active" : "Inactive",
+      ];
+      tableRows.push(receiverData);
+    });
+  
+    doc.text("Receivers Data", 14, 10); // Add a title
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 15,
+      theme: "grid",
+      styles: {
+        fontSize: 8, // Reduce font size to fit more content
+      },
+      headStyles: {
+        fillColor: [46, 139, 87], // Custom header color
+        textColor: 255, // White text
+        fontSize: 9, // Header font size
+      },
+      columnStyles: {
+        0: { cellWidth: 10 }, // Adjust column width for each field as needed
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 25 },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 40 },
+        9: { cellWidth: 20 },
+        10: { cellWidth: 50 },
+        11: { cellWidth: 50 },
+        12: { cellWidth: 15 },
+        13: { cellWidth: 15 },
+      },
+      margin: { top: 10, bottom: 10, left: 10, right: 10 },
+      pageBreak: "auto", // Automatically handle page breaks
+    });
+  
+    doc.save("receivers_data.pdf");
+  };
+  
+  
+  
   const handleToggleStatus = async (receiverId, currentStatus) => {
     try {
       const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
@@ -380,9 +463,9 @@ const ReceiversPage = () => {
     },
     headCells: {
       style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
@@ -397,8 +480,8 @@ const ReceiversPage = () => {
     },
     pagination: {
       style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
+        // backgroundColor: '#3f4d67',
+        color: 'black',
         borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
@@ -430,6 +513,9 @@ const ReceiversPage = () => {
           <Button variant="primary" onClick={handleAddUser}>
             <MdPersonAdd className="me-2" /> Add User
           </Button>
+          <Button variant="success" onClick={downloadPDF} className="ms-2">
+  Download PDF
+</Button>
         </div>
       </div>
       <div className="row">
