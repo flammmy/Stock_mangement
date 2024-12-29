@@ -225,7 +225,7 @@
 
 
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Row, Col, Alert, Button } from 'react-bootstrap';
+import { Row, Col, Alert, Button, Spinner } from 'react-bootstrap';  // Import Spinner from react-bootstrap
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -237,6 +237,7 @@ const JWTLogin = () => {
   const [captchaText, setCaptchaText] = useState('');
   const [userCaptchaInput, setUserCaptchaInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);  // State for controlling loading spinner
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -396,20 +397,26 @@ const JWTLogin = () => {
             </Col>
           )}
 
+
+
           <div>
             <h2 className="heading" style={{ fontSize: '14px', width: '100%', textAlign: 'start' }}>
               Captcha
             </h2>
-            <div className="container">
+            <div className="container" style={{display:"gird"}}>
               <div className="wrapper">
-                <canvas ref={canvasRef} width="200" height="70"></canvas>
+                <canvas ref={canvasRef} width="200px" height="70"></canvas>
                 <button
                   id="reload-button"
                   type="button"
                   onClick={() => {
+                    setIsLoading(true);  // Show the loading spinner
                     setUserCaptchaInput('');
-                    initializeCaptcha(canvasRef.current.getContext('2d'));
                     setCaptchaError('');
+                    setTimeout(() => {
+                      initializeCaptcha(canvasRef.current.getContext('2d'));
+                      setIsLoading(false);  // Hide the loading spinner after captcha is reloaded
+                    }, 500);  // Simulate a short delay for the spinner
                   }}
                   className="reload-icon-button"
                   style={{
@@ -419,24 +426,28 @@ const JWTLogin = () => {
                     outline: 'none',
                   }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    width="24"
-                    height="24"
-                    style={{color:"black"}}
-                  >
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <path d="M20.49 15a9 9 0 1 1 2.13-9.36L23 10"></path>
-                  </svg>
+                  {isLoading ? (
+                    <Spinner animation="border" size="sm" style={{ color: 'black' }} />
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      width="24"
+                      height="24"
+                      style={{ color: 'black' }}
+                    >
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <path d="M20.49 15a9 9 0 1 1 2.13-9.36L23 10"></path>
+                    </svg>
+                  )}
                 </button>
               </div>
-              <div style={{ width: '100%', textAlign: 'start' }}>
+              <div style={{ width: '100%',marginTop:"10px",textAlign:"start"}}>
                 <input
                   type="text"
                   id="user-input"
@@ -448,6 +459,11 @@ const JWTLogin = () => {
               </div>
             </div>
           </div>
+
+
+
+
+
 
           <Row style={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
             <Col mt={2}>

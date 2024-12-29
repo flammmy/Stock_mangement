@@ -23,7 +23,9 @@ const Signin1 = () => {
               <span className="r" />
         </div>
         <div className="auth-image">
-          <div className='d-flex flex-column align-items-center'> <h1 className='text-decoration-underline auth-heading'>The Stocks</h1><img src={Bg} alt="" /></div>
+          <div className='d-flex flex-column-align-items-center'> 
+            <h1 className='text-decoration-underline-auth-heading'>The Stocks</h1>
+          <img src={Bg} alt="" style={{width:"40%"}} /></div>
           <div className="auth-content">
             <Card className="borderless text-center">
               <Card.Body>

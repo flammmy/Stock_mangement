@@ -232,6 +232,7 @@ const JWTLogin = () => {
                 size="large"
                 type="submit"
                 variant="primary"
+                
               >
                 {isSubmitting ? 'Logging in...' : 'Login'}
               </Button>
