@@ -225,7 +225,7 @@
 
 
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Row, Col, Alert, Button, Spinner } from 'react-bootstrap';  // Import Spinner from react-bootstrap
+import { Row, Col, Alert, Button, Spinner } from 'react-bootstrap'; 
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -237,7 +237,7 @@ const JWTLogin = () => {
   const [captchaText, setCaptchaText] = useState('');
   const [userCaptchaInput, setUserCaptchaInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);  // State for controlling loading spinner
+  const [isLoading, setIsLoading] = useState(false); 
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -267,9 +267,9 @@ const JWTLogin = () => {
   const drawCaptchaOnCanvas = (ctx, captcha) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     const textColors = ['rgb(0,0,0)', 'rgb(130,130,130)'];
-    const letterSpace = 150 / captcha.length; // Adjust spacing dynamically
+    const letterSpace = 150 / captcha.length; 
     for (let i = 0; i < captcha.length; i++) {
-      const xInitialSpace = 15; // Adjust initial spacing for better centering
+      const xInitialSpace = 15; 
       ctx.font = '20px Roboto Mono';
       ctx.fillStyle = textColors[Math.floor(Math.random() * 2)];
       ctx.fillText(
@@ -356,129 +356,124 @@ const JWTLogin = () => {
       onSubmit={handleLogin}
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-        <form noValidate onSubmit={handleSubmit}>
-          <div className="form-group mb-3">
-            <label htmlFor="email" className="text-start w-100 text-black">Email</label>
-            <input
-              className="form-control"
-              name="email"
-              id="email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="email"
-              value={values.email}
-            />
-            {touched.email && errors.email && <small className="text-danger form-text">{errors.email}</small>}
-          </div>
+        <div className={`container ${errors.submit || captchaError ? 'error' : ''}`}>
+          <form noValidate onSubmit={handleSubmit}>
+            <div className="form-group mb-3">
+              <label htmlFor="email" className="text-start w-100 text-black">Email</label>
+              <input
+                className="form-control"
+                name="email"
+                id="email"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                type="email"
+                value={values.email}
+              />
+              {touched.email && errors.email && <small className="text-danger form-text">{errors.email}</small>}
+            </div>
 
-          <div className="form-group mb-4">
-            <label htmlFor="password" className="text-start w-100 text-black">Password</label>
-            <input
-              className="form-control"
-              name="password"
-              id="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="password"
-              value={values.password}
-            />
-            {touched.password && errors.password && <small className="text-danger form-text">{errors.password}</small>}
-          </div>
+            <div className="form-group mb-4">
+              <label htmlFor="password" className="text-start w-100 text-black">Password</label>
+              <input
+                className="form-control"
+                name="password"
+                id="password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                type="password"
+                value={values.password}
+              />
+              {touched.password && errors.password && <small className="text-danger form-text">{errors.password}</small>}
+            </div>
 
-          {captchaError && (
-            <Col sm={12}>
-              <Alert variant="danger">{captchaError}</Alert>
-            </Col>
-          )}
+            {captchaError && (
+              <Col sm={12}>
+                <Alert variant="danger">{captchaError}</Alert>
+              </Col>
+            )}
 
-          {errors.submit && (
-            <Col sm={12}>
-              <Alert variant="danger">{errors.submit}</Alert>
-            </Col>
-          )}
+            {errors.submit && (
+              <Col sm={12}>
+                <Alert variant="danger">{errors.submit}</Alert>
+              </Col>
+            )}
 
-
-
-          <div>
-            <h2 className="heading" style={{ fontSize: '14px', width: '100%', textAlign: 'start' }}>
-              Captcha
-            </h2>
-            <div className="container" style={{display:"gird"}}>
-              <div className="wrapper">
-                <canvas ref={canvasRef} width="200px" height="70"></canvas>
-                <button
-                  id="reload-button"
-                  type="button"
-                  onClick={() => {
-                    setIsLoading(true);  // Show the loading spinner
-                    setUserCaptchaInput('');
-                    setCaptchaError('');
-                    setTimeout(() => {
-                      initializeCaptcha(canvasRef.current.getContext('2d'));
-                      setIsLoading(false);  // Hide the loading spinner after captcha is reloaded
-                    }, 500);  // Simulate a short delay for the spinner
-                  }}
-                  className="reload-icon-button"
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    outline: 'none',
-                  }}
-                >
-                  {isLoading ? (
-                    <Spinner animation="border" size="sm" style={{ color: 'black' }} />
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      width="24"
-                      height="24"
-                      style={{ color: 'black' }}
-                    >
-                      <polyline points="23 4 23 10 17 10"></polyline>
-                      <path d="M20.49 15a9 9 0 1 1 2.13-9.36L23 10"></path>
-                    </svg>
-                  )}
-                </button>
-              </div>
-              <div style={{ width: '100%',marginTop:"10px",textAlign:"start"}}>
-                <input
-                  type="text"
-                  id="user-input"
-                  placeholder="Enter the captcha"
-                  value={userCaptchaInput}
-                  onChange={(e) => setUserCaptchaInput(e.target.value)}
-                  onBlur={handleBlur}
-                />
+            <div>
+              <h2 className="heading" style={{ fontSize: '14px', width: '100%', textAlign: 'start' }}>
+                Captcha
+              </h2>
+              <div className="container" style={{ display: 'grid' }}>
+                <div className="wrapper">
+                  <canvas ref={canvasRef} width="200px" height="70"></canvas>
+                  <button
+                    id="reload-button"
+                    type="button"
+                    onClick={() => {
+                      setIsLoading(true); 
+                      setUserCaptchaInput('');
+                      setCaptchaError('');
+                      setTimeout(() => {
+                        initializeCaptcha(canvasRef.current.getContext('2d'));
+                        setIsLoading(false);  
+                      }, 500);
+                    }}
+                    className="reload-icon-button"
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      outline: 'none',
+                    }}
+                  >
+                    {isLoading ? (
+                      <Spinner animation="border" size="sm" style={{ color: 'black' }} />
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        width="24"
+                        height="24"
+                        style={{ color: 'black' }}
+                      >
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1 2.13-9.36L23 10"></path>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <div style={{ width: '100%', marginTop: '10px', textAlign: 'start' }} className='cap-text-dev'>
+                  <input
+                    type="text"
+                    id="user-input"
+                    placeholder="Enter the captcha"
+                    value={userCaptchaInput}
+                    onChange={(e) => setUserCaptchaInput(e.target.value)}
+                    onBlur={handleBlur}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-
-
-
-
-
-          <Row style={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
-            <Col mt={2}>
-              <Button
-                className="btn-block mb-4"
-                disabled={isSubmitting}
-                size="large"
-                type="submit"
-                variant="primary"
-              >
-                {isSubmitting ? 'Logging in...' : 'Login'}
-              </Button>
-            </Col>
-          </Row>
-        </form>
+            <Row style={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
+              <Col mt={2}>
+                <Button
+                  className="btn-block mb-4"
+                  disabled={isSubmitting}
+                  size="large"
+                  type="submit"
+                  variant="primary"
+                >
+                  {isSubmitting ? 'Logging in...' : 'Login'}
+                </Button>
+              </Col>
+            </Row>
+          </form>
+        </div>
       )}
     </Formik>
   );
