@@ -29,7 +29,7 @@ const Invoice_out = () => {
     invoice_no: '',
     date: '',
     customer_id: '',
-    receiver_id: '2',
+    receiver_id: '',
     place_of_supply: '',
     vehicle_no: '',
     station: '',
@@ -303,6 +303,7 @@ const Invoice_out = () => {
                       name="payment_mode"
                       value={formData.payment_mode}
                       onChange={handleChange}
+                      options={[{id:'cash', name:'cash'},{id:'card', name:'card'},{id:'online', name:'online'},{id:'cheque', name:'cheque'},{id:'other', name:'other'}]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
@@ -317,6 +318,7 @@ const Invoice_out = () => {
                       name="payment_status"
                       value={formData.payment_status}
                       onChange={handleChange}
+                      options={[{id:'paid', name:'paid'},{id:'pending', name:'pending'},{id:'failed', name:'failed'}]}
                     />
                   </Col>
                   <Col md={4}>
@@ -338,6 +340,7 @@ const Invoice_out = () => {
                       name="reverse_charge"
                       value={formData.reverse_charge}
                       onChange={handleChange}
+                      options={[{id:1, name:'true'},{id:0, name:'false'}]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
@@ -355,6 +358,7 @@ const Invoice_out = () => {
                     />
                     <FormField
                       icon={FaMoneyBillWave}
+                      type='date'
                       label="Payment Date"
                       name="payment_date"
                       value={formData.payment_date}
@@ -481,16 +485,16 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         max={Number(row.out_width)}
-                                        value={row.width || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'width', e.target.value)}
+                                        value={row.out_width || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
                                       />
                                     </td>
                                     <td key="length">
                                       <input
                                         type="text"
                                         max={Number(row.out_length)}
-                                        value={row.length || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'length', e.target.value)}
+                                        value={row.out_length || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
                                       />
                                     </td>
                                     <td key="unit">
@@ -518,8 +522,8 @@ const Invoice_out = () => {
                                       <select
                                         className="form-control"
                                         style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.type || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'type', e.target.value)}
+                                        value={row.product_type || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'product_type', e.target.value)}
                                       >
                                         <option value="" disabled>
                                           Select
@@ -531,9 +535,8 @@ const Invoice_out = () => {
                                     <td key="qty">
                                       <input
                                         type="text"
-                                        placeholder={`max: ${row.out_quantity}`}
-                                        value={row.qty || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'qty', e.target.value)}
+                                        value={row.out_quantity || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
                                       />
                                     </td>
                                     <td key="rate">
