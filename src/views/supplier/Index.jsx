@@ -597,93 +597,97 @@ const SuppliersPage = () => {
   const [searchQuery, setSearchQuery] = useState(''); 
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [entriesPerPage, setEntriesPerPage] = useState('select'); // Default to 'select'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowPerPage, setRowPerPage] = useState(25); // Default row per page set to 25
+  const [loading, setLoading] = useState(true); // Added loading state
 
   const downloadPDF = () => {
-      if (!filteredSuppliers || filteredSuppliers.length === 0) {
-        toast.error("No supplier data available to download.");
-        return;
-      }
-    
-      const doc = new jsPDF('landscape');
-      const tableColumn = [
-        "Sr No",
-        "Name",
-        "Code",
-        "GST No",
-        "CIN No",
-        "PAN No",
-        "MSME No",
-        "Phone",
-        "Email",
-        "Owner Mobile",
-        "Registered Address",
-        "Work Address",
-        "Area",
-        "Status",
+    if (!filteredSuppliers || filteredSuppliers.length === 0) {
+      toast.error("No supplier data available to download.");
+      return;
+    }
+
+    const doc = new jsPDF('landscape');
+    const tableColumn = [
+      "Sr No",
+      "Name",
+      "Code",
+      "GST No",
+      "CIN No",
+      "PAN No",
+      "MSME No",
+      "Phone",
+      "Email",
+      "Owner Mobile",
+      "Registered Address",
+      "Work Address",
+      "Area",
+      "Status",
+    ];
+
+    const tableRows = [];
+
+    filteredSuppliers.forEach((supplier, index) => {
+      const supplierData = [
+        index + 1,
+        supplier.name,
+        supplier.code,
+        supplier.gst_no,
+        supplier.cin_no,
+        supplier.pan_no,
+        supplier.msme_no,
+        supplier.tel_no,
+        supplier.email,
+        supplier.owner_mobile,
+        supplier.reg_address.replace('\n', ', '),
+        supplier.work_address.replace('\n', ', '),
+        supplier.area,
+        supplier.status === 0 ? "Active" : "Inactive",
       ];
-    
-      const tableRows = [];
-    
-      filteredSuppliers.forEach((supplier, index) => {
-        const supplierData = [
-          index + 1,
-          supplier.name,
-          supplier.code,
-          supplier.gst_no,
-          supplier.cin_no,
-          supplier.pan_no,
-          supplier.msme_no,
-          supplier.tel_no,
-          supplier.email,
-          supplier.owner_mobile,
-          supplier.reg_address.replace('\n', ', '),
-          supplier.work_address.replace('\n', ', '),
-          supplier.area,
-          supplier.status === 0 ? "Active" : "Inactive",
-        ];
-        tableRows.push(supplierData);
-      });
-    
-      doc.text("products Data", 14, 10);
-      doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 15,
-        theme: "grid",
-        styles: {
-          fontSize: 8,
-        },
-        headStyles: {
-          fillColor: [46, 139, 87],
-          textColor: 255,
-          fontSize: 9,
-        },
-        columnStyles: {
-          0: { cellWidth: 10 },
-          1: { cellWidth: 30 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 25 },
-          4: { cellWidth: 25 },
-          5: { cellWidth: 25 },
-          6: { cellWidth: 25 },
-          7: { cellWidth: 20 },
-          8: { cellWidth: 40 },
-          9: { cellWidth: 20 },
-          10: { cellWidth: 50 },
-          11: { cellWidth: 50 },
-          12: { cellWidth: 15 },
-          13: { cellWidth: 15 },
-        },
-        margin: { top: 10, left: 10, right: 10 },
-        pageBreak: "auto",
-      });
-    
-      doc.save("Product_data.pdf");
-    };
+      tableRows.push(supplierData);
+    });
+
+    doc.text("Products Data", 14, 10);
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 15,
+      theme: "grid",
+      styles: {
+        fontSize: 8,
+      },
+      headStyles: {
+        fillColor: [46, 139, 87],
+        textColor: 255,
+        fontSize: 9,
+      },
+      columnStyles: {
+        0: { cellWidth: 10 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 25 },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 40 },
+        9: { cellWidth: 20 },
+        10: { cellWidth: 50 },
+        11: { cellWidth: 50 },
+        12: { cellWidth: 15 },
+        13: { cellWidth: 15 },
+      },
+      margin: { top: 10, left: 10, right: 10 },
+      pageBreak: "auto",
+    });
+
+    doc.save("Product_data.pdf");
+  };
 
   const handleToggleStatus = async (supplierId, currentStatus) => {
     console.log("Toggling status for supplier:", supplierId, "Current status:", currentStatus);
-  
+
     const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle the status
     try {
       const response = await axios.put(
@@ -696,22 +700,21 @@ const SuppliersPage = () => {
           },
         }
       );
-  
+
       console.log("Response from API:", response.data);
-  
+
       // Update the frontend state
-      setSupplier((prevSuppliers) =>
-        prevSuppliers.map((supplier) =>
+      setSupplier((prevSuppliers) => prevSuppliers.map((supplier) =>
           supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
         )
       );
-  
+
       setFilteredSupplier((prevFilteredSuppliers) =>
         prevFilteredSuppliers.map((supplier) =>
           supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
         )
       );
-  
+
       toast.success("Status updated successfully!");
     } catch (error) {
       console.error("Error updating status:", error);
@@ -730,9 +733,11 @@ const SuppliersPage = () => {
         });
         console.log(response);
         setSupplier(response.data.data);
-        setFilteredSupplier(response.data.data); 
+        setFilteredSupplier(response.data.data);
+        setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
         console.error(error);
+        setLoading(false); // Set loading to false on error
       }
     };
     fetchSupplier();
@@ -761,6 +766,9 @@ const SuppliersPage = () => {
   };
 
   const navigate = useNavigate();
+  const startIndex = (currentPage - 1) * rowPerPage;
+  const endIndex = startIndex + rowPerPage;
+  const paginatedUsers = filteredSuppliers.slice(startIndex, endIndex);
 
   const columns = [
     {
@@ -845,49 +853,49 @@ const SuppliersPage = () => {
     {
       name: 'Status',
       cell: (row) => (
-        <div className="d-flex align-items-center">
-          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-            <input
-              type="checkbox"
-              checked={row.status === 1} // Active if 1
-              onChange={() => handleToggleStatus(row.id, row.status)}
-              style={{ opacity: 0, width: 0, height: 0 }}
-            />
+          <div className="d-flex align-items-center">
+            <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+              <input
+                type="checkbox"
+                checked={row.status === 1} // Active if 1
+                onChange={() => handleToggleStatus(row.id, row.status)}
+                style={{ opacity: 0, width: 0, height: 0 }}
+              />
+              <span
+                style={{
+                  position: 'absolute',
+                  cursor: 'pointer',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: row.status === 1 ? '#4caf50' : '#ccc',
+                  transition: '0.4s',
+                  borderRadius: '20px',
+                }}
+              ></span>
+              <span
+                style={{
+                  position: 'absolute',
+                  content: '',
+                  height: '14px',
+                  width: '14px',
+                  left: row.status === 1 ? '18px' : '3px',
+                  bottom: '3px',
+                  backgroundColor: 'white',
+                  transition: '0.4s',
+                  borderRadius: '50%',
+                }}
+              ></span>
+            </label>
             <span
-              style={{
-                position: 'absolute',
-                cursor: 'pointer',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: row.status === 1 ? '#4caf50' : '#ccc',
-                transition: ' 0.4s',
-                borderRadius: '20px',
-              }}
-            ></span>
-            <span
-              style={{
-                position: 'absolute',
-                content: '',
-                height: '14px',
-                width: '14px',
-                left: row.status === 1 ? '18px' : '3px',
-                bottom: '3px',
-                backgroundColor: 'white',
-                transition: '0.4s',
-                borderRadius: '50%',
-              }}
-            ></span>
-          </label>
-          <span
-            className={`badge ${row.status === 1 ? 'bg-success ms-2' : 'bg-danger ms-2'}`}
-            style={{ padding: '5px 10px', borderRadius: '8px', marginTop: "-10px" }}
-          >
-            {row.status === 1 ? 'Active' : 'Inactive'}
-          </span>
-        </div>
-      ),
+              className={`badge ${row.status === 1 ? 'bg-success ms-2' : 'bg-danger ms-2'}`}
+              style={{ padding: '5px 10px', borderRadius: '8px', marginTop: "-10px" }}
+            >
+              {row.status === 1 ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+        ),
     },
     {
       name: 'Action',
@@ -982,7 +990,8 @@ const SuppliersPage = () => {
     }
   };
 
-  const handleAddUser  = () => {
+
+  const handleAddUser   = () => {
     navigate('/add-supplier');
   };
 
@@ -1010,7 +1019,6 @@ const SuppliersPage = () => {
         backgroundColor: '#f0fff4',
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
-        
         '&:hover': {
           backgroundColor: '#e6f4ea',
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
@@ -1019,12 +1027,13 @@ const SuppliersPage = () => {
     },
     headCells: {
       style: {
-        backgroundColor: ' #FFFFFF',
+        backgroundColor: '#FFFFFF',
         color: 'black',
         fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
+        borderRight: '1px solid #ddd', // Add a right border to column headers
       },
     },
     cells: {
@@ -1032,11 +1041,11 @@ const SuppliersPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
+        borderRight: '1px solid #ddd', // Add a right border to cells
       },
     },
     pagination: {
       style: {
-        // backgroundColor: '#3f4d67',
         color: 'black',
         borderRadius: '0 0 8px 8px',
       },
@@ -1049,48 +1058,98 @@ const SuppliersPage = () => {
       },
     },
   };
+  
+
+  const handleEntriesPerPageChange = (e) => {
+    const newEntriesPerPage = e.target.value;
+    setEntriesPerPage(newEntriesPerPage);
+
+    if (newEntriesPerPage === 'select') {
+      setRowPerPage(25); // If "Select" is chosen, reset to the default 25 rows per page
+    } else {
+      setRowPerPage(Number(newEntriesPerPage)); // If a specific value is chosen, set that as the row per page
+    }
+    setCurrentPage(1); // Reset pagination to page 1 when changing entries per page
+  };
 
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
-      <div className="row mb-3">
-        <div className="col-md-4">
-          <input
-            type="text"
-            placeholder="Sort by supplier name"
-            id='search'
-            value={searchQuery}
-            onChange={handleSearch}
-            className="pe-5 ps-2 py-2"
-            style={{ borderRadius: '5px' }}
-          />
-        </div>
-        <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddUser }>
-            <MdPersonAdd className="me-2" /> Add Supplier
-          </Button>
-          <Button variant="success" onClick={downloadPDF} className="ms-2">
-          Download PDF
-         </Button>
-        </div>
+    <div className="container-fluid pt-4" style={{borderRadius: '8px' }}>
+     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
+  <div
+    className="row mb-3"
+    style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'wrap', // Allow wrapping for small screens
+    }}
+  >
+    {/* Search Input */}
+    <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
+      <input
+        type="text"
+        placeholder="Sort by supplier name"
+        id="search"
+        value={searchQuery}
+        onChange={handleSearch}
+        className="pe-5 ps-2 py-2 w-100" // Ensure the input takes up full width on smaller screens
+        style={{ borderRadius: '5px' }}
+      />
+    </div>
+
+    {/* Entries Dropdown */}
+    <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <p style={{ marginBottom: '0', marginRight: '10px' }}>Show Entries</p>
+        <select
+          className="form-select"
+          value={entriesPerPage}
+          onChange={handleEntriesPerPageChange}
+          style={{
+            borderRadius: '5px',
+            fontSize: '0.8rem',
+            width:"80px",
+            height: '30px',
+          }}
+        >
+          <option value="select">Select</option>
+          <option value={5}>5 Entries</option>
+          <option value={10}>10 Entries</option>
+          <option value={25}>25 Entries</option>
+          <option value={50}>50 Entries</option>
+          <option value={100}>100 Entries</option>
+        </select>
       </div>
+    </div>
+
+    {/* Action Buttons */}
+    <div className="col-12 col-md-4 text-end" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+      <Button variant="primary" onClick={handleAddUser}>
+        <MdPersonAdd className="me-2" /> Add Supplier
+      </Button>
+      <Button variant="success" onClick={downloadPDF}>
+        Download PDF
+      </Button>
+    </div>
+  </div>
+</div>
+
+
+
       <div className="row">
-        <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
-            <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-              <DataTable
-                columns={columns}
-                data={filteredSuppliers}
-                pagination
-                highlightOnHover
-                striped
-                responsive
-                customStyles={customStyles}
-                defaultSortFieldId={1}
-              />
-            </div>
-          </div>
-        </div>
+        <DataTable
+          columns={columns}
+          data={loading ? Array(10).fill('') : paginatedUsers}
+          progressPending={loading}
+          pagination
+          paginationPerPage={rowPerPage}
+          paginationRowsPerPageOptions={[5, 10, 25, 50, 100]}
+          pagination TotalRows={filteredSuppliers.length}
+          onChangePage={(page) => setCurrentPage(page)}
+          customStyles={customStyles}
+        />
       </div>
+
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
@@ -1154,7 +1213,7 @@ const SuppliersPage = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                < Form.Label>MSME Number</Form.Label>
+                <Form.Label>MSME Number</Form.Label>
                 <Form.Control
                   type="text"
                   name="msme_no"
@@ -1228,7 +1287,7 @@ const SuppliersPage = () => {
         </Modal>
       )}
     </div>
-  );
-};
+
+  )};
 
 export default SuppliersPage;

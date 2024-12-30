@@ -463,49 +463,47 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
-import jsPDF from 'jspdf'; // Import jsPDF
-import 'jspdf-autotable'; // Import the jspdf-autotable plugin
-import html2canvas from 'html2canvas'; // Import html2canvas
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]); // For search
-  const [searchQuery, setSearchQuery] = useState(''); // Search query
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [entriesPerPage, setEntriesPerPage] = useState('select'); // Default to 'select'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowPerPage, setRowPerPage] = useState(25); // Default row per page set to 25
+  const handleToggleStatus = async (userId, currentStatus) => {
+        try {
+          const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+          await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`,
+            { status: updatedStatus },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          toast.success('Status updated successfully!');
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === userId ? { ...user, status: updatedStatus } : user
+            )
+          );
+        } catch (error) {
+          toast.error('Failed to update status!');
+        }
+      };
 
-  const handleDelete = async (userId) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        toast.success('User deleted successfully');
-        setUsers(users.filter((user) => user.id !== userId));
-        setFilteredUsers(filteredUsers.filter((user) => user.id !== userId));
-        Swal.fire('Deleted!', 'The user has been deleted.', 'success');
-      } catch (error) {
-        toast.error('Failed to delete user');
-        Swal.fire('Error!', 'There was a problem deleting the user.', 'error');
-      }
-    }
-  };
-
+  // Fetch users
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users`, {
@@ -532,27 +530,32 @@ const UsersPage = () => {
     setShowEditModal(true);
   };
 
-  const handleToggleStatus = async (userId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`,
-        { status: updatedStatus },
-        {
+  const handleDelete = async (userId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
           },
-        }
-      );
-      toast.success('Status updated successfully!');
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, status: updatedStatus } : user
-        )
-      );
-    } catch (error) {
-      toast.error('Failed to update status!');
+        });
+        toast.success('User deleted successfully');
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+        setFilteredUsers((prevFilteredUsers) => prevFilteredUsers.filter((user) => user.id !== userId));
+        Swal.fire('Deleted!', 'The user has been deleted.', 'success');
+      } catch (error) {
+        toast.error('Failed to delete user');
+        Swal.fire('Error!', 'There was a problem deleting the user.', 'error');
+      }
     }
   };
 
@@ -571,6 +574,18 @@ const UsersPage = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleEntriesPerPageChange = (e) => {
+    const newEntriesPerPage = e.target.value;
+    setEntriesPerPage(newEntriesPerPage);
+
+    if (newEntriesPerPage === 'select') {
+      setRowPerPage(25); // If "Select" is chosen, reset to the default 25 rows per page
+    } else {
+      setRowPerPage(Number(newEntriesPerPage)); // If a specific value is chosen, set that as the row per page
+    }
+    setCurrentPage(1); // Reset pagination to page 1 when changing entries per page
   };
 
   const navigate = useNavigate();
@@ -604,7 +619,8 @@ const UsersPage = () => {
     },
     {
       name: 'Role',
-      selector: (row) => (row.role === 1 ? 'Admin' : row.role === 2 ? 'Operator' : row.role === 3 ? 'Supervisor' : 'Superadmin'),
+      selector: (row) =>
+        row.role === 1 ? 'Admin' : row.role === 2 ? 'Operator' : row.role === 3 ? 'Supervisor' : 'Superadmin',
       sortable: true,
     },
     {
@@ -621,10 +637,9 @@ const UsersPage = () => {
               {row.status === 0 ? 'Active' : 'Inactive'}
             </span>
           </div>
-
           <input
             type="checkbox"
-            checked={row.status === 0} // Active if 0
+            checked={row.status === 0}
             onChange={() => handleToggleStatus(row.id, row.status)}
             style={{ opacity: 0, width: 0, height: 0 }}
           />
@@ -717,89 +732,28 @@ const UsersPage = () => {
         user.name,
         user.email,
         user.phone,
-        user.role === 1
-          ? 'Admin'
-          : user.role === 2
-          ? 'Operator'
-          : user.role === 3
-          ? 'Supervisor'
-          : 'Superadmin',
-        user.status === 0 ? 'Active' : 'Inactive',
+        user.role === 1 ? 'Admin' : user.role === 2 ? 'Operator' : 'Supervisor',
+        user.status === 1 ? 'Inactive' : 'Active',
       ];
       tableRows.push(userData);
     });
 
-    doc.text("User Data", 14, 15); // Add a title to the PDF
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-    });
-
-    doc.save("user_data.pdf"); // Save the PDF with a specific filename
+    doc.autoTable(tableColumn, tableRows);
+    doc.save("Users_Report.pdf");
   };
 
-  const customStyles = {
-    header: {
-      style: {
-        backgroundColor: '#2E8B57',
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
-    },
-    rows: {
-      style: {
-        backgroundColor: '#f0fff4',
-        borderBottom: '1px solid #e0e0e0',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#FFFFFF',
-        color: 'black',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        padding: '15px',
-      },
-    },
-    cells: {
-      style: {
-        fontSize: '14px',
-        color: '#333',
-        padding: '12px',
-      },
-    },
-    pagination: {
-      style: {
-        color: 'black',
-        borderRadius: '0 0 8px 8px',
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
-  };
+  // Pagination logic to slice the data based on entries per page
+  const startIndex = (currentPage - 1) * rowPerPage;
+  const endIndex = startIndex + rowPerPage;
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
 
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="search user "
             id="search"
             value={searchQuery}
             onChange={handleSearch}
@@ -807,7 +761,24 @@ const UsersPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
+        <div className="col-md-4" style={{display:"flex"}}>
+          <p>Show Entries</p>&nbsp;&nbsp;
+          <select
+            className="form-select"
+            value={entriesPerPage}
+            onChange={handleEntriesPerPageChange}
+            style={{ borderRadius: '5px',width:"100px",fontSize:"0.8rem",height:"30px",marginTop:"-3px"}}
+
+          >
+            <option value="select">Select</option>
+            <option value={5}>5 Entries</option>
+            <option value={10}>10 Entries</option>
+            <option value={25}>25 Entries</option>
+            <option value={50}>50 Entries</option>
+            <option value={100}>100 Entries</option>
+          </select>
+        </div>
+        <div className="col-md-4 text-end">
           <Button variant="primary" onClick={handleAddUser}>
             <MdPersonAdd className="me-2" /> Add User
           </Button>
@@ -816,35 +787,38 @@ const UsersPage = () => {
           </Button>
         </div>
       </div>
+
       <div className="row">
         <div className="col-12">
           <DataTable
             columns={columns}
-            data={loading ? Array(10).fill('') : filteredUsers}
-            customStyles={customStyles}
+            data={loading ? Array(10).fill('') : paginatedUsers}
             progressPending={loading}
             progressComponent={<Skeleton count={5} />}
             pagination
+            paginationPerPage={rowPerPage}
+            paginationRowsPerPageOptions={[5, 10, 25, 50, 100]}
+            paginationTotalRows={filteredUsers.length}
+            onChangePage={(page) => setCurrentPage(page)}
+            customStyles={{
+              headCells: {
+                style: {
+                  borderBottom: '2px solid #ddd', // Border for column headers
+                  fontWeight: 'bold',
+                  padding: '10px',
+                },
+              },
+              cells: {
+                style: {
+                  borderRight: '1px solid #ddd', // Border for each column
+                  borderBottom: '1px solid #ddd', // Border for rows
+                  padding: '8px',
+                },
+              },
+            }}
           />
         </div>
       </div>
-
-      {/* Delete Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       {/* Edit Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
         <Modal.Header closeButton>
@@ -887,6 +861,18 @@ const UsersPage = () => {
                 value={selectedUser?.phone || ''}
                 onChange={handleChange}
               />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Role</Form.Label>
+              <Form.Select
+                name="role"
+                value={selectedUser?.role || ''}
+                onChange={handleChange}
+              >
+                <option value={1}>Admin</option>
+                <option value={2}>Operator</option>
+                <option value={3}>Supervisor</option>
+              </Form.Select>
             </Form.Group>
           </Form>
         </Modal.Body>
