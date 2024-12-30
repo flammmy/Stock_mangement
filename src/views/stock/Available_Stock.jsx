@@ -7,6 +7,8 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -17,16 +19,13 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/available-stocks`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available-stocks`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
           }
-        );
-  
+        });
+
         console.log('stocks data:', response.data);
         if (Array.isArray(response.data.data)) {
           const productsWithStocks = [];
@@ -45,12 +44,12 @@ const ShowProduct = () => {
                   unit: stock.unit,
                   qty: stock.qty,
                   area: (parseFloat(stock.length) * parseFloat(stock.width) * stock.qty).toFixed(3),
-                  area_sq_ft: (parseFloat(stock.length) * parseFloat(stock.width) * stock.qty * 10.7639).toFixed(3),
+                  area_sq_ft: (parseFloat(stock.length) * parseFloat(stock.width) * stock.qty * 10.7639).toFixed(3)
                 });
               });
             }
           });
-  
+
           setProducts(productsWithStocks);
           setFilteredProducts(productsWithStocks);
         } else {
@@ -62,10 +61,9 @@ const ShowProduct = () => {
         setLoading(false);
       }
     };
-  
+
     fetchStocksData();
   }, []);
-  
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -85,53 +83,53 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Lot No',
       selector: (row) => row.lot_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Shade No',
       selector: (row) => row.shadeNo,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Pur. Shade No',
       selector: (row) => row.purchase_shade_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Length',
       selector: (row) => row.length,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Width',
       selector: (row) => row.width,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Unit',
       selector: (row) => row.unit,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Qty',
       selector: (row) => row.qty,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Area (sq. ft.)',
       selector: (row) => row.area_sq_ft,
-      sortable: true,
-    },
+      sortable: true
+    }
   ];
 
   const exportToCSV = () => {
@@ -155,8 +153,8 @@ const ShowProduct = () => {
         row.unit,
         row.qty,
         row.area,
-        row.area_sq_ft,
-      ]),
+        row.area_sq_ft
+      ])
     });
     doc.save('stocks_list.pdf');
   };
@@ -167,8 +165,8 @@ const ShowProduct = () => {
         color: '#fff',
         fontSize: '18px',
         fontWeight: 'bold',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     rows: {
       style: {
@@ -176,9 +174,9 @@ const ShowProduct = () => {
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
         '&:hover': {
-          backgroundColor: '#e6f4ea',
-        },
-      },
+          backgroundColor: '#e6f4ea'
+        }
+      }
     },
     headCells: {
       style: {
@@ -187,30 +185,30 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -229,12 +227,14 @@ const ShowProduct = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="d-flex justify-content-end">
-              <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+              <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                <FaFileCsv className="w-5 h-5 me-1" />
                 Export as CSV
               </button>
-              <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+              <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                <AiOutlineFilePdf className="w-5 h-5 me-1" />
                 Export as PDF
               </button>
             </div>

@@ -4,11 +4,12 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye } from 'react-icons/fa';
+import { FaEye, FaFileCsv } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfPreview';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -72,7 +73,7 @@ const Index = () => {
     {
       name: 'Invoice Number',
       selector: (row) => row.invoice_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Supplier Name',
@@ -112,7 +113,15 @@ const Index = () => {
           {/* <Button variant="outline-danger" size="sm">
             <MdDelete />
           </Button> */}
-          <Button variant="outline-primary" size="sm" onClick={() => {setSelectedInvoice(row.id);setShowPdfModal(true); console.log(row.id) }}>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => {
+              setSelectedInvoice(row.id);
+              setShowPdfModal(true);
+              console.log(row.id);
+            }}
+          >
             <MdPrint />
           </Button>
         </div>
@@ -216,6 +225,38 @@ const Index = () => {
     }
   };
 
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredSuppliers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'supplier_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 20, 10);
+    doc.autoTable({
+      head: [
+        [
+          'Invoice Number',
+          'Supplier Name',
+          'Receiver Name',
+          'Date',
+          'Bank',
+          'Total Amount',
+        ]
+      ],
+      body: filteredSuppliers.map((row) => [
+        row.invoice_no,
+        row.supplier_name,
+        row.receiver_name,
+        row.date,
+        row.bank,
+        row.total_amount,
+       
+      ])
+    });
+    doc.save('user_list.pdf');
+  };
+
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -238,7 +279,7 @@ const Index = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -254,6 +295,16 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                <div className="d-flex justify-content-end">
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                    <FaFileCsv className="w-5 h-5 me-1" />
+                    Export as CSV
+                  </button>
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                    Export as PDF
+                  </button>
+                </div>
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}
@@ -269,10 +320,9 @@ const Index = () => {
           </div>
         </div>
       </div>
-      {
-        invoiceAllDetails && selectedInvoice &&
-        <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice}/>
-      }
+      {invoiceAllDetails && selectedInvoice && (
+        <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+      )}
     </div>
   );
 };

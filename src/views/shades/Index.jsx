@@ -12,10 +12,12 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState([]); 
-  const [filteredProducts, setFilteredProducts] = useState([]); 
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -26,8 +28,8 @@ const ProductsPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         setProducts(response.data.data);
         setFilteredProducts(response.data.data);
@@ -61,22 +63,22 @@ const ProductsPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Shade No',
       selector: (row) => row.shadeNo,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Purchase Shade No',
       selector: (row) => row.purchase_shade_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Status',
@@ -84,35 +86,22 @@ const ProductsPage = () => {
       sortable: true,
       cell: (row) => {
         const statusText = row.status === 1 ? 'active' : 'inactive';
-        return (
-          <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>
-            {statusText}
-          </span>
-        );
+        return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
       }
     },
     {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => handleEdit(row)}
-          >
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
             <MdEdit />
           </Button>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => handleDelete(row.id)}
-          >
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
   const handleDelete = async (productId) => {
@@ -120,8 +109,8 @@ const ProductsPage = () => {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.status === 200) {
@@ -149,25 +138,17 @@ const ProductsPage = () => {
         return;
       }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/products/${selectedProduct.id}`,
-        selectedProduct,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/products/${selectedProduct.id}`, selectedProduct, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       if (response.status === 200) {
         toast.success('Product updated successfully!');
-        setProducts((prev) =>
-          prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod))
-        );
-        setFilteredProducts((prev) =>
-          prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod))
-        );
+        setProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod)));
+        setFilteredProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod)));
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
@@ -186,7 +167,7 @@ const ProductsPage = () => {
     const { name, value } = e.target;
     setSelectedProduct((prevProduct) => ({
       ...prevProduct,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -198,8 +179,8 @@ const ProductsPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -208,9 +189,9 @@ const ProductsPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -219,30 +200,30 @@ const ProductsPage = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
 
   const exportToCSV = () => {
@@ -254,8 +235,8 @@ const ProductsPage = () => {
     const doc = new jsPDF();
     doc.text('Banks List', 20, 10);
     doc.autoTable({
-      head: [['Shade No', 'Code','Purchase Shade No','Status']],
-      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [['Shade No', 'Code', 'Purchase Shade No', 'Status']],
+      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
     });
     doc.save('Products_list.pdf');
   };
@@ -283,11 +264,13 @@ const ProductsPage = () => {
         <div className="col-12">
           <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-            <div className="d-flex justify-content-end">
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
                   Export as CSV
                 </button>
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
                   Export as PDF
                 </button>
               </div>

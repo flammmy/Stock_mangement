@@ -118,7 +118,7 @@
 //       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
 //       sortable: true,
 //       cell: (row) => (
-        
+
 //         <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
 //           <div style={{marginLeft:"45px",marginTop:"-4px"}}>
 //           <span
@@ -128,7 +128,7 @@
 //             {row.status === 0 ? 'Active' : 'Inactive'}
 //           </span>
 //           </div>
-           
+
 //           <input
 //             type="checkbox"
 //             checked={row.status === 0} // Active if 0
@@ -163,7 +163,7 @@
 //           ></span>
 //         </label>
 //       )
-    
+
 //     },
 //     {
 //       name: 'Action',
@@ -428,8 +428,6 @@
 
 // export default UsersPage;
 
-
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
@@ -440,8 +438,8 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
-
-
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -451,13 +449,12 @@ import 'jspdf-autotable';
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-
 
   const handleDelete = async (userId) => {
     const result = await Swal.fire({
@@ -467,15 +464,15 @@ const UsersPage = () => {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Yes, delete it!'
     });
 
     if (result.isConfirmed) {
       try {
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
         toast.success('User deleted successfully');
         setUsers(users.filter((user) => user.id !== userId));
@@ -492,8 +489,8 @@ const UsersPage = () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       });
       setUsers(response.data.data);
       setFilteredUsers(response.data.data);
@@ -539,16 +536,12 @@ const UsersPage = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
       toast.success('Status updated successfully!');
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, status: updatedStatus } : user
-        )
-      );
+      setUsers((prevUsers) => prevUsers.map((user) => (user.id === userId ? { ...user, status: updatedStatus } : user)));
     } catch (error) {
       toast.error('Failed to update status!');
     }
@@ -560,16 +553,16 @@ const UsersPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
 
         setUsers(response.data.data);
-        setFilteredUsers(response.data.data); 
+        setFilteredUsers(response.data.data);
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
     fetchUsers();
@@ -603,27 +596,27 @@ const UsersPage = () => {
     {
       name: 'Username',
       selector: (row) => row.username,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Phone',
       selector: (row) => row.phone,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Role',
       selector: (row) => (row.role === 1 ? 'Admin' : row.role === 2 ? 'Operator' : row.role === 3 ? 'Supervisor' : 'Superadmin'),
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Status',
@@ -632,10 +625,7 @@ const UsersPage = () => {
       cell: (row) => (
         <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
           <div style={{ marginLeft: '45px', marginTop: '-4px' }}>
-            <span
-              className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-              style={{ padding: '5px 10px', borderRadius: '8px' }}
-            >
+            <span className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`} style={{ padding: '5px 10px', borderRadius: '8px' }}>
               {row.status === 0 ? 'Active' : 'Inactive'}
             </span>
           </div>
@@ -656,7 +646,7 @@ const UsersPage = () => {
               bottom: 0,
               backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
               transition: '0.4s',
-              borderRadius: '20px',
+              borderRadius: '20px'
             }}
           ></span>
           <span
@@ -669,25 +659,25 @@ const UsersPage = () => {
               bottom: '3px',
               backgroundColor: 'white',
               transition: '0.4s',
-              borderRadius: '50%',
+              borderRadius: '50%'
             }}
           ></span>
         </label>
-      ),
+      )
     },
     {
       name: 'Action',
       cell: (row) => (
-                <div className="d-flex">
-                  <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
-                    <MdEdit />
-                  </Button>
-                  <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
-                    <MdDelete />
-                  </Button>
-                </div>
-              ),
-    },
+        <div className="d-flex">
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+            <MdEdit />
+          </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
+        </div>
+      )
+    }
   ];
 
   // const handleDelete = async (userId) => {
@@ -710,19 +700,13 @@ const UsersPage = () => {
   // };
   const handleUpdateUser = async () => {
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`,
-        selectedUser,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`, selectedUser, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
+      });
       toast.success('User updated successfully!');
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === selectedUser.id ? response.data.data : user))
-      );
+      setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? response.data.data : user)));
       setShowEditModal(false);
     } catch (error) {
       toast.error('Error updating user!');
@@ -737,7 +721,7 @@ const UsersPage = () => {
     const { name, value } = e.target;
     setSelectedUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -749,8 +733,8 @@ const UsersPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -759,9 +743,9 @@ const UsersPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -770,30 +754,30 @@ const UsersPage = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
 
   const exportToCSV = () => {
@@ -805,8 +789,8 @@ const UsersPage = () => {
     const doc = new jsPDF();
     doc.text('User List', 20, 10);
     doc.autoTable({
-      head: [['Username', 'Name','Email','Phone','Role','Status']],
-      body: filteredUsers.map((row) => [row.username, row.name, row.email,row.phone, row.role, row.status === 1 ? 'Active' : 'Inactive'])
+      head: [['Username', 'Name', 'Email', 'Phone', 'Role', 'Status']],
+      body: filteredUsers.map((row) => [row.username, row.name, row.email, row.phone, row.role, row.status === 1 ? 'Active' : 'Inactive'])
     });
     doc.save('user_list.pdf');
   };
@@ -850,10 +834,12 @@ const UsersPage = () => {
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                 <div className="d-flex justify-content-end">
-                  <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                    <FaFileCsv className="w-5 h-5 me-1" />
                     Export as CSV
                   </button>
-                  <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
                     Export as PDF
                   </button>
                 </div>
@@ -898,39 +884,19 @@ const UsersPage = () => {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={selectedUser?.username || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" name="username" value={selectedUser?.username || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                value={selectedUser?.name || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" name="name" value={selectedUser?.name || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={selectedUser?.email || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="email" name="email" value={selectedUser?.email || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="text"
-                name="phone"
-                value={selectedUser?.phone || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" name="phone" value={selectedUser?.phone || ''} onChange={handleChange} />
             </Form.Group>
           </Form>
         </Modal.Body>

@@ -521,6 +521,8 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
@@ -964,10 +966,12 @@ const SuppliersPage = () => {
           <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
                   Export as CSV
                 </button>
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
                   Export as PDF
                 </button>
               </div>
