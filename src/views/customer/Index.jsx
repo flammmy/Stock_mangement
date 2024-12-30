@@ -8,8 +8,9 @@ import { toast } from 'react-toastify';
 
 const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
-  const [filteredCustomers, setFilteredCustomer] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredCustomers, setFilteredCustomer] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
 
@@ -24,7 +25,7 @@ const CustomersPage = () => {
         });
         console.log(response);
         setCustomer(response.data.data);
-        setFilteredCustomer(response.data.data); 
+        setFilteredCustomer(response.data.data);
       } catch (error) {
         console.error(error);
       }
@@ -126,19 +127,53 @@ const CustomersPage = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return (
+      cell: (row) => (
+        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+          <div style={{ marginLeft: '45px', marginTop: '-4px' }}>
+            <span
+              className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+              style={{ padding: '5px 10px', borderRadius: '8px' }}
+            >
+              {row.status === 0 ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+
+          <input
+            type="checkbox"
+            checked={row.status === 0} // Active if 0
+            onChange={() => handleToggleStatus(row.id, row.status)}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
           <span
-            className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'
-              }`}
-          >
-            {statusText}
-          </span>
-        );
-      },
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+              transition: '0.4s',
+              borderRadius: '20px',
+            }}
+          ></span>
+          <span
+            style={{
+              position: 'absolute',
+              content: '',
+              height: '14px',
+              width: '14px',
+              left: row.status === 0 ? '18px' : '3px',
+              bottom: '3px',
+              backgroundColor: 'white',
+              transition: '0.4s',
+              borderRadius: '50%',
+            }}
+          ></span>
+        </label>
+      ),
     },
     {
       name: 'Action',
@@ -193,13 +228,11 @@ const CustomersPage = () => {
   };
   const handleUpdateUser = async () => {
     try {
-      // Ensure the selectedCustomer is valid
       if (!selectedCustomer || !selectedCustomer.id) {
         toast.error('Invalid Customer selected for update!');
         return;
       }
 
-      // Perform the API call
       const response = await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/customers/${selectedCustomer.id}`,
         selectedCustomer,
@@ -210,7 +243,6 @@ const CustomersPage = () => {
           },
         }
       );
-
       // Check the response status
       if (response.status === 200) {
         toast.success('Customer updated successfully!');
@@ -235,7 +267,30 @@ const CustomersPage = () => {
       toast.error('Error updating Customer!');
     }
   };
-
+  const handleToggleStatus = async (userId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      toast.success('Status updated successfully!');
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, status: updatedStatus } : user
+        )
+      );
+      
+    } catch (error) {
+      toast.error('Failed to update status!');
+    }
+  };
 
   const handleAddUser = () => {
     navigate('/add-Customer');
@@ -327,12 +382,6 @@ const CustomersPage = () => {
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
-            {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Customers Management</h2>
-            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <DataTable
                 columns={columns}
@@ -348,6 +397,22 @@ const CustomersPage = () => {
           </div>
         </div>
       </div>
+      {/* Delete Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this Customer?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Edit User Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
