@@ -127,7 +127,7 @@ const AddProduct = () => {
 
     const payload = items.map((item) => ({
       ...item,
-      invoice_id: id, // Attach invoice_id for all items
+      invoice_id: id, 
       invoice_no: no
     }));
 

@@ -13,7 +13,7 @@ const Show_product = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]); // For search
   const [searchQuery, setSearchQuery] = useState(''); // Search query
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -28,8 +28,17 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        console.log(response.data);
-        setProducts(response.data);
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.length * product.width * product.qty;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3), 
+            area_sq_ft: areaSqFt.toFixed(3), 
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
       } catch (err) {
         console.log(err);
       } finally {
@@ -37,9 +46,9 @@ const Show_product = () => {
       }
     };
     fetchProductData();
-  }, []);
+  }, [id]);
 
-  // Update filtered users when the search query changes
+  // Update filtered Products when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter(
@@ -138,6 +147,38 @@ const Show_product = () => {
     setSelectedProduct(product);
     setShowEditModal(true);
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
+  const handleUpdateProduct = async () => {
+    try {
+      console.log(selectedProduct);
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/stocks/${selectedProduct.id}`,
+        selectedProduct,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      console.log(response.data)
+      setProducts((prevProducts) =>
+        prevProducts.map((products) =>
+          products.id === selectedProduct.id ? selectedProduct : products
+        )
+      );
+      toast.success('Product updated successfully!');
+      setShowEditModal(false);
+    } catch (error) {
+      toast.error('Error updating Product!');
+    }
+  };
+
   const handleDelete = async (productId) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${productId}`, {
@@ -150,7 +191,7 @@ const Show_product = () => {
       setProducts(products.filter((product) => product.id !== productId));
       setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
     } catch (error) {
-      toast.error('Failed to delete user');
+      toast.error('Failed to delete Product');
     }
   };
 
@@ -270,7 +311,84 @@ const Show_product = () => {
           </div>
         </div>
       </div>
+      {/* Edit Product Modal */}
+<Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Edit Product</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label>Lot Number</Form.Label>
+        <Form.Control
+          type="text"
+          name="lot_no"
+          value={selectedProduct?.lot_no || ''}
+          onChange={handleChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Length</Form.Label>
+        <Form.Control
+          type="number"
+          step="0.01"
+          name="length"
+          value={selectedProduct?.length || ''}
+          onChange={handleChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Width</Form.Label>
+        <Form.Control
+          type="number"
+          step="0.01"
+          name="width"
+          value={selectedProduct?.width || ''}
+          onChange={handleChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Unit</Form.Label>
+        <Form.Control
+          type="read-only"
+          name="unit"
+          value={selectedProduct?.unit || ''}
+          disabled={true}
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Type</Form.Label>
+        <Form.Control
+          type="text"
+          name="type"
+          value={selectedProduct?.type || ''}
+          onChange={handleChange}
+          
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Quantity</Form.Label>
+        <Form.Control
+          type="number"
+          name="qty"
+          value={selectedProduct?.qty || ''}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={handleUpdateProduct}>
+      Save Changes
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
+    
   );
 };
 

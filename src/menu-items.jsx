@@ -136,10 +136,17 @@ const menuItems = {
               url: '/add-invoice'
             }, {
               id: 'all_stocks',
-              title: 'All Stocks',
+              title: 'Purchase Stocks',
               icon: 'feather icon-clipboard',
               type: 'item',
               url: '/all-stocks'
+            },
+            {
+              id: 'Available_stocks',
+              title: 'Available Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/available-stocks'
             }
           ]
         }
