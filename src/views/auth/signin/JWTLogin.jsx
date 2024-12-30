@@ -639,6 +639,8 @@ const JWTLogin = () => {
                 onChange={handleChange}
                 type="email"
                 value={values.email}
+                style={{fontSize: "12px",
+                  width: "140px !important"}}
               />
               {touched.email && errors.email && <small className="text-danger form-text">{errors.email}</small>}
             </div>
