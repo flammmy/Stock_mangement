@@ -8,8 +8,8 @@
 
 // const SuppliersPage = () => {
 //   const [suppliers, setSupplier] = useState([]);
-//   const [filteredSuppliers, setFilteredSupplier] = useState([]); 
-//   const [searchQuery, setSearchQuery] = useState(''); 
+//   const [filteredSuppliers, setFilteredSupplier] = useState([]);
+//   const [searchQuery, setSearchQuery] = useState('');
 //   const [showEditModal, setShowEditModal] = useState(false);
 //   const [selectedSupplier, setselectedSupplier] = useState(null);
 
@@ -24,7 +24,7 @@
 //         });
 //         console.log(response);
 //         setSupplier(response.data.data);
-//         setFilteredSupplier(response.data.data); 
+//         setFilteredSupplier(response.data.data);
 //       } catch (error) {
 //         console.error(error);
 //       }
@@ -248,7 +248,6 @@
 //     }
 //   };
 
-
 //   const handleAddUser = () => {
 //     navigate('/add-Supplier');
 //   };
@@ -259,7 +258,6 @@
 //       [name]: value
 //     }));
 //   };
-
 
 //   const customStyles = {
 //     header: {
@@ -507,10 +505,7 @@
 //   );
 // };
 
-
 // export default SuppliersPage;
-
-
 
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
@@ -522,16 +517,21 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
-  const [filteredSuppliers, setFilteredSupplier] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredSuppliers, setFilteredSupplier] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
 
   const handleToggleStatus = async (supplierId, currentStatus) => {
-    console.log("Toggling status for supplier:", supplierId, "Current status:", currentStatus);
-  
+    console.log('Toggling status for supplier:', supplierId, 'Current status:', currentStatus);
+
     const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle the status
     try {
       const response = await axios.put(
@@ -540,30 +540,26 @@ const SuppliersPage = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
-  
-      console.log("Response from API:", response.data);
-  
+
+      console.log('Response from API:', response.data);
+
       // Update the frontend state
       setSupplier((prevSuppliers) =>
-        prevSuppliers.map((supplier) =>
-          supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
-        )
+        prevSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
       );
-  
+
       setFilteredSupplier((prevFilteredSuppliers) =>
-        prevFilteredSuppliers.map((supplier) =>
-          supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
-        )
+        prevFilteredSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
       );
-  
-      toast.success("Status updated successfully!");
+
+      toast.success('Status updated successfully!');
     } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status!");
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status!');
     }
   };
 
@@ -573,12 +569,12 @@ const SuppliersPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supplier`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response);
         setSupplier(response.data.data);
-        setFilteredSupplier(response.data.data); 
+        setFilteredSupplier(response.data.data);
       } catch (error) {
         console.error(error);
       }
@@ -614,69 +610,69 @@ const SuppliersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Supplier Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true,
- },
+      sortable: true
+    },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Logo',
@@ -687,7 +683,7 @@ const SuppliersPage = () => {
           style={{ width: '50px', height: '50px', borderRadius: '50%' }}
         />
       ),
-      sortable: false,
+      sortable: false
     },
     {
       name: 'Status',
@@ -710,7 +706,7 @@ const SuppliersPage = () => {
                 bottom: 0,
                 backgroundColor: row.status === 1 ? '#4caf50' : '#ccc',
                 transition: '0.4s',
-                borderRadius: '20px',
+                borderRadius: '20px'
               }}
             ></span>
             <span
@@ -723,34 +719,33 @@ const SuppliersPage = () => {
                 bottom: '3px',
                 backgroundColor: 'white',
                 transition: '0.4s',
-                borderRadius: '50%',
+                borderRadius: '50%'
               }}
             ></span>
           </label>
           <span
             className={`badge ${row.status === 1 ? 'bg-success ms-2' : 'bg-danger ms-2'}`}
-            style={{ padding: '5px 10px', borderRadius: '8px',marginTop:"-10px" }}
+            style={{ padding: '5px 10px', borderRadius: '8px', marginTop: '-10px' }}
           >
             {row.status === 1 ? 'Active' : 'Inactive'}
           </span>
         </div>
-      ),
+      )
     },
     {
       name: 'Action',
       cell: (row) => (
-                <div className="d-flex">
-                  <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
-                    <MdEdit />
-                  </Button>
-                  <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
-                    <MdDelete />
-                  </Button>
-                </div>
-              ),
-    },
+        <div className="d-flex">
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+            <MdEdit />
+          </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
+        </div>
+      )
+    }
   ];
-
 
   const handleDelete = async (supplierId) => {
     try {
@@ -762,75 +757,65 @@ const SuppliersPage = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete it!'
       });
-  
+
       if (result.isConfirmed) {
         // Attempt to delete supplier
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${supplierId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
-  
+
         // Update state on successful deletion
         setSupplier((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
-        setFilteredSupplier((prevFilteredSuppliers) =>
-          prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId)
-        );
-  
+        setFilteredSupplier((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
+
         toast.success('Supplier deleted successfully');
         Swal.fire('Deleted!', 'The supplier has been deleted.', 'success');
       }
     } catch (error) {
       // Log error for debugging and notify user
       console.error('Error deleting supplier:', error);
-  
+
       // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(`Failed to delete supplier: ${error.response.data.message}`);
       } else {
         toast.error('An unexpected error occurred while deleting the supplier.');
       }
-  
+
       // Display error notification in confirmation dialog
       Swal.fire('Error!', 'There was a problem deleting the supplier.', 'error');
     }
   };
-  
+
   const handleEdit = (supplier) => {
     setselectedSupplier(supplier);
     setShowEditModal(true);
   };
 
-  const handleUpdateUser  = async () => {
+  const handleUpdateUser = async () => {
     try {
       if (!selectedSupplier || !selectedSupplier.id) {
         toast.error('Invalid supplier selected for update!');
         return;
- }
+      }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`,
-        selectedSupplier,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`, selectedSupplier, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       if (response.status === 200) {
         toast.success('Supplier updated successfully!');
 
-        setSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
-        );
+        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setFilteredSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
-        );
+        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
         setShowEditModal(false);
       } else {
@@ -842,7 +827,7 @@ const SuppliersPage = () => {
     }
   };
 
-  const handleAddUser  = () => {
+  const handleAddUser = () => {
     navigate('/add-supplier');
   };
 
@@ -850,9 +835,8 @@ const SuppliersPage = () => {
     const { name, value } = e.target;
     setselectedSupplier((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-  
   };
 
   const customStyles = {
@@ -863,8 +847,8 @@ const SuppliersPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -873,9 +857,9 @@ const SuppliersPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -884,32 +868,77 @@ const SuppliersPage = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
-
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredSuppliers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'supplier_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 20, 10);
+    doc.autoTable({
+      head: [
+        [
+          'Supplier Name',
+          'Code',
+          'GST No',
+          'CIN No',
+          'PAN No',
+          'MSME No',
+          'Phone',
+          'Email',
+          'Owner Mobile',
+          'Registered Address',
+          'Work Address',
+          'Area',
+          'Logo',
+          'Status'
+        ]
+      ],
+      body: filteredSuppliers.map((row) => [
+        row.name,
+        row.code,
+        row.gst_no,
+        row.cin_no,
+        row.pan_no,
+        row.msme_no,
+        row.tel_no,
+        row.email,
+        row.owner_mobile,
+        row.reg_address,
+        row.work_address,
+        row.area,
+        row.logo,
+        row.status === 1 ? 'Active' : 'Inactive'
+      ])
+    });
+    doc.save('user_list.pdf');
+  };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -917,7 +946,7 @@ const SuppliersPage = () => {
           <input
             type="text"
             placeholder="Search..."
-            id='search'
+            id="search"
             value={searchQuery}
             onChange={handleSearch}
             className="pe-5 ps-2 py-2"
@@ -925,15 +954,23 @@ const SuppliersPage = () => {
           />
         </div>
         <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddUser }>
+          <Button variant="primary" onClick={handleAddUser}>
             <MdPersonAdd className="me-2" /> Add Supplier
           </Button>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredSuppliers}
@@ -1079,7 +1116,7 @@ const SuppliersPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser }>
+            <Button variant="success" onClick={handleUpdateUser}>
               Update
             </Button>
           </Modal.Footer>

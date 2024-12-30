@@ -4,6 +4,11 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
+import Skeleton from 'react-loading-skeleton';
+import DataTable from 'react-data-table-component';
+import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
+
+import 'react-loading-skeleton/dist/skeleton.css';
 import {
   FaFileInvoice,
   FaCalendarAlt,
@@ -16,10 +21,8 @@ import {
   FaCity,
   FaSignature,
   FaQrcode
-} from 'react-icons/fa'; 
+} from 'react-icons/fa';
 import FormField from '../../components/FormField';
-import { error } from 'jquery';
-import { color } from 'd3';
 
 const Invoice_out = () => {
   const [formData, setFormData] = useState({
@@ -40,95 +43,57 @@ const Invoice_out = () => {
     qr_code: '',
     products: []
   });
+  const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const handleAddRow = () => {
-    setItems([
-      ...items,
-      {
-        product_id: '',
-        purchase_shadeNo: '',
-        hsn_sac_code: '',
-        quantity: '',
-        product_type: '',
-        total_product: '',
-        unit: '',
-        rate: '',
-        amount: ''
-      }
-    ]);
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      products: [
-        ...prevFormData.products,
-        {
-          product_id: '',
-          purchase_shadeNo: '',
-          hsn_sac_code: '',
-          quantity: 0,
-          product_type: '',
-          total_product: '',
-          unit: '',
-          rate: 0,
-          amount: 0
-        }
-      ]
-    }));
-  };
-  const handleDeleteRow = (index) => {
-    setItems(items.filter((_, i) => i !== index));
-    setFormData((prevFormData) => {
-      const updatedProducts = prevFormData.products.filter((_, i) => i !== index);
-      return {
-        ...prevFormData,
-        products: updatedProducts
-      };
-    });
-  };
-
-  const handleRowChange = (index, field, value) => {
-    setItems((prevRows) => {
-      const updatedRows = [...prevRows];
-      if (field === 'product_id') {
-        const selectedProduct = products.find((product) => product.id == value);
-        if (selectedProduct) {
-          updatedRows[index].product_id = value;
-          updatedRows[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
-        } else {
-          updatedRows[index].purchase_shadeNo = '';
-        }
-      }
-      else {
-        updatedRows[index][field] = value;
-      }
-
-      if (field === 'amount') {
-        const totalAmount = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        formData.total_amount = totalAmount;
-      }
-      
-      // Sync with formData
-      setFormData((prevFormData) => {
-        const updatedProducts = [...prevFormData.products];
-        updatedProducts[index] = {
-          ...updatedProducts[index],
-          ...updatedRows[index]
-        };
-        return {
-          ...prevFormData,
-          products: updatedProducts
-        };
-      });
-
-      return updatedRows;
-    });
-  };
-
   const [receivers, setReceivers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
-  const [banks, setBanks] = useState([{ id: '', name: 'Select a bank' }]);
+  const [banks, setBanks] = useState([]);
+  const [shadeNo, setShadeNo] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  useEffect(() => {
+    const fetchShadeNo = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log(response.data.data);
+        setShadeNo(response.data.data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+    fetchShadeNo();
+  }, []);
+
+  const handleShadeNoChange = async (event) => {
+    setLoading(true);
+    const selectedProductId = event.target.value; // Get the selected product ID
+
+    if (selectedProductId) {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setLoading(false);
+
+        console.log(response.data.data);
+        setProducts(response.data.data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    } else {
+      setProducts(null); // Clear products state if no shade is selected
+    }
+  };
 
   useEffect(() => {
     const fetchBanksData = async () => {
@@ -145,24 +110,6 @@ const Invoice_out = () => {
       }
     };
     fetchBanksData();
-  }, []);
-
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setProducts(response.data.data);
-        // console.log(response.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchProductData();
   }, []);
 
   useEffect(() => {
@@ -224,6 +171,34 @@ const Invoice_out = () => {
     }
 
     console.log(formData);
+  };
+  const navigate = useNavigate();
+
+  const columns = [
+    { id: 'product_shadeNo', label: 'Shade No' },
+    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+    { id: 'lot_no', label: 'LOT No' },
+    { id: 'width', label: 'Width' },
+    { id: 'length', label: 'Length' },
+    { id: 'unit', label: ' Unit' },
+    { id: 'area_sq_ft', label: 'Area(sqft)' },
+    { id: 'type', label: 'Type' },
+    { id: 'qty', label: 'Quantity' }
+  ];
+
+  const handleCheckboxChange = (id) => {
+    setSelectedRows((prevSelected) => {
+      const isAlreadySelected = prevSelected.some((row) => row.id === id);
+
+      if (isAlreadySelected) {
+        // Deselect: Remove the row from the selected rows
+        return prevSelected.filter((row) => row.id !== id);
+      } else {
+        // Select: Add the row to the selected rows
+        const newRow = products.find((p) => p.id === id);
+        return [...prevSelected, newRow];
+      }
+    });
   };
 
   const mainColor = '#3f4d67';
@@ -288,7 +263,6 @@ const Invoice_out = () => {
                       onChange={handleChange}
                       options={receivers}
                       add={'/add-Receiver'}
-
                     />
                   </Col>
                   <Col md={4}>
@@ -297,11 +271,10 @@ const Invoice_out = () => {
                     <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
                     <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
                     <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
-                   
                   </Col>
 
                   <Col md={4}>
-                  <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
+                    <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
                     <FormField icon={FaTruck} label="Transport" name="transport" value={formData.transport} onChange={handleChange} />
                     <FormField
                       icon={FaKey}
@@ -318,137 +291,160 @@ const Invoice_out = () => {
                       onChange={handleChange}
                       options={banks}
                       add={'/add-Bank'}
-
                     />
                   </Col>
                 </Row>
+                <hr />
 
                 <div>
-                  <div className="d-flex justify-content-between">
-                    <h5>Invoice Items</h5>
-                    <Button variant="success" onClick={handleAddRow} className="px-1 py-1">
-                      <FaPlus /> Add Item
-                    </Button>
+                  <div className="d-flex align-items-center gap-3 mb-3">
+                    <label htmlFor="shadeNo" className="form-label mb-0 fw-medium">
+                      Select Shade No
+                    </label>
+                    <Form.Control
+                      as="select"
+                      id="shadeNo"
+                      className="form-select px-2"
+                      style={{ width: '8rem', minWidth: 'fit-content' }}
+                      onChange={handleShadeNoChange}
+                    >
+                      <option value="">Select</option>
+
+                      {shadeNo.map((shade) => {
+                        return (
+                          <option key={shade.id} value={shade.id}>
+                            {shade.shadeNo}
+                          </option>
+                        );
+                      })}
+                    </Form.Control>
                   </div>
-                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset'}}>
-                    <thead >
-                      <tr className='text-white'>
-                        <th>&nbsp;&nbsp;Shade Number&nbsp;&nbsp;</th>
-                        <th>Pur. Shade No</th>
-                        <th>Total Product</th>
-                        <th>&nbsp;&nbsp;Product Type&nbsp;&nbsp;</th>
-                        <th>HSN/SAC</th>
-                        <th>Quantity</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>Rate</th>
-                        <th>Amount</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((item, index) => (
-                        <tr key={index}>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.shadeNo}
-                              onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
-                              className='px-1'
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
+                        {loading ? (
+                          <div>
+                            {[...Array(8)].map((_, index) => (
+                              <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                                <Skeleton width={50} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                            <div className="table-responsive">
+                              <table className="table table-hover table-bordered align-middle">
+                                <thead className="table-dark">
+                                  <tr>
+                                    <th scope="col" style={{ width: '50px' }}>
+                                      {/* Empty header for checkbox column */}
+                                      <input
+                                        type="checkbox"
+                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.id) : [])}
+                                        // checked={selectedRows.length === products.length}
+                                      />
+                                    </th>
+                                    {columns.map((column) => (
+                                      <th key={column.id} scope="col">
+                                        {column.label}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {products.map((row) => (
+                                    <tr key={row.id}>
+                                      <td>
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.id)} />
+                                      </td>
+                                      {columns.map((column) => (
+                                        <td key={column.id}>{row[column.id]}</td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-3">
+                          <h4 className="ms-4 mb-3">Selected Rows:</h4>
+                        </div>
+                        <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                          <div className="table-responsive">
+                            <table className="table table-hover table-bordered align-middle">
+                              <thead className="table-dark">
+                                <tr>
+                                  {columns.map((column) => (
+                                    <th key={column.id} scope="col">
+                                      {column.label}
+                                    </th>
+                                  ))}
+                                  <th>Rate</th>
+                                  <th>Amount</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {selectedRows.map((row) => (
+                                  <tr key={row.id}>
+                                    {/* {columns.map((column) => (
+                                      <td key={column.id}>
+                                        <input type="text" value={row[column.id]}/>
+                                      </td>
+                                    ))} */}
 
-                            >
-                              <option value="">Select Shade No.</option>
-                              {products.map((product, idx) => (
-                                <option key={product.id} value={product.id}>
-                                  {product.shadeNo}
-                                </option>
-                              ))}
-                            </Form.Control>
-                          </td>
+                                    <td key="shadeNo"> {row.product_shadeNo}</td>
+                                    <td key="pur_shadeNo"> {row.product_shadeNo}</td>
+                                    <td key="lot_no">
+                                      <input type="text" />
+                                    </td>
+                                    <td key="width">
+                                    <input type="text"  placeholder={`max: ${row.width}`} max={Number(row.width)} />
 
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.purchase_shadeNo}
-                              onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.total_product}
-                              onChange={(e) => handleRowChange(index, 'total_product', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.product_type}
-                              onChange={(e) => handleRowChange(index, 'product_type', e.target.value)}
-                              className='px-1'
-
-                              >
-                              <option value="" disabled>Select type</option>
-                              <option value="roll">Roll</option>
-                              <option value="box">Box</option>
-
-                              
-                            </Form.Control>
-                          </td>
-
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.hsn_sac_code}
-                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.quantity}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
-                            />
-                          </td>
-                         
-                          <td>
-                            <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
-                              <option value="" disabled>Select unit</option>
-                              <option value="sqft">Sq.ft.</option>
-                              <option value="pcs">Pcs.</option>
-                            </Form.Control>
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.rate}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'rate', e.target.value)}
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.amount}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'amount', e.target.value)}
-                            />
-                          </td>
-                          <td>
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
-                              <FaTrash />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+                                    </td>
+                                    <td key="length">
+                                      <input type="text"  placeholder={`max: ${row.length}`} max={Number(row.length)}/>
+                                    </td>
+                                    <td key="unit">
+                                      <select className='form-control' style={{width:'5rem',paddingInline:'10px'}} >
+                                        <option value="" disabled selected>Select</option>
+                                        <option value="meter">meter</option>
+                                        <option value="milimeter">milimeter</option>
+                                      </select>
+                                    </td>
+                                    <td key="area">
+                                      <input type="text" />
+                                    </td>
+                                    <td key="type">
+                                    <select className='form-control' style={{width:'5rem',paddingInline:'10px'}}>
+                                        <option value="" disabled selected>Select</option>
+                                        <option value="roll">Roll</option>
+                                        <option value="box">Box</option>
+                                      </select>
+                                    </td>
+                                    <td key="qty">
+                                      <input type="text" placeholder={`max: ${row.qty}`} />
+                                    </td>
+                                    <td key="rate">
+                                      <input type="text" />
+                                    </td>
+                                    <td key="amount">
+                                      <input type="text" />
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <Row className="mt-4">
                     <Col md={3}>
                       <FormField
@@ -476,11 +472,10 @@ const Invoice_out = () => {
                         value={formData.cgst_percentage}
                         onChange={handleChange}
                       />
-                      
                     </Col>
 
                     <Col md={3}>
-                    <FormField
+                      <FormField
                         icon={FaCalendarAlt}
                         label="Ack Date"
                         type="date"

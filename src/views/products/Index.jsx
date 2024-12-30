@@ -9,7 +9,10 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
 
-
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
@@ -396,7 +399,20 @@ const SuppliersPage = () => {
       },
     },
   };
-
+const exportToCSV = () => {
+        const csv = Papa.unparse();
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, 'supplier_list.csv');
+      };
+      const exportToPDF = () => {
+        const doc = new jsPDF('landscape');
+        doc.text('Banks List', 20, 10);
+        doc.autoTable({
+          head: [['Bank Name', 'IFSC Code','Branch','Account Number']],
+          body: filteredBanks.map((row) => [row.name, row.ifsc_code, row.branch, row.account_number]),
+        });
+        doc.save('Banks_list.pdf');
+      };
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

@@ -8,6 +8,11 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 const ReceiversPage = () => {
   const [Receivers, setReceiver] = useState([]);
   const [filteredReceivers, setFilteredReceiver] = useState([]); 
@@ -409,7 +414,20 @@ const ReceiversPage = () => {
       },
     },
   };
-  
+  const exportToCSV = () => {
+      const csv = Papa.unparse(filteredReceivers);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'supplier_list.csv');
+    };
+    const exportToPDF = () => {
+      const doc = new jsPDF('landscape');
+      doc.text('Receivers List', 20, 10);
+      doc.autoTable({
+        head: [['Receiver Name', 'Code','GST No','CIN No','PAN No','MSME No','Phone','Email','Owner Mobile','Registered Address','Work Address','Area','Logo','Status']],
+        body: filteredReceivers.map((row) => [row.name, row.code, row.gst_no, row.cin_no, row.pan_no, row.msme_no, row.tel_no, row.email, row.owner_mobile, row.reg_address, row.work_address, row.area, row.logo, row.status === 1 ? 'Active' : 'Inactive']),
+      });
+      doc.save('Receivers_list.pdf');
+    };
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -433,7 +451,7 @@ const ReceiversPage = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             {/* <div
               className="card-header d-flex justify-content-between align-items-center"
               style={{ backgroundColor: '#3f4d67', color: 'white' }}
@@ -441,6 +459,14 @@ const ReceiversPage = () => {
               <h2 className="m-0 text-white">Receivers Management</h2>
             </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredReceivers}

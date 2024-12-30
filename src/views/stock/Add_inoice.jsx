@@ -129,7 +129,7 @@ const Add_inoice = () => {
 
   const [receivers, setReceivers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
-  const [banks, setBanks] = useState([{ id: '', name: 'Select a bank' }]);
+  const [banks, setBanks] = useState([]);
 
   useEffect(() => {
     const fetchBanksData = async () => {
@@ -140,7 +140,7 @@ const Add_inoice = () => {
             'Content-Type': 'application/json'
           }
         });
-        setBanks([...banks, ...response.data.data]);
+        setBanks(response.data.data);
       } catch (err) {
         console.log(err);
       }

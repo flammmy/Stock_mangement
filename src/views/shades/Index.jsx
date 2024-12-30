@@ -8,6 +8,11 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 const ProductsPage = () => {
   const [products, setProducts] = useState([]); 
   const [filteredProducts, setFilteredProducts] = useState([]); 
@@ -240,6 +245,20 @@ const ProductsPage = () => {
     },
   };
 
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredProducts);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'Products_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Banks List', 20, 10);
+    doc.autoTable({
+      head: [['Shade No', 'Code','Purchase Shade No','Status']],
+      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive']),
+    });
+    doc.save('Products_list.pdf');
+  };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -262,8 +281,16 @@ const ProductsPage = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+            <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredProducts} // Use filteredProducts
