@@ -1,25 +1,29 @@
 import React, { useState, memo } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
-
-const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChange, options = null, required = true}) => {
+import { FaPlus } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChange, options = null, required = true, add}) => {
+  const navigate = useNavigate();
     return (
       <Form.Group className="mb-3 position-relative">
         <Form.Label className="d-flex align-items-center">
           <Icon className="me-2" style={{ color: '#3f4d67' }} />
-          {label}
+          {label} {add && <FaPlus onClick={() => navigate(add)} className='bg-success text-white ms-2 p-1' style={{width:'20px', height:'20px', borderRadius:'10px', cursor:'pointer'}}/>}
         </Form.Label>
         {options ? (
           <Form.Select
             name={name}
-            value={value}
+            // value={value}
             onChange={onChange}
             required={required}
             className='py-2'
+            defaultValue={'default'}
             style={{
               paddingLeft: '40px',
               borderColor: '#3f4d67',
             }}
           >
+            <option value="default" disabled>Select {label}</option>
             {options.map((option, index) => (
               <option key={index} value={option.id}>
                 {option.name}

@@ -113,6 +113,18 @@ const routes = [
 
       },{
         exact: 'true',
+        path: '/customers',
+        element: lazy(() => import('./views/customer/Index')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
+        path: '/add-Customer',
+        element: lazy(() => import('./views/customer/AddCustomer')),
+        allowedRoles:[1,2,3]
+
+      },{
+        exact: 'true',
         path: '/bank',
         element: lazy(() => import('./views/bank/Index')),
         allowedRoles:[1,2,3]
@@ -140,6 +152,11 @@ const routes = [
         exact: 'true',
         path: '/stocks',
         element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },{
+        exact: 'true',
+        path: '/available-stocks',
+        element: lazy(() => import('./views/stock/Available_Stock')),
         allowedRoles:[1,2,3]
       },
       {
@@ -170,6 +187,29 @@ const routes = [
         exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/shades',
+        element: lazy(() => import('./views/shades/Index')),
+        allowedRoles:[1,2,3]
+      },{
+        exact: 'true',
+        path: '/add-shades',
+        element: lazy(() => import('./views/shades/AddShade')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/all-stocks',
+        element: lazy(() => import('./views/stock/All_Stock')),
+        allowedRoles:[1,2,3]
+      },
+      {
+        exact: 'true',
+        path: '/invoice-out',
+        element: lazy(() => import('./views/stockOut/Invoice_out')),
         allowedRoles:[1,2,3]
       },
       {

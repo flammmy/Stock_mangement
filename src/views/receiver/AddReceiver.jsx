@@ -34,7 +34,7 @@ const AddReceiver = () => {
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
-    const statuses = ['Active✅', 'Inactive❌'];
+    const statuses = [{id:'0',name:'Operator'}, {id:'1',name:'Supplier'}]
 
     const handleChange = (e) => {
         const { name, value } = e.target;

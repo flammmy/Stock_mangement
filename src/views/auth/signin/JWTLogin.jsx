@@ -192,31 +192,30 @@ const JWTLogin = () => {
               {touched.password && errors.password && <small className="text-danger form-text" >{errors.password}</small>}
             </div>
 
-            <div className='input-cap' style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              marginBottom: '20px',
-              padding: '15px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-            }}>
-              <canvas
-                ref={canvasRef}
-                width="200"
-                className='int_dis_cap'
-                height="60"
-                style={{
-                  border: '2px solid #ccc',
-                  borderRadius: '5px',
-                  width:"130px"
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setIsLoading(true);
-                  setTimeout(() => {
+          {captchaError && (
+            <Col sm={12}>
+              <Alert variant="danger">{captchaError}</Alert>
+            </Col>
+          )}
+
+          {errors.submit && (
+            <Col sm={12}>
+              <Alert variant="danger">{errors.submit}</Alert>
+            </Col>
+          )}
+
+          <div>
+            <h2 className="heading" style={{ fontSize: '14px', width: '100%', textAlign: 'start' }}>
+              Captcha
+            </h2>
+            <div className="container">
+              <div className="wrapper">
+                <canvas ref={canvasRef} width="200" height="70"></canvas>
+                <button
+                  id="reload-button"
+                  type="button"
+                  onClick={() => {
+                    setUserCaptchaInput('');
                     initializeCaptcha(canvasRef.current.getContext('2d'));
                     setIsLoading(false);
                   }, 500);
@@ -244,8 +243,7 @@ const JWTLogin = () => {
                     strokeLinejoin="round"
                     width="24"
                     height="24"
-                    style={{ color: '#007bff' }}
-                    className='spin'
+                    style={{color:"black"}}
                   >
                     <polyline points="23 4 23 10 17 10"></polyline>
                     <path d="M20.49 15a9 9 0 1 1 2.13-9.36L23 10"></path>

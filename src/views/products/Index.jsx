@@ -8,8 +8,8 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+
+
 
 const SuppliersPage = () => {
   const [suppliers, setSuppliers] = useState([]); // Fixed variable name to setSuppliers
@@ -176,7 +176,6 @@ const SuppliersPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '80px',
     },
     {
       name: 'Supplier Name',
@@ -434,9 +433,9 @@ const SuppliersPage = () => {
     },
     headCells: {
       style: {
-        backgroundColor: '#FFFFFF',
-        color: 'black',
-        fontSize: '14px',
+        backgroundColor: '#20B2AA',
+        color: '#fff',
+        fontSize: '16px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
@@ -457,12 +456,6 @@ const SuppliersPage = () => {
       },
     },
   };
-
-
-  const paginatedSuppliers = filteredSuppliers.slice(
-    (currentPage - 1) * rowPerPage,
-    currentPage * rowPerPage
-  );
 
   return (
     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>

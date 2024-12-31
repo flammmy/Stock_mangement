@@ -3,18 +3,22 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd } from 'react-icons/md';
-import { FaEye } from "react-icons/fa";
+import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { FaEye, FaFileCsv } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import PdfPreview from 'components/PdfPreview';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]); // For search
   const [searchQuery, setSearchQuery] = useState(''); // Search query
-  const [selectedInvoices, setSelectedInvoices] = useState(null);
+  const [invoiceAllDetails, setInvoiceAllDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -26,7 +30,7 @@ const Index = () => {
           }
         });
         const invoicesDetails = response.data.data;
-
+        setInvoiceAllDetails(invoicesDetails);
         const filteredFields = (data) => {
           return invoicesDetails.map((invoice) => ({
             invoice_no: invoice.invoice_no,
@@ -57,7 +61,6 @@ const Index = () => {
         invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredInvoices(filtered);
-    console.log(filtered);
   }, [searchQuery, invoices]);
 
   const handleSearch = (e) => {
@@ -70,8 +73,7 @@ const Index = () => {
     {
       name: 'Invoice Number',
       selector: (row) => row.invoice_no,
-      sortable: true,
-      width: '80px'
+      sortable: true
     },
     {
       name: 'Supplier Name',
@@ -102,14 +104,25 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick = {() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
+          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
             <MdAdd />
           </Button>
-          <Button variant="outline-success" size="sm" className="me-2" >
+          <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
           </Button>
-          <Button variant="outline-danger" size="sm">
+          {/* <Button variant="outline-danger" size="sm">
             <MdDelete />
+          </Button> */}
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => {
+              setSelectedInvoice(row.id);
+              setShowPdfModal(true);
+              console.log(row.id);
+            }}
+          >
+            <MdPrint />
           </Button>
         </div>
       )
@@ -181,9 +194,9 @@ const Index = () => {
     },
     headCells: {
       style: {
-        backgroundColor: '#FFFFFF',
-        color: 'black',
-        fontSize: '14px',
+        backgroundColor: '#20B2AA',
+        color: '#fff',
+        fontSize: '16px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
@@ -203,6 +216,38 @@ const Index = () => {
         color: 'green',
       },
     },
+  };
+
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredSuppliers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'supplier_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 20, 10);
+    doc.autoTable({
+      head: [
+        [
+          'Invoice Number',
+          'Supplier Name',
+          'Receiver Name',
+          'Date',
+          'Bank',
+          'Total Amount',
+        ]
+      ],
+      body: filteredSuppliers.map((row) => [
+        row.invoice_no,
+        row.supplier_name,
+        row.receiver_name,
+        row.date,
+        row.bank,
+        row.total_amount,
+       
+      ])
+    });
+    doc.save('user_list.pdf');
   };
 
   return (
@@ -227,7 +272,7 @@ const Index = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -243,6 +288,16 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                <div className="d-flex justify-content-end">
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                    <FaFileCsv className="w-5 h-5 me-1" />
+                    Export as CSV
+                  </button>
+                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                    Export as PDF
+                  </button>
+                </div>
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}
@@ -258,6 +313,9 @@ const Index = () => {
           </div>
         </div>
       </div>
+      {invoiceAllDetails && selectedInvoice && (
+        <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+      )}
     </div>
   );
 };

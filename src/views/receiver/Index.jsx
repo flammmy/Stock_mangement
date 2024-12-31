@@ -7,13 +7,11 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 const ReceiversPage = () => {
   const [Receivers, setReceiver] = useState([]);
-  const [filteredReceivers, setFilteredReceiver] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredReceivers, setFilteredReceiver] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedReceiver, setselectedReceiver] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,8 +75,8 @@ const ReceiversPage = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
 
@@ -86,15 +84,11 @@ const ReceiversPage = () => {
 
       // Update state for both Receivers and filteredReceivers
       setReceiver((prevReceivers) =>
-        prevReceivers.map((receiver) =>
-          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
-        )
+        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
 
       setFilteredReceiver((prevFilteredReceivers) =>
-        prevFilteredReceivers.map((receiver) =>
-          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
-        )
+        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
     } catch (error) {
       toast.error('Failed to update status!');
@@ -108,12 +102,12 @@ const ReceiversPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/receiver`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response.data.data);
         setReceiver(response.data.data);
-        setFilteredReceiver(response.data.data); 
+        setFilteredReceiver(response.data.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -152,70 +146,69 @@ const ReceiversPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
-      width: '80px',
+      sortable: true
     },
     {
       name: 'Receiver Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Logo',
@@ -226,7 +219,7 @@ const ReceiversPage = () => {
           style={{ width: '50px', height: '50px', borderRadius: '50%' }}
         />
       ),
-      sortable: false,
+      sortable: false
     },
     {
       name: 'Status',
@@ -234,14 +227,15 @@ const ReceiversPage = () => {
       sortable: true,
       cell: (row) => (
         <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-          <div style={{ marginLeft: "45px", marginTop: "-4px" }}>
-            <span
-              className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-              style={{ padding: '5px 10px', borderRadius: '8px' }}
-            >
-              {row.status === 0 ? 'Active' : 'Inactive'}
-            </span>
+          <div style={{marginLeft:"45px",marginTop:"-4px"}}>
+          <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{ padding: '5px 10px', borderRadius: '8px' }}
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
           </div>
+           
           <input
             type="checkbox"
             checked={row.status === 0} // Active if 0
@@ -264,7 +258,7 @@ const ReceiversPage = () => {
           <span
             style={{
               position: 'absolute',
-              content: "",
+              content: '',
               height: '14px',
               width: '14px',
               left: row.status === 0 ? '18 px' : '3px',
@@ -280,15 +274,15 @@ const ReceiversPage = () => {
     {
       name: 'Action',
       cell: (row) => (
-        <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
-            <MdEdit />
-          </Button>
-          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
-            <MdDelete />
-          </Button>
-        </div>
-      ),
+                      <div className="d-flex">
+                        <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+                          <MdEdit />
+                        </Button>
+                        <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                          <MdDelete />
+                        </Button>
+                      </div>
+                    ),
     },
   ];
 
@@ -301,27 +295,36 @@ const ReceiversPage = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete it!'
       });
 
       if (result.isConfirmed) {
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
-
+  
+        // Update state on successful deletion
         setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
         setFilteredReceiver((prevFilteredReceivers) =>
           prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId)
         );
-
+  
         toast.success('Receiver deleted successfully');
         Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting Receiver:', error);
-      toast.error('An unexpected error occurred while deleting the Receiver.');
+  
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the Receiver.');
+      }
+  
+      // Display error notification in confirmation dialog
       Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
     }
   };
@@ -338,6 +341,7 @@ const ReceiversPage = () => {
         return;
       }
 
+      // Perform the API call
       const response = await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${selectedReceiver.id}`,
         selectedReceiver,
@@ -347,15 +351,17 @@ const ReceiversPage = () => {
             'Content-Type': 'application/json',
           },
         }
-      );
+      });
 
       if (response.status === 200) {
         toast.success('Receiver updated successfully!');
 
+        // Update the Receivers list
         setReceiver((prev) =>
           prev.map((sup) => (sup.id === selectedReceiver.id ? selectedReceiver : sup))
         );
 
+        // Update the filtered Receivers list
         setFilteredReceiver((prev) =>
           prev.map((sup) => (sup.id === selectedReceiver.id ? selectedReceiver : sup))
         );
@@ -370,7 +376,8 @@ const ReceiversPage = () => {
     }
   };
 
-  const handleAddUser  = () => {
+
+  const handleAddUser = () => {
     navigate('/add-Receiver');
   };
 
@@ -390,8 +397,8 @@ const ReceiversPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -400,9 +407,9 @@ const ReceiversPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -412,7 +419,6 @@ const ReceiversPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #ddd', // Add a right border to column headers
       },
     },
     cells: {
@@ -421,12 +427,12 @@ const ReceiversPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid #ddd', // Add a right border to cells
       },
     },
     pagination: {
       style: {
-        color: 'black',
+        backgroundColor: '#3f4d67',
+        color: '#fff',
         borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
@@ -438,6 +444,7 @@ const ReceiversPage = () => {
       },
     },
   };
+  
 
   return (
     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
@@ -453,7 +460,7 @@ const ReceiversPage = () => {
         <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
           <input
             type="text"
-            placeholder="Search here"
+            placeholder="Search..."
             id='search'
             value={searchQuery}
             onChange={handleSearch}
@@ -461,10 +468,8 @@ const ReceiversPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-
-        {/* Action Buttons */}
-        <div className="col-12 col-md-4 text-end" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-          <Button variant="primary" onClick={handleAddUser }>
+        <div className="col-md-8 text-end">
+          <Button variant="primary" onClick={handleAddUser}>
             <MdPersonAdd className="me-2" /> Add User
           </Button>
           <Button variant="success" onClick={downloadPDF} className="ms-2">
@@ -476,7 +481,23 @@ const ReceiversPage = () => {
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
+            {/* <div
+              className="card-header d-flex justify-content-between align-items-center"
+              style={{ backgroundColor: '#3f4d67', color: 'white' }}
+            >
+              <h2 className="m-0 text-white">Receivers Management</h2>
+            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredReceivers}
@@ -617,7 +638,7 @@ const ReceiversPage = () => {
                 <Form.Label>Status</Form.Label>
                 <Form.Select
                   name="status"
-                  value={selectedReceiver?.status || ''}
+                  value={selectedReceiver.status || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 >

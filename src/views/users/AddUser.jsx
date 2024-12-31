@@ -21,13 +21,11 @@ const AddUser = () => {
     phone: '',
     role: 'operator',
     password: '',
-    status: 'Active',
   });
 
   const navigate = useNavigate();
 
-  const roles = useMemo(() => [{id:'0',name:'Operator'}, {id:'0',name:'Supplier'}], []);
-  const statuses = useMemo(() => [{id:'0',name:'Active✅'}, {id:'0',name:'Inactive❌'}], []);
+  const roles = useMemo(() => [{id:'0',name:'Operator'}, {id:'1',name:'Supplier'}], []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +44,6 @@ const AddUser = () => {
           phone: formData.phone,
           role: formData.role === 'operator' ? 2 : 3,
           password: formData.password,
-          status: formData.status === 'Active✅' ? 1 : 0,
         },
         {
           headers: {
@@ -118,13 +115,7 @@ const AddUser = () => {
                       value={formData.email}
                       onChange={handleChange}
                     />
-                    <FormField
-                      icon={FaPhone}
-                      label="Phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
+                    
                   </Col>
                   <Col md={6}>
                     <FormField
@@ -144,13 +135,13 @@ const AddUser = () => {
                       onChange={handleChange}
                     />
                     <FormField
-                      icon={FaCheckCircle}
-                      label="Status"
-                      name="status"
-                      value={formData.status}
+                      icon={FaPhone}
+                      label="Phone"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleChange}
-                      options={statuses}
                     />
+                  
                   </Col>
                 </Row>
                 <Button
