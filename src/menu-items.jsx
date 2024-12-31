@@ -171,6 +171,18 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/invoice-out'
+            },{
+              id: 'invoice_out_index',
+              title: 'All Out Invoice',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/all-invoices-out'
+            },{
+              id: 'invoice_out_stock',
+              title: 'All Out Stock',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/all-out-stock'
             }
           ]
         }

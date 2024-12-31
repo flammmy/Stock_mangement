@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
@@ -13,6 +15,7 @@ const CustomersPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
+  const [filteredSuppliers, setFilteredSuppliers] = useState([]);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -20,8 +23,8 @@ const CustomersPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response);
         setCustomer(response.data.data);
@@ -61,69 +64,69 @@ const CustomersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Customer Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Status',
@@ -179,33 +182,47 @@ const CustomersPage = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => handleEdit(row)}
-          >
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
             <MdEdit />
           </Button>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => handleDelete(row.id)}
-          >
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
+  const handleToggleStatus = async (userId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      toast.success('Status updated successfully!');
+      setCustomer((prevCustomers) =>
+        prevCustomers.map((customer) =>
+          customer.id === userId ? { ...customer, status: updatedStatus } : customer
+        )
+      );
+    } catch (error) {
+      toast.error('Failed to update status!');
+    }
+  };
   const handleDelete = async (userId) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
 
       // Check if the response indicates success
@@ -221,41 +238,26 @@ const CustomersPage = () => {
       toast.error('Failed to delete user');
     }
   };
-
-  const handleEdit = (user) => {
-    setselectedCustomer(user);
-    setShowEditModal(true);
-  };
-  const handleUpdateUser = async () => {
+  const handleUpdateCustomer = async () => {
     try {
       if (!selectedCustomer || !selectedCustomer.id) {
         toast.error('Invalid Customer selected for update!');
         return;
       }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${selectedCustomer.id}`,
-        selectedCustomer,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      // Perform the API call
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${selectedCustomer.id}`, selectedCustomer, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
-      // Check the response status
+      });
       if (response.status === 200) {
         toast.success('Customer updated successfully!');
-
-        // Update the Customers list
-        setCustomer((prev) =>
-          prev.map((sup) => (sup.id === selectedCustomer.id ? selectedCustomer : sup))
-        );
+        setCustomer((prev) => prev.map((sup) => (sup.id === selectedCustomer.id ? selectedCustomer : sup)));
 
         // Update the filtered Customers list
-        setFilteredCustomer((prev) =>
-          prev.map((sup) => (sup.id === selectedCustomer.id ? selectedCustomer : sup))
-        );
+        setFilteredCustomer((prev) => prev.map((sup) => (sup.id === selectedCustomer.id ? selectedCustomer : sup)));
 
         // Close the modal
         setShowEditModal(false);
@@ -267,31 +269,11 @@ const CustomersPage = () => {
       toast.error('Error updating Customer!');
     }
   };
-  const handleToggleStatus = async (userId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      toast.success('Status updated successfully!');
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, status: updatedStatus } : user
-        )
-      );
-      
-    } catch (error) {
-      toast.error('Failed to update status!');
-    }
+  const handleEdit = (user) => {
+    setselectedCustomer(user);
+    setShowEditModal(true);
   };
-
+  
   const handleAddUser = () => {
     navigate('/add-Customer');
   };
@@ -303,7 +285,6 @@ const CustomersPage = () => {
     }));
   };
 
-
   const customStyles = {
     header: {
       style: {
@@ -312,8 +293,8 @@ const CustomersPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -322,9 +303,9 @@ const CustomersPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -333,31 +314,75 @@ const CustomersPage = () => {
         fontSize: '16px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
+  const exportToCSV = () => {
+      const csv = Papa.unparse(filteredSuppliers);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'supplier_list.csv');
+    };
+    const exportToPDF = () => {
+      const doc = new jsPDF('landscape');
+      doc.text('Suppliers List', 20, 10);
+      doc.autoTable({
+        head: [
+          [
+            'Customer Name',
+            'Code',
+            'GST No',
+            'CIN No',
+            'PAN No',
+            'MSME No',
+            'Phone',
+            'Email',
+            'Owner Mobile',
+            'Registered Address',
+            'Work Address',
+            'Area',
+            'Status'
+          ]
+        ],
+        body: filteredSuppliers.map((row) => [
+          row.name,
+          row.code,
+          row.gst_no,
+          row.cin_no,
+          row.pan_no,
+          row.msme_no,
+          row.tel_no,
+          row.email,
+          row.owner_mobile,
+          row.reg_address,
+          row.work_address,
+          row.area,
+          row.status === 1 ? 'Active' : 'Inactive'
+        ])
+      });
+      doc.save('user_list.pdf');
+    };
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -366,7 +391,7 @@ const CustomersPage = () => {
           <input
             type="text"
             placeholder="Search..."
-            id='search'
+            id="search"
             value={searchQuery}
             onChange={handleSearch}
             className="pe-5 ps-2 py-2"
@@ -382,7 +407,24 @@ const CustomersPage = () => {
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
+          <div className="card  border-0 shadow-none" style={{ background: '#f5f0e6' }}>
+            {/* <div
+              className="card-header d-flex justify-content-between align-items-center"
+              style={{ backgroundColor: '#3f4d67', color: 'white' }}
+            >
+              <h2 className="m-0 text-white">Customers Management</h2>
+            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredCustomers}
@@ -536,16 +578,15 @@ const CustomersPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser}>
+            <Button variant="success" onClick={handleUpdateCustomer}>
               Update
             </Button>
           </Modal.Footer>
         </Modal>
-
       )}
-    </div>
-  );
-};
-
+      </div>
+      </div>
+    );
+  };
 
 export default CustomersPage;

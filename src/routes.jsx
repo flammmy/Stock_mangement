@@ -211,6 +211,16 @@ const routes = [
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
         allowedRoles:[1,2,3]
+      },{
+        exact: 'true',
+        path: '/all-invoices-out',
+        element: lazy(() => import('./views/stockOut/Index')),
+        allowedRoles:[1,2,3]
+      },{
+        exact: 'true',
+        path: '/all-out-stock',
+        element: lazy(() => import('./views/stockOut/all_out_stock')),
+        allowedRoles:[1,2,3]
       },
       {
         exact: 'true',

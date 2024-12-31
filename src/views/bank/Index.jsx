@@ -10,11 +10,13 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const BanksPage = () => {
   const [Banks, setBank] = useState([]);
-  const [filteredBanks, setFilteredBank] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredBanks, setFilteredBank] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedBank, setselectedBank] = useState(null);
 
@@ -24,12 +26,12 @@ const BanksPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response);
         setBank(response.data.data);
-        setFilteredBank(response.data.data); 
+        setFilteredBank(response.data.data);
       } catch (error) {
         console.error(error);
       }
@@ -60,50 +62,41 @@ const BanksPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Bank Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'IFSC Code',
       selector: (row) => row.ifsc_code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Branch',
       selector: (row) => row.branch,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Account Number',
       selector: (row) => row.account_number,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => handleEdit(row)}
-          >
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
             <MdEdit />
           </Button>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => handleDelete(row.id)}
-          >
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
   const handleDelete = async (userId) => {
@@ -111,8 +104,8 @@ const BanksPage = () => {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.status === 200) {
@@ -140,27 +133,19 @@ const BanksPage = () => {
         return;
       }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${selectedBank.id}`,
-        selectedBank,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${selectedBank.id}`, selectedBank, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       if (response.status === 200) {
         toast.success('Bank updated successfully!');
 
-        setBank((prev) =>
-          prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup))
-        );
+        setBank((prev) => prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup)));
 
-        setFilteredBank((prev) =>
-          prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup))
-        );
+        setFilteredBank((prev) => prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup)));
 
         setShowEditModal(false);
       } else {
@@ -192,8 +177,8 @@ const BanksPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -202,9 +187,9 @@ const BanksPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -213,45 +198,45 @@ const BanksPage = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
-   const exportToCSV = () => {
-        const csv = Papa.unparse(filteredBanks);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, 'supplier_list.csv');
-      };
-      const exportToPDF = () => {
-        const doc = new jsPDF();
-        doc.text('Banks List', 20, 10);
-        doc.autoTable({
-          head: [['Bank Name', 'IFSC Code','Branch','Account Number']],
-          body: filteredBanks.map((row) => [row.name, row.ifsc_code, row.branch, row.account_number]),
-        });
-        doc.save('Banks_list.pdf');
-      };
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredBanks);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'supplier_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Banks List', 20, 10);
+    doc.autoTable({
+      head: [['Bank Name', 'IFSC Code', 'Branch', 'Account Number']],
+      body: filteredBanks.map((row) => [row.name, row.ifsc_code, row.branch, row.account_number])
+    });
+    doc.save('Banks_list.pdf');
+  };
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -260,7 +245,7 @@ const BanksPage = () => {
           <input
             type="text"
             placeholder="Search..."
-            id='search'
+            id="search"
             value={searchQuery}
             onChange={handleSearch}
             className="pe-5 ps-2 py-2"
@@ -277,11 +262,13 @@ const BanksPage = () => {
         <div className="col-12">
           <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-            <div className="d-flex justify-content-end">
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToCSV}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
                   Export as CSV
                 </button>
-                <button type="button" className="btn btn-sm btn-primary" onClick={exportToPDF}>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
                   Export as PDF
                 </button>
               </div>

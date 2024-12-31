@@ -8,7 +8,7 @@ import { FaEye, FaFileCsv } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import PdfPreview from 'components/PdfPreview';
+import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
@@ -23,28 +23,33 @@ const Index = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
+        console.log(response.data.data);
         const invoicesDetails = response.data.data;
         console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
+
         const filteredFields = (data) => {
-          return invoicesDetails.map((invoice) => ({
-            invoice_no: invoice.invoice_no,
-            id: invoice.id,
-            supplier_name: invoice.supplier.name,
-            receiver_name: invoice.receiver.name,
-            date: invoice.date,
-            bank: invoice.bank.account_number,
-            total_amount: invoice.total_amount
-          }));
-        };
-        setInvoices(filteredFields);
-        setFilteredInvoices(filteredFields); // Initialize filtered users
+            return data.map((invoice) => ({
+              invoice_no: invoice.invoice_no,
+              id: invoice.id,
+              supplier_name: invoice.customer?.name,
+              receiver_name: invoice.receiver?.name,
+              height: invoice.stock_out_details?.height,
+              date: invoice.date,
+              bank: invoice.payment_Bank,
+              payment_mode: invoice.payment_mode,
+              payment_status: invoice.payment_status,
+              total_amount: invoice.total_amount,
+            }));
+          };
+          setInvoices(filteredFields(invoicesDetails));
+          setFilteredInvoices(filteredFields(invoicesDetails));
       } catch (error) {
         console.error(error);
       } finally {
@@ -53,8 +58,6 @@ const Index = () => {
     };
     fetchInvoices();
   }, []);
-
-  //   Update filtered users when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = invoices.filter(
@@ -77,12 +80,12 @@ const Index = () => {
       sortable: true
     },
     {
-      name: 'Supplier Name',
+      name: 'Customer Name',
       selector: (row) => row.supplier_name,
       sortable: true
     },
     {
-      name: 'Receiver Name',
+      name: 'Supplier Name',
       selector: (row) => row.receiver_name,
       sortable: true
     },
@@ -105,14 +108,21 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
+          {/* <Button
+            variant="outline-warning"
+            size="sm"
+            className="me-2"
+            onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}
+          >
             <MdAdd />
-          </Button>
-          <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
-          </Button>
-          {/* <Button variant="outline-danger" size="sm">
-            <MdDelete />
+          </Button> */}
+          {/* <Button
+            variant="outline-success"
+            size="sm"
+            className="me-2"
+            onClick={() => navigate(`/show-product/${row.id}`)}
+          >
+            <FaEye />
           </Button> */}
           <Button
             variant="outline-primary"
@@ -129,48 +139,10 @@ const Index = () => {
       )
     }
   ];
-
-  //   const handleUpdateUser = async () => {
-  //     try {
-  //       console.log(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`);
-  //       const response = await axios.put(
-  //         `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`,
-  //         {
-  //           username: selectedUser.username,
-  //           name: selectedUser.name,
-  //           email: selectedUser.email,
-  //           phone: selectedUser.phone,
-  //           role: selectedUser.role == 'operator' ? 2 : 3,
-  //           password: selectedUser.password,
-  //           status: selectedUser.status == 'active' ? 1 : 0
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //             'Content-Type': 'application/json'
-  //           }
-  //         }
-  //       );
-  //       toast.success('User updated successfully!');
-  //       setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user)));
-
-  //       setShowEditModal(false);
-  //     } catch (err) {
-  //       toast.error('Error updating user!');
-  //     }
-  //   };
-
+  
   const handleAddInvoice = () => {
-    navigate('/add-invoice');
+    navigate('/invoice-out');
   };
-  //   const handleChange = (e) => {
-  //     const { name, value } = e.target;
-  //     setSelectedInvoices((prevInvoice) => ({
-  //       ...prevInvoice,
-  //       [name]: value
-  //     }));
-  //   };
-
   const customStyles = {
     header: {
       style: {
@@ -227,32 +199,31 @@ const Index = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
+    const csv = Papa.unparse(filteredInvoices);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'supplier_list.csv');
   };
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
+    doc.text('Customers List', 20, 10);
     doc.autoTable({
       head: [
         [
           'Invoice Number',
+          'Customer Name',
           'Supplier Name',
-          'Receiver Name',
           'Date',
           'Bank',
           'Total Amount',
         ]
       ],
-      body: filteredSuppliers.map((row) => [
+      body: filteredInvoices.map((row) => [
         row.invoice_no,
         row.supplier_name,
         row.receiver_name,
         row.date,
         row.bank,
-        row.total_amount,
-       
+        row.total_amount,        
       ])
     });
     doc.save('user_list.pdf');

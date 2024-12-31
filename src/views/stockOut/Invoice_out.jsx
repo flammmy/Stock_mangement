@@ -26,28 +26,39 @@ import FormField from '../../components/FormField';
 
 const Invoice_out = () => {
   const [formData, setFormData] = useState({
+    invoice_no: '',
+    date: '',
+    customer_id: '',
+    receiver_id: '',
     place_of_supply: '',
-    receiver_id: '1',
-    supplier_id: '1',
-    date: undefined,
-    irn: '',
-    ack_no: '',
-    ack_date: undefined,
     vehicle_no: '',
     station: '',
     ewaybill: '',
+    reverse_charge: false,
     gr_rr: '',
     transport: '',
-    reverse_charge: '',
-    bank_id: '',
+    irn: '',
+    ack_no: '',
+    ack_date: '',
+    total_amount: '',
+    cgst_percentage: '',
+    sgst_percentage: '',
+    payment_mode: '',
+    payment_status: '',
+    payment_date: '',
+    payment_bank: '',
+    payment_account_no: '',
+    payment_ref_no: '',
+    payment_amount: '',
+    payment_remarks: '',
     qr_code: '',
-    products: []
+    out_products: []
   });
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
   const [receivers, setReceivers] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [banks, setBanks] = useState([]);
   const [shadeNo, setShadeNo] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -113,21 +124,20 @@ const Invoice_out = () => {
   }, []);
 
   useEffect(() => {
-    const fetchSupplierData = async () => {
+    const fetchCustomerData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supplier`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        setSuppliers(response.data.data);
-        // console.log(response.data.data);
+        setCustomers(response.data.data);
       } catch (err) {
         console.log(err);
       }
     };
-    fetchSupplierData();
+    fetchCustomerData();
   }, []);
   useEffect(() => {
     const fetchReceiverData = async () => {
@@ -154,16 +164,31 @@ const Invoice_out = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleInputChange = (id, field, value) => {
+    // Update selectedRows
+    setSelectedRows((prevSelectedRows) => {
+      const updatedRows = prevSelectedRows.map((row) => (row.stock_available_id === id ? { ...row, [field]: value } : row));
+
+      // Sync formData.out_products with updatedRows
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows
+      }));
+
+      return updatedRows;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      toast.success('Invoice added successfully');
+      toast.success('Stocks out successfully');
       // navigate('/users');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
@@ -178,26 +203,33 @@ const Invoice_out = () => {
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'width', label: 'Width' },
-    { id: 'length', label: 'Length' },
+    { id: 'out_width', label: 'Width' },
+    { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
     { id: 'area_sq_ft', label: 'Area(sqft)' },
     { id: 'type', label: 'Type' },
-    { id: 'qty', label: 'Quantity' }
+    { id: 'out_quantity', label: 'Quantity' }
   ];
 
   const handleCheckboxChange = (id) => {
+    // console.log(id)
+    // console.log(selectedRows)
     setSelectedRows((prevSelected) => {
-      const isAlreadySelected = prevSelected.some((row) => row.id === id);
+      const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
 
-      if (isAlreadySelected) {
-        // Deselect: Remove the row from the selected rows
-        return prevSelected.filter((row) => row.id !== id);
-      } else {
-        // Select: Add the row to the selected rows
-        const newRow = products.find((p) => p.id === id);
-        return [...prevSelected, newRow];
-      }
+      const updatedSelectedRows = isAlreadySelected
+        ? prevSelected.filter((row) => row.stock_available_id !== id) // Deselect: Remove the row
+        : [...prevSelected, products.find((p) => p.stock_available_id === id)]; // Select: Add the row
+
+      console.log(updatedSelectedRows);
+
+      // Update formData's out_products array
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedSelectedRows // Sync with selectedRows
+      }));
+
+      return updatedSelectedRows;
     });
   };
 
@@ -240,12 +272,12 @@ const Invoice_out = () => {
                     />
                     <FormField
                       icon={FaUser}
-                      label="Supplier"
-                      name="supplier_id"
-                      value={formData.supplier_id}
+                      label="Customer"
+                      name="customer_id"
+                      value={formData.customer_id}
                       onChange={handleChange}
-                      options={suppliers}
-                      add={'/add-Supplier'}
+                      options={customers}
+                      add={'/add-Customer'}
                     />
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
                     <FormField
@@ -264,6 +296,30 @@ const Invoice_out = () => {
                       options={receivers}
                       add={'/add-Receiver'}
                     />
+                    
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Mode"
+                      name="payment_mode"
+                      value={formData.payment_mode}
+                      onChange={handleChange}
+                      options={[{id:'cash', name:'cash'},{id:'card', name:'card'},{id:'online', name:'online'},{id:'cheque', name:'cheque'},{id:'other', name:'other'}]}
+                    />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Amount"
+                      name="payment_amount"
+                      value={formData.payment_amount}
+                      onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Status"
+                      name="payment_status"
+                      value={formData.payment_status}
+                      onChange={handleChange}
+                      options={[{id:'paid', name:'paid'},{id:'pending', name:'pending'},{id:'failed', name:'failed'}]}
+                    />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
@@ -271,6 +327,8 @@ const Invoice_out = () => {
                     <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
                     <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
                     <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
+                    <FormField icon={FaMoneyBillWave} label="QR Code" name="qr_code" value={formData.qr_code} onChange={handleChange} />
+                    <FormField icon={FaMoneyBillWave} label="Payment Bank" name="payment_bank" value={formData.payment_bank} onChange={handleChange} />
                   </Col>
 
                   <Col md={4}>
@@ -282,15 +340,37 @@ const Invoice_out = () => {
                       name="reverse_charge"
                       value={formData.reverse_charge}
                       onChange={handleChange}
+                      options={[{id:1, name:'true'},{id:0, name:'false'}]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
-                      label="Bank"
-                      name="bank_id"
-                      value={formData.bank}
+                      label="Payment A/C no"
+                      name="payment_account_no"
+                      value={formData.payment_account_no}
                       onChange={handleChange}
-                      options={banks}
-                      add={'/add-Bank'}
+                    />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Ref No"
+                      name="payment_ref_no"
+                      value={formData.payment_ref_no}
+                      onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      type='date'
+                      label="Payment Date"
+                      name="payment_date"
+                      value={formData.payment_date}
+                      onChange={handleChange}
+                    />
+
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Remark"
+                      name="payment_remarks"
+                      value={formData.payment_remarks}
+                      onChange={handleChange}
                     />
                   </Col>
                 </Row>
@@ -345,7 +425,7 @@ const Invoice_out = () => {
                                       {/* Empty header for checkbox column */}
                                       <input
                                         type="checkbox"
-                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.id) : [])}
+                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.stock_available_id) : [])}
                                         // checked={selectedRows.length === products.length}
                                       />
                                     </th>
@@ -358,9 +438,9 @@ const Invoice_out = () => {
                                 </thead>
                                 <tbody>
                                   {products.map((row) => (
-                                    <tr key={row.id}>
+                                    <tr key={row.stock_available_id}>
                                       <td>
-                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.id)} />
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
                                       </td>
                                       {columns.map((column) => (
                                         <td key={column.id}>{row[column.id]}</td>
@@ -391,50 +471,87 @@ const Invoice_out = () => {
                               </thead>
                               <tbody>
                                 {selectedRows.map((row) => (
-                                  <tr key={row.id}>
-                                    {/* {columns.map((column) => (
-                                      <td key={column.id}>
-                                        <input type="text" value={row[column.id]}/>
-                                      </td>
-                                    ))} */}
-
-                                    <td key="shadeNo"> {row.product_shadeNo}</td>
-                                    <td key="pur_shadeNo"> {row.product_shadeNo}</td>
+                                  <tr key={row.stock_available_id}>
+                                    <td key="shadeNo">{row.product_shadeNo}</td>
+                                    <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">
-                                      <input type="text" />
+                                      <input
+                                        type="text"
+                                        value={row.lot_no || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
+                                      />
                                     </td>
                                     <td key="width">
-                                    <input type="text"  placeholder={`max: ${row.width}`} max={Number(row.width)} />
-
+                                      <input
+                                        type="text"
+                                        max={Number(row.out_width)}
+                                        value={row.out_width || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
+                                      />
                                     </td>
                                     <td key="length">
-                                      <input type="text"  placeholder={`max: ${row.length}`} max={Number(row.length)}/>
+                                      <input
+                                        type="text"
+                                        max={Number(row.out_length)}
+                                        value={row.out_length || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
+                                      />
                                     </td>
                                     <td key="unit">
-                                      <select className='form-control' style={{width:'5rem',paddingInline:'10px'}} >
-                                        <option value="" disabled selected>Select</option>
+                                      <select
+                                        className="form-control"
+                                        style={{ width: '5rem', paddingInline: '10px' }}
+                                        value={row.unit || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'unit', e.target.value)}
+                                      >
+                                        <option value="" disabled>
+                                          Select
+                                        </option>
                                         <option value="meter">meter</option>
-                                        <option value="milimeter">milimeter</option>
+                                        <option value="inches">inches</option>
                                       </select>
                                     </td>
                                     <td key="area">
-                                      <input type="text" />
+                                      <input
+                                        type="text"
+                                        value={row.area || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'area', e.target.value)}
+                                      />
                                     </td>
                                     <td key="type">
-                                    <select className='form-control' style={{width:'5rem',paddingInline:'10px'}}>
-                                        <option value="" disabled selected>Select</option>
+                                      <select
+                                        className="form-control"
+                                        style={{ width: '5rem', paddingInline: '10px' }}
+                                        value={row.product_type || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'product_type', e.target.value)}
+                                      >
+                                        <option value="" disabled>
+                                          Select
+                                        </option>
                                         <option value="roll">Roll</option>
                                         <option value="box">Box</option>
                                       </select>
                                     </td>
                                     <td key="qty">
-                                      <input type="text" placeholder={`max: ${row.qty}`} />
+                                      <input
+                                        type="text"
+                                        value={row.out_quantity || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
+                                      />
                                     </td>
                                     <td key="rate">
-                                      <input type="text" />
+                                      <input
+                                        type="text"
+                                        value={row.rate || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'rate', e.target.value)}
+                                      />
                                     </td>
                                     <td key="amount">
-                                      <input type="text" />
+                                      <input
+                                        type="text"
+                                        value={row.amount || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'amount', e.target.value)}
+                                      />
                                     </td>
                                   </tr>
                                 ))}
@@ -496,7 +613,7 @@ const Invoice_out = () => {
                     width: '10rem'
                   }}
                 >
-                  <FaUserPlus className="me-2" /> Add Invoice
+                  <FaUserPlus className="me-2" /> Stock out
                 </Button>
               </Form>
             </Card.Body>

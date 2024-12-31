@@ -79,7 +79,7 @@ const Signin1 = () => {
         </div>
         <div className="auth-image">
           <div className='d-flex-flex-column'>
-            <h1 className='text-decoration-underline auth-heading'>The Stocks</h1>
+            <h1 className='text-decoration-underline auth-heading' style={{width:"100%",textAlign:"center"}}>The Stocks</h1>
             <img src={Bg} alt="" />
           </div>
           <div className="auth-content">
