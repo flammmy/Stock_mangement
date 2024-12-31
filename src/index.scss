@@ -282,7 +282,7 @@ td {
   width: 65vw;
   display: flex;
   justify-content: center;
-  height: 83vh;
+  height: 77vh;
   gap: 5rem;
   align-items: center;
   background-color: #ffffff19;
@@ -309,6 +309,9 @@ td {
   .me-2{
     font-size: 18px;
   }
+  .input-cap{
+    display: grid !important;
+  }
   
 }
 
@@ -324,4 +327,52 @@ td {
   .col-md-4{
     margin-top: 20px;
   }
+}
+
+.Capt{
+  margin-left: 2px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.textt {
+  width: 60%;
+  height: 30px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f4f7fa;
+}
+
+.captcha-box {
+  background-color: #f4f7fa;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px 0px 0px 5px;
+  height: 40px;
+  width: 80%;
+  
+}
+
+.validate-btn{
+  font-weight: 800;
+  border: none;
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.vale {
+  display: flex;
+  gap: 50px;
+}
+
+.regenerate-btn{
+  border: none;
+  background-color: none ;
+  margin: auto;
+  background-color: none !important;
+  
+  
 }
