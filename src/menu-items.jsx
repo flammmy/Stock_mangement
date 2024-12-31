@@ -27,39 +27,46 @@ const menuItems = {
           id: 'Users',
           title: 'People',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'feather icon-users',
           children: [
             {
               id: 'users',
               title: 'Users',
-              icon: 'feather icon-home',
+              icon: 'feather icon-user',
               type: 'item',
               url: '/users'
             },{
               id: 'suppliers',
               title: 'Suppliers',
-              icon: 'feather icon-home',
+              icon: 'feather icon-share-2',
               type: 'item',
               url: '/supplier'
             },
             {
               id: 'receivers',
               title: 'Receivers',
-              icon: 'feather icon-home',
+              icon: 'feather icon-users',
               type: 'item',
               url: '/receiver'
+            },
+            {
+              id: 'customers',
+              title: 'Customers',
+              icon: 'feather icon-user-check',
+              type: 'item',
+              url: '/customers'
             },{
               id: 'banks',
               title: 'Banks',
-              icon: 'feather icon-home',
+              icon: 'feather icon-credit-card',
               type: 'item',
               url: '/bank'
             },{
               id: 'Products',
               title: 'Products',
-              icon: 'feather icon-home',
+              icon: 'feather icon-package',
               type: 'item',
-              url: '/products'
+              url: '/shades'
             }
             //,{
             //   id: 'button',
@@ -101,31 +108,69 @@ const menuItems = {
         }
       ]
     },
+    
     {
-      id: 'stock',
-      title: 'Stock',
+      id: 'stockin',
+      title: 'Stock In',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocks',
-          title: 'Stocks',
+          title: 'Stocks In',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
             {
               id: 'list_stock',
               title: 'List',
-              icon: 'feather icon-home',
+              icon: 'feather icon-list',
               type: 'item',
               url: '/invoices'
             },
             {
               id: 'add_invoice',
               title: 'Add Invoice',
-              icon: 'feather icon-home',
+              icon: 'feather icon-file-plus',
               type: 'item',
               url: '/add-invoice'
+            }, {
+              id: 'all_stocks',
+              title: 'Purchase Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/all-stocks'
+            },
+            {
+              id: 'Available_stocks',
+              title: 'Available Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/available-stocks'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'stockout',
+      title: 'Stock Out',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'stocksout',
+          title: 'Stocks Out',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+           
+            {
+              id: 'invoice_out',
+              title: 'Invoice',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/invoice-out'
             }
           ]
         }

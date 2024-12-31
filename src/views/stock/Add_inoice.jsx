@@ -129,7 +129,7 @@ const Add_inoice = () => {
 
   const [receivers, setReceivers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
-  const [banks, setBanks] = useState([{ id: '', name: 'Select a bank' }]);
+  const [banks, setBanks] = useState([]);
 
   useEffect(() => {
     const fetchBanksData = async () => {
@@ -140,7 +140,7 @@ const Add_inoice = () => {
             'Content-Type': 'application/json'
           }
         });
-        setBanks([...banks, ...response.data.data]);
+        setBanks(response.data.data);
       } catch (err) {
         console.log(err);
       }
@@ -151,7 +151,7 @@ const Add_inoice = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -222,6 +222,7 @@ const Add_inoice = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
+      
     }
 
     console.log(formData);
@@ -271,6 +272,7 @@ const Add_inoice = () => {
                       value={formData.supplier_id}
                       onChange={handleChange}
                       options={suppliers}
+                      add={'/add-Supplier'}
                     />
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
                     <FormField
@@ -287,6 +289,8 @@ const Add_inoice = () => {
                       value={formData.receiver_id}
                       onChange={handleChange}
                       options={receivers}
+                      add={'/add-Receiver'}
+
                     />
                   </Col>
                   <Col md={4}>
@@ -315,6 +319,8 @@ const Add_inoice = () => {
                       value={formData.bank}
                       onChange={handleChange}
                       options={banks}
+                      add={'/add-Bank'}
+
                     />
                   </Col>
                 </Row>
@@ -329,13 +335,13 @@ const Add_inoice = () => {
                   <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset'}}>
                     <thead >
                       <tr className='text-white'>
-                        <th>Shade Number</th>
+                        <th>&nbsp;&nbsp;Shade Number&nbsp;&nbsp;</th>
                         <th>Pur. Shade No</th>
                         <th>Total Product</th>
-                        <th>Product Type</th>
+                        <th>&nbsp;&nbsp;Product Type&nbsp;&nbsp;</th>
                         <th>HSN/SAC</th>
                         <th>Quantity</th>
-                        <th>Unit</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th>Rate</th>
                         <th>Amount</th>
                         <th>Actions</th>

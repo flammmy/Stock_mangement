@@ -66,6 +66,7 @@ const ForgotPassword = () => {
             variant="primary"
             disabled={isSubmitting}
             className="btn-block"
+            style={{width:"40px !important"}}
           >
             {isSubmitting ? 'Sending...' : 'Send Reset Link'}
           </Button>

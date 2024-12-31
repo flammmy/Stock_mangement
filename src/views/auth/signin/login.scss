@@ -1,16 +1,18 @@
-
-.wrapper {
+/* Default styles */
+.container {
+    // display: flex;
+    // justify-content: space-between;
+    margin: 10px 0;
+  }
+  
+  .wrapper {
     display: flex;
     align-content: center;
-    margin: 1em 0;
-}
-
-canvas {
-    // border: 2px solid crimson;
-    // border-radius: 20px;
-}
-
-button#reload-button {
+    // border: 1.5px solid;
+    width: 280px;
+    height: 45px;
+  }
+  button#reload-button {
     font-size: 14px;
     width: 60px;
     background-color: crimson;
@@ -20,9 +22,9 @@ button#reload-button {
     border-radius: 0.4em;
     color: #ffffff;
     margin-top: 10px;
-}
-
-button#reload-button:hover {
+  }
+  
+  button#reload-button:hover {
     background-color: rgb(46, 153, 46);
 }
 
@@ -45,8 +47,8 @@ button#submit-button {
     border-radius: 0.4em;
     background-color: green;
     cursor: pointer;
-}
-
-button#submit-button:hover {
+  }
+  
+  button#submit-button:hover {
     background-color: rgb(53, 175, 53);
 }

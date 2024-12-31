@@ -5,116 +5,53 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-const BanksPage = () => {
-  const [Banks, setBank] = useState([]);
-  const [filteredBanks, setFilteredBank] = useState([]);
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
+
+const ProductsPage = () => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedBank, setselectedBank] = useState(null);
-   const [loading, setLoading] = useState(true);
-  
-   const downloadPDF = () => {
-    if (!filteredBanks || filteredBanks.length === 0) {
-      toast.error("No bank data available to download.");
-      return;
-    }
-  
-    const doc = new jsPDF('landscape');
-    const tableColumn = [
-      "Sr No",
-      "Bank Name",
-      "IFSC Code",
-      "Branch",
-      "Account Number",
-    ];
-  
-    const tableRows = [];
-  
-    filteredBanks.forEach((bank, index) => {
-      const bankData = [
-        index + 1,
-        bank.name,
-        bank.ifsc_code,
-        bank.branch,
-        bank.account_number,
-      ];
-      tableRows.push(bankData);
-    });
-  
-    doc.text("Bank Data", 14, 10);
-  
-    // Use autoTable to generate the table with specific settings to ensure full-page usage
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      theme: "grid",
-      styles: {
-        fontSize: 10, // Medium font size for readability
-        cellPadding: 6, // More padding for clearer cell spacing
-      },
-      headStyles: {
-        fillColor: [46, 139, 87], // Green header color
-        textColor: 255, // White text for the header
-        fontSize: 12, // Slightly larger header font size
-      },
-      columnStyles: {
-        0: { cellWidth: 'auto' }, // Auto width for the first column (Sr No)
-        1: { cellWidth: 'auto' }, // Auto width for the second column (Bank Name)
-        2: { cellWidth: 'auto' }, // Auto width for the third column (IFSC Code)
-        3: { cellWidth: 'auto' }, // Auto width for the fourth column (Branch)
-        4: { cellWidth: 'auto' }, // Auto width for the fifth column (Account Number)
-      },
-      margin: { top: 20, left: 10, right: 10, bottom: 10 }, // Ensure no clipping and use more space
-      pageBreak: "auto",
-      showHead: "everyPage", // Show the header on every page if the table spans multiple pages
-      tableLineColor: [0, 0, 0], // Black table borders
-      tableLineWidth: 0.1, // Thin borders for cells
-      useCss: true, // Use CSS styles for better formatting
-      columnWidth: 'auto', // Let the columns automatically adjust to their content
-      autoSize: true, // Allow the content to fit the width of the page dynamically
-    });
-  
-    // Save the PDF with the updated layout
-    doc.save("Bank_data.pdf");
-  };
-  
-  
-  
-    
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    const fetchBank = async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        console.log(response);
-        setBank(response.data.data);
-        setFilteredBank(response.data.data);
+        setProducts(response.data.data);
+        setFilteredProducts(response.data.data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching products:', error);
       }
     };
-    fetchBank();
+    fetchProducts();
   }, []);
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = Banks.filter((Bank) => {
+    const filtered = products.filter((product) => {
       return (
-        Bank.name.toLowerCase().includes(lowercasedQuery) ||
-        Bank.ifsc_code.toLowerCase().includes(lowercasedQuery) ||
-        Bank.branch.toLowerCase().includes(lowercasedQuery) ||
-        Bank.account_number.toLowerCase().includes(lowercasedQuery)
+        product.name.toLowerCase().includes(lowercasedQuery) ||
+        product.shadeNo.toLowerCase().includes(lowercasedQuery) ||
+        product.code.toLowerCase().includes(lowercasedQuery) ||
+        product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)
       );
     });
-    setFilteredBank(filtered);
-  }, [searchQuery, Banks]);
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -129,24 +66,28 @@ const BanksPage = () => {
       sortable: true
     },
     {
-      name: 'Bank Name',
-      selector: (row) => row.name,
+      name: 'Shade No',
+      selector: (row) => row.shadeNo,
       sortable: true
     },
     {
-      name: 'IFSC Code',
-      selector: (row) => row.ifsc_code,
+      name: 'Code',
+      selector: (row) => row.code,
       sortable: true
     },
     {
-      name: 'Branch',
-      selector: (row) => row.branch,
+      name: 'Purchase Shade No',
+      selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
-      name: 'Account Number',
-      selector: (row) => row.account_number,
-      sortable: true
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      sortable: true,
+      cell: (row) => {
+        const statusText = row.status === 1 ? 'active' : 'inactive';
+        return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
+      }
     },
     {
       name: 'Action',
@@ -163,9 +104,9 @@ const BanksPage = () => {
     }
   ];
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async (productId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${userId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -173,31 +114,31 @@ const BanksPage = () => {
       });
 
       if (response.status === 200) {
-        toast.success('Bank deleted successfully');
-        setBank(Banks.filter((user) => user.id !== userId));
-        setFilteredBank(filteredBanks.filter((user) => user.id !== userId));
+        toast.success('Product deleted successfully');
+        setProducts(products.filter((product) => product.id !== productId));
+        setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to delete bank');
+      toast.error('Failed to delete product');
     }
   };
 
-  const handleEdit = (user) => {
-    setselectedBank(user);
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
     setShowEditModal(true);
   };
 
-  const handleUpdateBank = async () => {
+  const handleUpdateProduct = async () => {
     try {
-      if (!selectedBank || !selectedBank.id) {
-        toast.error('Invalid Bank selected for update!');
+      if (!selectedProduct || !selectedProduct.id) {
+        toast.error('Invalid product selected for update!');
         return;
       }
 
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/admin/bank/${selectedBank.id}`, selectedBank, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/products/${selectedProduct.id}`, selectedProduct, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -205,30 +146,27 @@ const BanksPage = () => {
       });
 
       if (response.status === 200) {
-        toast.success('Bank updated successfully!');
-
-        setBank((prev) => prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup)));
-
-        setFilteredBank((prev) => prev.map((sup) => (sup.id === selectedBank.id ? selectedBank : sup)));
-
+        toast.success('Product updated successfully!');
+        setProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod)));
+        setFilteredProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod)));
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error('Error during update:', error);
-      toast.error('Error updating Bank!');
+      toast.error('Error updating product!');
     }
   };
 
-  const handleAddBank = () => {
-    navigate('/add-Bank');
+  const handleAddProduct = () => {
+    navigate('/add-shades');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedBank((prevBank) => ({
-      ...prevBank,
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
       [name]: value
     }));
   };
@@ -259,38 +197,51 @@ const BanksPage = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '16px',
+        fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
-      },
+        padding: '15px'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px',
-      },
+        padding: '12px'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
 
-
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredProducts);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'Products_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Banks List', 20, 10);
+    doc.autoTable({
+      head: [['Shade No', 'Code', 'Purchase Shade No', 'Status']],
+      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
+    });
+    doc.save('Products_list.pdf');
+  };
   return (
-    <div className="container-fluid pt-4 " style={{ borderRadius: '8px' }}>
+    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -304,11 +255,8 @@ const BanksPage = () => {
           />
         </div>
         <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddBank}>
-            <MdPersonAdd className="me-2" /> Add Bank
-          </Button>
-          <Button variant="success" onClick={downloadPDF} className="ms-2"> 
-          Download PDF
+          <Button variant="primary" onClick={handleAddProduct}>
+            <MdPersonAdd className="me-2" /> Add Product
           </Button>
         </div>
       </div>
@@ -328,7 +276,7 @@ const BanksPage = () => {
               </div>
               <DataTable
                 columns={columns}
-                data={filteredBanks}
+                data={filteredProducts} // Use filteredProducts
                 pagination
                 highlightOnHover
                 striped
@@ -340,55 +288,64 @@ const BanksPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Product Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
-            <Modal.Title className="text-white">Edit Bank</Modal.Title>
+            <Modal.Title className="text-white">Edit Product</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
               <Form.Group className="mb-3">
-                <Form.Label>Bank Name</Form.Label>
+                <Form.Label>Product Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
-                  value={selectedBank.name || ''}
+                  value={selectedProduct.name || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>IFSC Code</Form.Label>
+                <Form.Label>Shade No</Form.Label>
                 <Form.Control
                   type="text"
-                  name="ifsc_code"
-                  value={selectedBank.ifsc_code || ''}
+                  name="shadeNo"
+                  value={selectedProduct.shadeNo || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Branch</Form.Label>
+                <Form.Label>Code</Form.Label>
                 <Form.Control
                   type="text"
-                  name="branch"
-                  value={selectedBank.branch || ''}
+                  name="code"
+                  value={selectedProduct.code || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Account Number</Form.Label>
+                <Form.Label>Purchase Shade No</Form.Label>
                 <Form.Control
                   type="text"
-                  name="account_number"
-                  value={selectedBank.account_number || ''}
+                  name="purchase_shade_no"
+                  value={selectedProduct.purchase_shade_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Status</Form.Label>
+                <Form.Select name="status" value={selectedProduct.status || ''} onChange={handleChange} className="bg-white shadow-sm">
+                  <option value={1}>Active</option>
+                  <option value={0}>Inactive</option>
+                </Form.Select>
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -396,7 +353,7 @@ const BanksPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateBank}>
+            <Button variant="success" onClick={handleUpdateProduct}>
               Update
             </Button>
           </Modal.Footer>
@@ -406,4 +363,4 @@ const BanksPage = () => {
   );
 };
 
-export default BanksPage;
+export default ProductsPage;

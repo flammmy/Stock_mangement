@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -10,17 +10,64 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const ReceiversPage = () => {
   const [Receivers, setReceiver] = useState([]);
-  const [filteredReceivers, setFilteredReceiver] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredReceivers, setFilteredReceiver] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedReceiver, setselectedReceiver] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [rowPerPage, setRowPerPage] = useState(25); // Default row per page set to 25
+  const [currentPage, setCurrentPage] = useState(1); // Added currentPage state
+  const [entriesPerPage, setEntriesPerPage] = useState('select'); // Added entriesPerPage state
+
+  const downloadPDF = () => {
+    const doc = new jsPDF('landscape');
+    const tableColumn = [
+      'Sr No',
+      'Name',
+      'Code',
+      'GST No',
+      'CIN No',
+      'PAN No',
+      'MSME No',
+      'Phone',
+      'Email',
+      'Owner Mobile',
+      'Registered Address',
+      'Work Address',
+      'Area',
+      'Status',
+    ];
+    const tableRows = filteredReceivers.map((receiver, index) => [
+      index + 1,
+      receiver.name,
+      receiver.code,
+      receiver.gst_no,
+      receiver.cin_no,
+      receiver.pan_no,
+      receiver.msme_no,
+      receiver.tel_no,
+      receiver.email,
+      receiver.owner_mobile,
+      receiver.reg_address.replace('\n', ', '),
+      receiver.work_address.replace('\n', ', '),
+      receiver.area,
+      receiver.status === 0 ? 'Active' : 'Inactive',
+    ]);
+
+    doc.text('Receivers Data', 14, 10);
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 15,
+      theme: 'grid',
+    });
+    doc.save('receivers_data.pdf');
+  };
 
   const handleToggleStatus = async (receiverId, currentStatus) => {
     try {
       const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-  
+
       // Make the API call to update status
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
@@ -28,31 +75,26 @@ const ReceiversPage = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
-  
+
       toast.success('Status updated successfully!');
-  
+
       // Update state for both Receivers and filteredReceivers
       setReceiver((prevReceivers) =>
-        prevReceivers.map((receiver) =>
-          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
-        )
+        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
-  
+
       setFilteredReceiver((prevFilteredReceivers) =>
-        prevFilteredReceivers.map((receiver) =>
-          receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver
-        )
+        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
     } catch (error) {
       toast.error('Failed to update status!');
       console.error(error);
     }
   };
-  
 
   useEffect(() => {
     const fetchReceiver = async () => {
@@ -60,16 +102,15 @@ const ReceiversPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/receiver`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response.data.data);
         setReceiver(response.data.data);
-        setFilteredReceiver(response.data.data); 
+        setFilteredReceiver(response.data.data);
       } catch (error) {
         console.error(error);
-      }
-      finally {
+      } finally {
         setLoading(false); // Stop loading
       }
     };
@@ -80,7 +121,7 @@ const ReceiversPage = () => {
   // Update filtered Receivers when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = Receivers.filter((Receiver) => {
+    const filtered = Receivers .filter((Receiver) => {
       const statusText = Receiver.status === 1 ? 'active' : 'inactive';
       return (
         Receiver.name.toLowerCase().includes(lowercasedQuery) ||
@@ -105,88 +146,86 @@ const ReceiversPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
-      width: '80px',
+      sortable: true
     },
     {
       name: 'Receiver Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Logo',
       cell: (row) => (
         <img
-        src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
+          src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
           alt={`${row.name} logo`}
           style={{ width: '50px', height: '50px', borderRadius: '50%' }}
         />
       ),
-      sortable: false,
+      sortable: false
     },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-        
         <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
           <div style={{marginLeft:"45px",marginTop:"-4px"}}>
           <span
@@ -219,10 +258,10 @@ const ReceiversPage = () => {
           <span
             style={{
               position: 'absolute',
-              content: "",
+              content: '',
               height: '14px',
               width: '14px',
-              left: row.status === 0 ? '18px' : '3px',
+              left: row.status === 0 ? '18 px' : '3px',
               bottom: '3px',
               backgroundColor: 'white',
               transition: '0.4s',
@@ -249,7 +288,6 @@ const ReceiversPage = () => {
 
   const handleDelete = async (receiverId) => {
     try {
-      // Display confirmation modal
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -257,15 +295,14 @@ const ReceiversPage = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete it!'
       });
-  
+
       if (result.isConfirmed) {
-        // Attempt to delete supplier
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
   
         // Update state on successful deletion
@@ -278,7 +315,6 @@ const ReceiversPage = () => {
         Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
       }
     } catch (error) {
-      // Log error for debugging and notify user
       console.error('Error deleting Receiver:', error);
   
       // Provide user feedback
@@ -292,15 +328,14 @@ const ReceiversPage = () => {
       Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
     }
   };
-  
 
   const handleEdit = (user) => {
     setselectedReceiver(user);
     setShowEditModal(true);
   };
-  const handleUpdateUser = async () => {
+
+  const handleUpdateUser  = async () => {
     try {
-      // Ensure the selectedReceiver is valid
       if (!selectedReceiver || !selectedReceiver.id) {
         toast.error('Invalid Receiver selected for update!');
         return;
@@ -316,9 +351,8 @@ const ReceiversPage = () => {
             'Content-Type': 'application/json',
           },
         }
-      );
+      });
 
-      // Check the response status
       if (response.status === 200) {
         toast.success('Receiver updated successfully!');
 
@@ -332,7 +366,6 @@ const ReceiversPage = () => {
           prev.map((sup) => (sup.id === selectedReceiver.id ? selectedReceiver : sup))
         );
 
-        // Close the modal
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
@@ -347,14 +380,14 @@ const ReceiversPage = () => {
   const handleAddUser = () => {
     navigate('/add-Receiver');
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedReceiver((prevUser) => ({
-      ...prevUser,
+    setselectedReceiver((prevUser ) => ({
+      ...prevUser ,
       [name]: value
     }));
   };
-
 
   const customStyles = {
     header: {
@@ -364,8 +397,8 @@ const ReceiversPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -374,22 +407,23 @@ const ReceiversPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
       },
     },
     cells: {
-      style: {
+      style 
+: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
@@ -413,16 +447,24 @@ const ReceiversPage = () => {
   
 
   return (
-    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
-      <div className="row mb-3">
-        <div className="col-md-4">
+    <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
+      <div className="row mb-3"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap', // Changed to wrap for better responsiveness
+        }}
+      >
+        {/* Search Input */}
+        <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
           <input
             type="text"
             placeholder="Search..."
             id='search'
             value={searchQuery}
             onChange={handleSearch}
-            className="pe-5 ps-2 py-2"
+            className="pe-5 ps-2 py-2 w-100" // Full width on small screens
             style={{ borderRadius: '5px' }}
           />
         </div>
@@ -430,8 +472,12 @@ const ReceiversPage = () => {
           <Button variant="primary" onClick={handleAddUser}>
             <MdPersonAdd className="me-2" /> Add User
           </Button>
+          <Button variant="success" onClick={downloadPDF} className="ms-2">
+            Download PDF
+          </Button>
         </div>
       </div>
+
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">
@@ -442,10 +488,23 @@ const ReceiversPage = () => {
               <h2 className="m-0 text-white">Receivers Management</h2>
             </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+              <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+                  <FaFileCsv className="w-5 h-5 me-1" />
+                  Export as CSV
+                </button>
+                <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                  Export as PDF
+                </button>
+              </div>
               <DataTable
                 columns={columns}
                 data={filteredReceivers}
                 pagination
+                paginationPerPage={rowPerPage}  // Use the updated rowPerPage state
+                paginationResetDefaultPage={currentPage === 1} // Reset pagination to the first page on change
+                onChangePage={page => setCurrentPage(page)}  // Update the current page on page change
                 highlightOnHover
                 striped
                 responsive
@@ -458,7 +517,8 @@ const ReceiversPage = () => {
       </div>
       {/* Edit User Modal */}
       {showEditModal && (
-        <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered 
+        >
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
             <Modal.Title className="text-white">Edit Receiver</Modal.Title>
           </Modal.Header>
@@ -469,7 +529,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="name"
-                  value={selectedReceiver.name || ''}
+                  value={selectedReceiver?.name || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -480,7 +540,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="code"
-                  value={selectedReceiver.code || ''}
+                  value={selectedReceiver?.code || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -491,7 +551,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="gst_no"
-                  value={selectedReceiver.gst_no || ''}
+                  value={selectedReceiver?.gst_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -502,7 +562,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="cin_no"
-                  value={selectedReceiver.cin_no || ''}
+                  value={selectedReceiver?.cin_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -513,7 +573,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="pan_no"
-                  value={selectedReceiver.pan_no || ''}
+                  value={selectedReceiver?.pan_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -524,7 +584,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="msme_no"
-                  value={selectedReceiver.msme_no || ''}
+                  value={selectedReceiver?.msme_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -535,7 +595,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="reg_address"
-                  value={selectedReceiver.reg_address || ''}
+                  value={selectedReceiver?.reg_address || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -546,7 +606,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="work_address"
-                  value={selectedReceiver.work_address || ''}
+                  value={selectedReceiver?.work_address || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -557,7 +617,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="tel_no"
-                  value={selectedReceiver.tel_no || ''}
+                  value={selectedReceiver?.tel_no || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -568,7 +628,7 @@ const ReceiversPage = () => {
                 <Form.Control
                   type="text"
                   name="owner_mobile"
-                  value={selectedReceiver.owner_mobile || ''}
+                  value={selectedReceiver?.owner_mobile || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -592,16 +652,15 @@ const ReceiversPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser}>
+            <Button variant="success" onClick={handleUpdateUser }>
               Update
             </Button>
           </Modal.Footer>
         </Modal>
-
       )}
+      
     </div>
   );
 };
-
 
 export default ReceiversPage;

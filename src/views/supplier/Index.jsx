@@ -524,10 +524,97 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
-  const [filteredSuppliers, setFilteredSupplier] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredSuppliers, setFilteredSupplier] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [entriesPerPage, setEntriesPerPage] = useState('select'); // Default to 'select'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowPerPage, setRowPerPage] = useState(25); // Default row per page set to 25
+  const [loading, setLoading] = useState(true); // Added loading state
+
+  const downloadPDF = () => {
+    if (!filteredSuppliers || filteredSuppliers.length === 0) {
+      toast.error("No supplier data available to download.");
+      return;
+    }
+
+    const doc = new jsPDF('landscape');
+    const tableColumn = [
+      "Sr No",
+      "Name",
+      "Code",
+      "GST No",
+      "CIN No",
+      "PAN No",
+      "MSME No",
+      "Phone",
+      "Email",
+      "Owner Mobile",
+      "Registered Address",
+      "Work Address",
+      "Area",
+      "Status",
+    ];
+
+    const tableRows = [];
+
+    filteredSuppliers.forEach((supplier, index) => {
+      const supplierData = [
+        index + 1,
+        supplier.name,
+        supplier.code,
+        supplier.gst_no,
+        supplier.cin_no,
+        supplier.pan_no,
+        supplier.msme_no,
+        supplier.tel_no,
+        supplier.email,
+        supplier.owner_mobile,
+        supplier.reg_address.replace('\n', ', '),
+        supplier.work_address.replace('\n', ', '),
+        supplier.area,
+        supplier.status === 0 ? "Active" : "Inactive",
+      ];
+      tableRows.push(supplierData);
+    });
+
+    doc.text("Products Data", 14, 10);
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 15,
+      theme: "grid",
+      styles: {
+        fontSize: 8,
+      },
+      headStyles: {
+        fillColor: [46, 139, 87],
+        textColor: 255,
+        fontSize: 9,
+      },
+      columnStyles: {
+        0: { cellWidth: 10 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 25 },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 40 },
+        9: { cellWidth: 20 },
+        10: { cellWidth: 50 },
+        11: { cellWidth: 50 },
+        12: { cellWidth: 15 },
+        13: { cellWidth: 15 },
+      },
+      margin: { top: 10, left: 10, right: 10 },
+      pageBreak: "auto",
+    });
+
+    doc.save("Product_data.pdf");
+  };
 
   const handleToggleStatus = async (supplierId, currentStatus) => {
     console.log("Toggling status for supplier:", supplierId, "Current status:", currentStatus);
@@ -540,8 +627,8 @@ const SuppliersPage = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
   
@@ -553,17 +640,15 @@ const SuppliersPage = () => {
           supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
         )
       );
-  
+
       setFilteredSupplier((prevFilteredSuppliers) =>
-        prevFilteredSuppliers.map((supplier) =>
-          supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier
-        )
+        prevFilteredSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
       );
   
       toast.success("Status updated successfully!");
     } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status!");
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status!');
     }
   };
 
@@ -573,14 +658,15 @@ const SuppliersPage = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supplier`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log(response);
         setSupplier(response.data.data);
         setFilteredSupplier(response.data.data); 
       } catch (error) {
         console.error(error);
+        setLoading(false); // Set loading to false on error
       }
     };
     fetchSupplier();
@@ -609,38 +695,40 @@ const SuppliersPage = () => {
   };
 
   const navigate = useNavigate();
+  const startIndex = (currentPage - 1) * rowPerPage;
+  const endIndex = startIndex + rowPerPage;
+  const paginatedUsers = filteredSuppliers.slice(startIndex, endIndex);
 
   const columns = [
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
-      width: '80px',
+      sortable: true
     },
     {
       name: 'Supplier Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'MSME No',
@@ -650,34 +738,34 @@ const SuppliersPage = () => {
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Logo',
@@ -688,7 +776,7 @@ const SuppliersPage = () => {
           style={{ width: '50px', height: '50px', borderRadius: '50%' }}
         />
       ),
-      sortable: false,
+      sortable: false
     },
     {
       name: 'Status',
@@ -752,10 +840,8 @@ const SuppliersPage = () => {
     },
   ];
 
-
   const handleDelete = async (supplierId) => {
     try {
-      // Display confirmation modal
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -763,15 +849,14 @@ const SuppliersPage = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete it!'
       });
-  
+
       if (result.isConfirmed) {
-        // Attempt to delete supplier
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${supplierId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
   
         // Update state on successful deletion
@@ -784,7 +869,6 @@ const SuppliersPage = () => {
         Swal.fire('Deleted!', 'The supplier has been deleted.', 'success');
       }
     } catch (error) {
-      // Log error for debugging and notify user
       console.error('Error deleting supplier:', error);
   
       // Provide user feedback
@@ -798,40 +882,32 @@ const SuppliersPage = () => {
       Swal.fire('Error!', 'There was a problem deleting the supplier.', 'error');
     }
   };
-  
+
   const handleEdit = (supplier) => {
     setselectedSupplier(supplier);
     setShowEditModal(true);
   };
 
-  const handleUpdateUser  = async () => {
+  const handleUpdateUser = async () => {
     try {
       if (!selectedSupplier || !selectedSupplier.id) {
         toast.error('Invalid supplier selected for update!');
         return;
- }
+      }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`,
-        selectedSupplier,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`, selectedSupplier, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       if (response.status === 200) {
         toast.success('Supplier updated successfully!');
 
-        setSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
-        );
+        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setFilteredSupplier((prev) =>
-          prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup))
-        );
+        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
         setShowEditModal(false);
       } else {
@@ -851,9 +927,8 @@ const SuppliersPage = () => {
     const { name, value } = e.target;
     setselectedSupplier((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-  
   };
 
   const customStyles = {
@@ -864,8 +939,8 @@ const SuppliersPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
@@ -874,9 +949,9 @@ const SuppliersPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -955,7 +1030,6 @@ const SuppliersPage = () => {
             <Modal.Title className="text-white">Edit Supplier</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
-            ```javascript
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>Supplier Name</Form.Label>
@@ -1080,14 +1154,14 @@ const SuppliersPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser }>
+            <Button variant="success" onClick={handleUpdateUser}>
               Update
             </Button>
           </Modal.Footer>
         </Modal>
       )}
     </div>
-  );
-};
+
+  )};
 
 export default SuppliersPage;
