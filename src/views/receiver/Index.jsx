@@ -439,21 +439,6 @@ const ReceiversPage = () => {
     },
   };
 
-  const handleEntriesPerPageChange = (e) => {
-    const newEntriesPerPage = e.target.value;
-  
-    setEntriesPerPage(newEntriesPerPage);
-  
-    if (newEntriesPerPage === 'select') {
-      setRowPerPage(25); // If "Select" is chosen, reset to the default 25 rows per page
-    } else {
-      setRowPerPage(Number(newEntriesPerPage)); // If a specific value is chosen, set that as the row per page
-    }
-  
-    // Reset pagination to page 1 when changing entries per page
-    setCurrentPage(1); 
-  };
-
   return (
     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
       <div className="row mb-3"
@@ -475,30 +460,6 @@ const ReceiversPage = () => {
             className="pe-5 ps-2 py-2 w-100" // Full width on small screens
             style={{ borderRadius: '5px' }}
           />
-        </div>
-
-        {/* Show Entries Dropdown */}
-        <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ marginBottom: '0', marginRight: '10px' }}>Show Entries</p>
-            <select
-              className="form-select w-auto"
-              value={entriesPerPage}
-              onChange={handleEntriesPerPageChange}
-              style={{
-                borderRadius: '5px',
-                fontSize: '0.8rem',
-                height: '30px',
-              }}
-            >
-              <option value="select">Select</option>
-              <option value={5}>5 Entries</option>
-              <option value={10}>10 Entries</option>
-              <option value={25}>25 Entries</option>
-              <option value={50}>50 Entries</option>
-              <option value={100}>100 Entries</option>
-            </select>
-          </div>
         </div>
 
         {/* Action Buttons */}

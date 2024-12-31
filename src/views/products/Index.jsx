@@ -458,17 +458,6 @@ const SuppliersPage = () => {
     },
   };
 
-  const handleEntriesPerPageChange = (e) => {
-    const newValue = e.target.value;
-    setEntriesPerPage(newValue);
-
-    if (newValue === "select") {
-      setRowPerPage(25);
-    } else {
-      setRowPerPage(Number(newValue));
-    }
-    setCurrentPage(1); // Reset to first page
-  };
 
   const paginatedSuppliers = filteredSuppliers.slice(
     (currentPage - 1) * rowPerPage,
@@ -477,12 +466,12 @@ const SuppliersPage = () => {
 
   return (
     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
-      <div className="row mb-3" style={{ flexWrap: 'wrap' }}>
+      <div className="row mb-3" style={{ display:"flex" ,justifyContent:"space-between"}}>
         {/* Search Input */}
         <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search product"
             id="search"
             value={searchQuery}
             onChange={handleSearch}
@@ -492,28 +481,6 @@ const SuppliersPage = () => {
         </div>
 
         {/* Entries Dropdown */}
-        <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ marginBottom: '0', marginRight: '10px' }}>Show Entries</p>
-            <select
-              className="form-select w-auto"
-              value={entriesPerPage}
-              onChange={handleEntriesPerPageChange}
-              style={{
-                borderRadius: '5px',
-                fontSize: '0.8rem',
-                height: '30px',
-              }}
-            >
-              <option value="select">Select</option>
-              <option value={5}>5 Entries</option>
-              <option value={10}>10 Entries</option>
-              <option value={25}>25 Entries</option>
-              <option value={50}>50 Entries</option>
-              <option value={100}>100 Entries</option>
-            </select>
-          </div>
-        </div>
 
         {/* Action Buttons */}
         <div className="col-12 col-md-4 text-end" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

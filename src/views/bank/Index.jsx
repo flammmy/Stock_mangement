@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const BanksPage = () => {
   const [Banks, setBank] = useState([]);
@@ -12,6 +14,77 @@ const BanksPage = () => {
   const [searchQuery, setSearchQuery] = useState(''); 
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedBank, setselectedBank] = useState(null);
+   const [loading, setLoading] = useState(true);
+  
+   const downloadPDF = () => {
+    if (!filteredBanks || filteredBanks.length === 0) {
+      toast.error("No bank data available to download.");
+      return;
+    }
+  
+    const doc = new jsPDF('landscape');
+    const tableColumn = [
+      "Sr No",
+      "Bank Name",
+      "IFSC Code",
+      "Branch",
+      "Account Number",
+    ];
+  
+    const tableRows = [];
+  
+    filteredBanks.forEach((bank, index) => {
+      const bankData = [
+        index + 1,
+        bank.name,
+        bank.ifsc_code,
+        bank.branch,
+        bank.account_number,
+      ];
+      tableRows.push(bankData);
+    });
+  
+    doc.text("Bank Data", 14, 10);
+  
+    // Use autoTable to generate the table with specific settings to ensure full-page usage
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: "grid",
+      styles: {
+        fontSize: 10, // Medium font size for readability
+        cellPadding: 6, // More padding for clearer cell spacing
+      },
+      headStyles: {
+        fillColor: [46, 139, 87], // Green header color
+        textColor: 255, // White text for the header
+        fontSize: 12, // Slightly larger header font size
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' }, // Auto width for the first column (Sr No)
+        1: { cellWidth: 'auto' }, // Auto width for the second column (Bank Name)
+        2: { cellWidth: 'auto' }, // Auto width for the third column (IFSC Code)
+        3: { cellWidth: 'auto' }, // Auto width for the fourth column (Branch)
+        4: { cellWidth: 'auto' }, // Auto width for the fifth column (Account Number)
+      },
+      margin: { top: 20, left: 10, right: 10, bottom: 10 }, // Ensure no clipping and use more space
+      pageBreak: "auto",
+      showHead: "everyPage", // Show the header on every page if the table spans multiple pages
+      tableLineColor: [0, 0, 0], // Black table borders
+      tableLineWidth: 0.1, // Thin borders for cells
+      useCss: true, // Use CSS styles for better formatting
+      columnWidth: 'auto', // Let the columns automatically adjust to their content
+      autoSize: true, // Allow the content to fit the width of the page dynamically
+    });
+  
+    // Save the PDF with the updated layout
+    doc.save("Bank_data.pdf");
+  };
+  
+  
+  
+    
 
   useEffect(() => {
     const fetchBank = async () => {
@@ -204,12 +277,13 @@ const BanksPage = () => {
     },
     headCells: {
       style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
+        borderRight: '1px solid #ddd', // Add a right border to column headers
       },
     },
     cells: {
@@ -217,26 +291,19 @@ const BanksPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
+        borderRight: '1px solid #ddd', // Add a right border to cells
       },
     },
     pagination: {
       style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px',
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
+        color: 'green',
       },
     },
   };
 
+
   return (
-    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4 " style={{ borderRadius: '8px' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -252,6 +319,9 @@ const BanksPage = () => {
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddBank}>
             <MdPersonAdd className="me-2" /> Add Bank
+          </Button>
+          <Button variant="success" onClick={downloadPDF} className="ms-2"> 
+          Download PDF
           </Button>
         </div>
       </div>
