@@ -165,8 +165,8 @@ const Index = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
-      }
+        borderRadius: '8px 8px 8px 8px',
+      },
     },
     rows: {
       style: {
@@ -175,45 +175,38 @@ const Index = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRight: '1px solid #ddd', // Add a right border to column headers
+      },
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
-      }
+        padding: '12px',
+        borderRight: '1px solid #ddd', // Add a right border to cells
+      },
     },
     pagination: {
       style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        color: 'green',
       },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
+    },
   };
 
   return (
-    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4 " style={{ borderRadius: '8px'}}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input

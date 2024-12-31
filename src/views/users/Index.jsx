@@ -279,7 +279,7 @@ const UsersPage = () => {
   const startIndex = (currentPage - 1) * rowPerPage;
   const endIndex = startIndex + rowPerPage;
   const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-
+  
   return (
     <div className="container-fluid pt-4" style={{ borderRadius: '8px' }}>
       <div className="row mb-3" style={{display:"flex",justifyContent:"space-between"}}>
@@ -287,7 +287,7 @@ const UsersPage = () => {
           <input
             type="text"
             placeholder="search user "
-            id="search"
+            id="search here"
             value={searchQuery}
             onChange={handleSearch}
             className="pe-5 ps-2 py-2"
@@ -317,20 +317,59 @@ const UsersPage = () => {
             paginationTotalRows={filteredUsers.length}
             onChangePage={(page) => setCurrentPage(page)}
             customStyles={{
-              headCells: {
-                style: {
-                  borderBottom: '2px solid #ddd', // Border for column headers
-                  fontWeight: 'bold',
-                  padding: '10px',
-                },
-              },
-              cells: {
-                style: {
-                  borderRight: '1px solid #ddd', // Border for each column
-                  borderBottom: '1px solid #ddd', // Border for rows
-                  padding: '8px',
-                },
-              },
+              header: {
+      style: {
+        backgroundColor: '#2E8B57',
+        color: '#fff',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        padding: '15px',
+        borderRadius: '8px 8px 8px 8px',
+      },
+    },
+    rows: {
+      style: {
+        backgroundColor: '#f0fff4',
+        borderBottom: '1px solid #e0e0e0',
+        transition: 'background-color 0.3s ease',
+        '&:hover': {
+          backgroundColor: '#e6f4ea',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
+    },
+    headCells: {
+      style: {
+        backgroundColor: '#FFFFFF',
+        color: 'black',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        padding: '15px',
+        borderRight: '1px solid #ddd', // Add a right border to column headers
+      },
+    },
+    cells: {
+      style: {
+        fontSize: '14px',
+        color: '#333',
+        padding: '12px',
+        borderRight: '1px solid #ddd', // Add a right border to cells
+      },
+    },
+    pagination: {
+      style: {
+        color: 'black',
+        borderRadius: '0 0 8px 8px',
+      },
+      pageButtonsStyle: {
+        backgroundColor: 'transparent',
+        color: '#fff',
+        '&:hover': {
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+      },
+    },
             }}
           />
         </div>

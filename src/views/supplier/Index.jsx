@@ -494,7 +494,7 @@ const SuppliersPage = () => {
     <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
       <input
         type="text"
-        placeholder="Sort by supplier name"
+        placeholder="search here"
         id="search"
         value={searchQuery}
         onChange={handleSearch}
@@ -527,7 +527,7 @@ const SuppliersPage = () => {
           pagination
           paginationPerPage={rowPerPage}
           paginationRowsPerPageOptions={[5, 10, 25, 50, 100]}
-          pagination TotalRows={filteredSuppliers.length}
+          paginationTotalRows={filteredSuppliers.length}
           onChangePage={(page) => setCurrentPage(page)}
           customStyles={customStyles}
         />

@@ -471,7 +471,7 @@ const SuppliersPage = () => {
         <div className="col-12 col-md-4 mb-2 mb-md-0" style={{ paddingRight: '10px' }}>
           <input
             type="text"
-            placeholder="Search product"
+            placeholder="Search here"
             id="search"
             value={searchQuery}
             onChange={handleSearch}
