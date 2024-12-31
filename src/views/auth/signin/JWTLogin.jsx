@@ -297,6 +297,10 @@ const JWTLogin = () => {
 
   const handleLogin = async (values, { setSubmitting, setErrors }) => {
     try {
+      console.log("User Input:", values);
+      console.log("Captcha Text:", captchaText);
+      console.log("User Captcha Input:", userCaptchaInput);
+      
       // Validate CAPTCHA
       if (userCaptchaInput !== captchaText) {
         setCaptchaError('Incorrect captcha');
@@ -307,20 +311,27 @@ const JWTLogin = () => {
       setCaptchaError('');
 
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      console.log('API Base URL:', API_BASE_URL);
+
+      const requestData = {
+        email: values.email,
+        password: values.password,
+      };
+      console.log('Request Data:', requestData);
 
       // Attempt to login
       const response = await axios.post(
         `${API_BASE_URL}/api/login`,
-        {
-          email: values.email,
-          password: values.password,
-        },
+        requestData,
         {
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
         }
       );
+
+      // Check the API response status and log the response
+      console.log('API Response:', response);
 
       if (response.status === 200) {
         const user = response.data.user;
@@ -337,16 +348,26 @@ const JWTLogin = () => {
         console.log('Login successful:', user);
         navigate('/dashboard');
       } else {
-        throw new Error('Login failed');
+        console.error('Login failed: Unexpected status code', response.status);
+        throw new Error('Login failed: Unexpected status code');
       }
     } catch (error) {
       // Improved error handling with more detailed logging
-      console.error('Login failed:', error.response ? error.response.data : error.message);
+      console.error('Login failed:', error);
+      console.log("Error response:", error.response);
+
       setErrors({
         submit: error.response?.data?.message || 'Something went wrong. Please try again.',
       });
-      if (error.response) {
-        console.log("Error response:", error.response);
+
+      if (!error.response) {
+        // Network or CORS issue
+        setErrors({
+          submit: 'There was an issue connecting to the server. Please check your network or try again later.',
+        });
+      } else {
+        // Server-side error
+        console.error('API Error Response:', error.response.data);
       }
     } finally {
       setSubmitting(false);
@@ -380,7 +401,7 @@ const JWTLogin = () => {
                 type="email"
                 value={values.email}
               />
-              {touched.email && errors.email && <small className="text-danger form-text">{errors.email}</small>}
+              {touched.email && errors.email && <small className="text-danger form-text" >{errors.email}</small>}
             </div>
 
             <div className="form-group mb-4">
@@ -394,9 +415,8 @@ const JWTLogin = () => {
                 type="password"
                 value={values.password}
               />
-              {touched.password && errors.password && <small className="text-danger form-text">{errors.password}</small>}
+              {touched.password && errors.password && <small className="text-danger form-text" >{errors.password}</small>}
             </div>
-               
 
             <div className='input-cap' style={{
               display: 'flex',
