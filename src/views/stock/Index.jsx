@@ -129,37 +129,6 @@ const Index = () => {
       )
     }
   ];
-
-  //   const handleUpdateUser = async () => {
-  //     try {
-  //       console.log(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`);
-  //       const response = await axios.put(
-  //         `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`,
-  //         {
-  //           username: selectedUser.username,
-  //           name: selectedUser.name,
-  //           email: selectedUser.email,
-  //           phone: selectedUser.phone,
-  //           role: selectedUser.role == 'operator' ? 2 : 3,
-  //           password: selectedUser.password,
-  //           status: selectedUser.status == 'active' ? 1 : 0
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //             'Content-Type': 'application/json'
-  //           }
-  //         }
-  //       );
-  //       toast.success('User updated successfully!');
-  //       setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user)));
-
-  //       setShowEditModal(false);
-  //     } catch (err) {
-  //       toast.error('Error updating user!');
-  //     }
-  //   };
-
   const handleAddInvoice = () => {
     navigate('/add-invoice');
   };

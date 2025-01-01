@@ -203,12 +203,12 @@ const Invoice_out = () => {
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
+    { id: 'stock_code', label: 'Stock Code' },
     { id: 'out_width', label: 'Width' },
     { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
     { id: 'area_sq_ft', label: 'Area(sqft)' },
-    { id: 'type', label: 'Type' },
-    { id: 'out_quantity', label: 'Quantity' }
+    { id: 'product_type', label: 'Type' },
   ];
 
   const handleCheckboxChange = (id) => {
@@ -271,6 +271,15 @@ const Invoice_out = () => {
                       onChange={handleChange}
                     />
                     <FormField
+                      icon={FaUsers}
+                      label="Seller"
+                      name="receiver_id"
+                      value={formData.receiver_id}
+                      onChange={handleChange}
+                      options={receivers}
+                      add={'/add-Receiver'}
+                    />
+                    <FormField
                       icon={FaUser}
                       label="Customer"
                       name="customer_id"
@@ -287,15 +296,7 @@ const Invoice_out = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                    <FormField
-                      icon={FaUsers}
-                      label="Receiver"
-                      name="receiver_id"
-                      value={formData.receiver_id}
-                      onChange={handleChange}
-                      options={receivers}
-                      add={'/add-Receiver'}
-                    />
+                    
                     
                     <FormField
                       icon={FaMoneyBillWave}
@@ -481,6 +482,9 @@ const Invoice_out = () => {
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
                                       />
                                     </td>
+                                    <td key="Stock Code">
+                                    <td key="pur_shadeNo">{row.stock_code}</td>
+                                    </td>
                                     <td key="width">
                                       <input
                                         type="text"
@@ -531,13 +535,6 @@ const Invoice_out = () => {
                                         <option value="roll">Roll</option>
                                         <option value="box">Box</option>
                                       </select>
-                                    </td>
-                                    <td key="qty">
-                                      <input
-                                        type="text"
-                                        value={row.out_quantity || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
-                                      />
                                     </td>
                                     <td key="rate">
                                       <input
