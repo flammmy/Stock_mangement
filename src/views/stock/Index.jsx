@@ -10,6 +10,8 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import Swal from 'sweetalert2';
+
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -37,7 +39,7 @@ const Index = () => {
             invoice_no: invoice.invoice_no,
             id: invoice.id,
             supplier_name: invoice.supplier.name,
-            receiver_name: invoice.receiver.name,
+            agent: invoice.agent,
             date: invoice.date,
             bank: invoice.bank.account_number,
             total_amount: invoice.total_amount
@@ -57,10 +59,7 @@ const Index = () => {
   //   Update filtered users when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter(
-      (invoice) =>
-        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
-    );
+    const filtered = invoices.filter((invoice) => invoice.supplier_name.toLowerCase().includes(lowercasedQuery));
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
 
@@ -83,7 +82,7 @@ const Index = () => {
     },
     {
       name: 'Receiver Name',
-      selector: (row) => row.receiver_name,
+      selector: (row) => row.agent,
       sortable: true
     },
     {
@@ -125,10 +124,57 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
         </div>
       )
     }
   ];
+
+  const handleDelete = async (id) => {
+    try {
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+
+      if (result.isConfirmed) {
+        // Attempt to delete supplier
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        // Update state on successful deletion
+        setInvoices((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
+        setFilteredInvoices((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
+
+        toast.success('Invoice deleted successfully');
+        Swal.fire('Deleted!', 'The Invoice has been deleted.', 'success');
+      }
+    } catch (error) {
+      // Log error for debugging and notify user
+      console.error('Error deleting supplier:', error);
+
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the Invoice.');
+      }
+
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the Invoice.', 'error');
+    }
+  };
 
   //   const handleUpdateUser = async () => {
   //     try {
@@ -175,8 +221,8 @@ const Index = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -185,8 +231,8 @@ const Index = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -195,9 +241,9 @@ const Index = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -207,46 +253,45 @@ const Index = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
-        '& svg':{
-          fill: 'white',
+        '& svg': {
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-  
 
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredSuppliers);
@@ -257,25 +302,8 @@ const Index = () => {
     const doc = new jsPDF('landscape');
     doc.text('Suppliers List', 20, 10);
     doc.autoTable({
-      head: [
-        [
-          'Invoice Number',
-          'Supplier Name',
-          'Receiver Name',
-          'Date',
-          'Bank',
-          'Total Amount',
-        ]
-      ],
-      body: filteredSuppliers.map((row) => [
-        row.invoice_no,
-        row.supplier_name,
-        row.receiver_name,
-        row.date,
-        row.bank,
-        row.total_amount,
-       
-      ])
+      head: [['Invoice Number', 'Supplier Name', 'Receiver Name', 'Date', 'Bank', 'Total Amount']],
+      body: filteredSuppliers.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
     });
     doc.save('user_list.pdf');
   };
@@ -318,16 +346,7 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-                <div className="d-flex justify-content-end">
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                    <FaFileCsv className="w-5 h-5 me-1" />
-                    Export as CSV
-                  </button>
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                    Export as PDF
-                  </button>
-                </div>
+                <div className="d-flex justify-content-end"></div>
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}

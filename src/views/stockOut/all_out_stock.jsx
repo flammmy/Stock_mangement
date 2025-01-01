@@ -42,8 +42,9 @@ const ShowProduct = () => {
             width: detail.out_width,
             unit: detail.unit,
             qty: detail.out_quantity,
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * 10.7639 || 0).toFixed(3) // Area in sq. ft.
+            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length)*detail.out_quantity* 10.7639  || 0).toFixed(3),
+            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity || 0).toFixed(3), // Area in m²
+            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
           }))
         );
   
@@ -86,7 +87,8 @@ const ShowProduct = () => {
     { name: 'Unit', selector: (row) => row.unit, sortable: true },
     { name: 'Qty', selector: (row) => Number(row.qty).toFixed(0), sortable: true },
     { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
-    { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true }
+    { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true },
+    { name: 'Wastage Area (sq. ft.)', selector: (row) => row.waste, sortable: true }
   ];
   
   const exportToCSV = () => {
