@@ -37,7 +37,7 @@ const Index = () => {
             invoice_no: invoice.invoice_no,
             id: invoice.id,
             supplier_name: invoice.supplier.name,
-            receiver_name: invoice.receiver.name,
+            agent: invoice.agent,
             date: invoice.date,
             bank: invoice.bank.account_number,
             total_amount: invoice.total_amount
@@ -83,7 +83,7 @@ const Index = () => {
     },
     {
       name: 'Receiver Name',
-      selector: (row) => row.receiver_name,
+      selector: (row) => row.agent,
       sortable: true
     },
     {
@@ -225,39 +225,6 @@ const Index = () => {
       }
     }
   };
-
-  const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'supplier_list.csv');
-  };
-  const exportToPDF = () => {
-    const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
-    doc.autoTable({
-      head: [
-        [
-          'Invoice Number',
-          'Supplier Name',
-          'Receiver Name',
-          'Date',
-          'Bank',
-          'Total Amount',
-        ]
-      ],
-      body: filteredSuppliers.map((row) => [
-        row.invoice_no,
-        row.supplier_name,
-        row.receiver_name,
-        row.date,
-        row.bank,
-        row.total_amount,
-       
-      ])
-    });
-    doc.save('user_list.pdf');
-  };
-
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -297,14 +264,7 @@ const Index = () => {
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                 <div className="d-flex justify-content-end">
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                    <FaFileCsv className="w-5 h-5 me-1" />
-                    Export as CSV
-                  </button>
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                    Export as PDF
-                  </button>
+                  
                 </div>
                 <DataTable
                   columns={columns}

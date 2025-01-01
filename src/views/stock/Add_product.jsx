@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload } from 'react-icons/fa';
 import axios from 'axios';
@@ -7,6 +8,7 @@ import { toast } from 'react-toastify';
 
 const AddProduct = () => {
   const { id, no } = useParams();
+  const navigate = useNavigate();
   const [file, setFile ] = useState(null);
   const [items, setItems] = useState([
     {
@@ -113,11 +115,13 @@ const AddProduct = () => {
       );
       if (response.status === 201) {
         toast.success("Stock added successfully");
-        setFile(null); // Reset file after successful upload
+        setFile(null); 
+        navigate('/stocks');
       }
     } catch (error) {
       console.error(error);
-      toast.error("Failed to upload file. Please try again.");
+      const errorMessage = error.response?.data?.error || 'Error adding stock';
+      toast.error(errorMessage);
     }
   };
 

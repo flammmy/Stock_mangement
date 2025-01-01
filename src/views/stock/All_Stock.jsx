@@ -71,6 +71,10 @@ const ShowProduct = () => {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
+    }, {
+      name: 'Stock Code',
+      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      sortable: true
     },
     {
       name: 'Invoice No',
@@ -108,11 +112,6 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Qty',
-      selector: (row) => row.qty,
-      sortable: true
-    },
-    {
       name: 'Area (m²)',
       selector: (row) => row.area,
       sortable: true
@@ -124,7 +123,23 @@ const ShowProduct = () => {
     }
   ];
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredProducts);
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
+      'Lot No': row.lot_no,
+      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
+      'Date': row.stock_invoice?.date || 'N/A',
+      'Shade No': row.stock_product?.shadeNo || 'N/A',
+      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Length': row.length,
+      'Width': row.width,
+      'Unit': row.unit,
+      'Area (m²)': row.area,
+      'Area (sq. ft.)': row.area_sq_ft
+    }));
+    const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
@@ -135,7 +150,9 @@ const ShowProduct = () => {
       head: [
         [
           'Sr No',
+          'User Name',
           'Lot No',
+          'Stock Code',
           'Invoice No',
           'Date',
           'Shade No',
@@ -143,14 +160,15 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Quantity',
           'Area (m²)',
           'Area (sq. ft.)'
         ]
       ],
-      body: filteredProducts.map((row) => [
-        row.index,
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        JSON.parse(localStorage.getItem('user')).username || 'N/A',
         row.lot_no,
+        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
         row.stock_invoice?.invoice_no || 'N/A',
         row.stock_invoice?.date || 'N/A',
         row.stock_product?.shadeNo || 'N/A',
@@ -158,7 +176,6 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.qty,
         row.area,
         row.area_sq_ft
       ])

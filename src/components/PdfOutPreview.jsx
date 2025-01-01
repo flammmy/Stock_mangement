@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
 
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
     const invoice = invoiceData.find((invoice) => invoice.id === id);
+    console.log(invoice)
 
     // Remove unnecessary fields
     const cleanedInvoiceData = {
@@ -251,7 +252,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>Purchase ShadeNo</Text>
                                         <Text style={styles.tableCell}>ShadeNo</Text>
                                         <Text style={styles.tableCell}>Product Type</Text>
-                                        <Text style={styles.tableCell}>HSN/SAC</Text>
+                                        <Text style={styles.tableCell}>Length</Text>
+                                        <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
                                         <Text style={styles.tableCell}>Unit</Text>
                                         <Text style={styles.tableCell}>Rate</Text>
@@ -263,7 +265,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{detail.product?.purchase_shade_no ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.product?.shadeNo ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.product_type ?? '-'}</Text>
-                                            <Text style={styles.tableCell}>{detail.hsn_sac_code ?? '-'}</Text>
+                                            <Text style={styles.tableCell}>{detail.out_length ?? '-'}</Text>
+                                            <Text style={styles.tableCell}>{detail.out_width ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.out_quantity ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.unit ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.rate ?? '-'}</Text>

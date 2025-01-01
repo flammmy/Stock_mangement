@@ -43,8 +43,8 @@ const menuItems = {
               url: '/supplier'
             },
             {
-              id: 'receivers',
-              title: 'Receivers',
+              id: 'Purchaser',
+              title: 'Purchaser',
               icon: 'feather icon-users',
               type: 'item',
               url: '/receiver'
