@@ -170,6 +170,12 @@ const BanksPage = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0, // Removes spacing between cells
+      },
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -177,8 +183,8 @@ const BanksPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
-      }
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+      },
     },
     rows: {
       style: {
@@ -187,9 +193,9 @@ const BanksPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
@@ -198,31 +204,47 @@ const BanksPage = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none', // Removes border for the last cell
+        },
+      },
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
-      }
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+        '& svg':{
+          fill: 'white',
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
+      },
+    },
   };
+  
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredBanks);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

@@ -16,11 +16,12 @@ const FormField = memo(({ icon: Icon, label, type = 'text', name, value, onChang
             // value={value}
             onChange={onChange}
             required={required}
-            className='py-2'
             defaultValue={'default'}
             style={{
               paddingLeft: '40px',
               borderColor: '#3f4d67',
+              paddingTop: '.7rem',
+              paddingBottom: '.7rem',
             }}
           >
             <option value="default" disabled>Select {label}</option>
