@@ -27,12 +27,12 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width * product.qty;
+          const areaM2 = product.length * product.width ;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
-            area: areaM2.toFixed(3), // Area in square meters
-            area_sq_ft: areaSqFt.toFixed(3) // Area in square feet
+            area: areaM2.toFixed(3), 
+            area_sq_ft: areaSqFt.toFixed(3) 
           };
         });
         setProducts(productsWithArea);
