@@ -128,7 +128,8 @@ const Index = () => {
             <MdDelete />
           </Button>
         </div>
-      )
+      ),
+       width: '220px'
     }
   ];
 

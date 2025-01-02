@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     textAlign: 'center'
   },
-  
+
 });
 
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
@@ -158,22 +158,6 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   </View>
                 </View>
               </View>
-
-              <View style={styles.borderBox}>
-                <Text style={styles.sectionTitle}>Receiver Details:</Text>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Name:</Text>
-                  <Text style={styles.value}>{invoice.receiver.name}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>GST No:</Text>
-                  <Text style={styles.value}>{invoice.receiver.gst_no}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Code:</Text>
-                  <Text style={styles.value}>{invoice.receiver.code}</Text>
-                </View>
-              </View>
               <View style={[styles.borderBox, styles]}>
                 <View style={styles.flexContainer}>
                   <View style={styles.column}>
@@ -208,6 +192,14 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                     <View style={styles.row}>
                       <Text style={styles.label}>Vehicle No:</Text>
                       <Text style={styles.value}>{invoice.vehicle_no}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>Agent Name</Text>
+                      <Text style={styles.value}>{invoice.agent}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>WareHouse</Text>
+                      <Text style={styles.value}>{invoice.warehouse}</Text>
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.label}>Place:</Text>
@@ -262,13 +254,30 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   <View style={[styles.row, { borderTop: '1pt solid black', marginTop: 5, paddingTop: 5 }]}>
                     <Text style={styles.label}>Grand Total:</Text>
                     <Text style={styles.value}>
-                      ₹{(invoice.total_amount * (1 + (invoice.cgst_percentage + invoice.sgst_percentage) / 100)).toFixed(2)}
+                      ₹ {
+                        (() => {
+                          // Parse the values to make sure they are numbers
+                          const totalAmount = parseFloat(invoice.total_amount);
+                          const cgstPercentage = parseFloat(invoice.cgst_percentage);
+                          const sgstPercentage = parseFloat(invoice.sgst_percentage);
+
+                          // Check if the values are valid numbers
+                          if (isNaN(totalAmount) || isNaN(cgstPercentage) || isNaN(sgstPercentage)) {
+                            console.error('Invalid data:', { totalAmount, cgstPercentage, sgstPercentage });
+                            return 'Invalid Data';
+                          }
+
+                          // Calculate Grand Total
+                          const grandTotal = totalAmount * (1 + (cgstPercentage + sgstPercentage) / 100);
+                          return `₹${grandTotal.toFixed(2)}`;
+                        })()
+                      }
                     </Text>
                   </View>
                 </View>
               </View>
 
-              
+
               <View style={styles.footerColumns}>
                 <View style={styles.footerColumn}>
                   <Text style={styles.sectionTitle}>Terms & Conditions</Text>
@@ -278,11 +287,15 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   <Text style={styles.termsText}>4. E.&O.E.</Text>
                 </View>
 
-                <View style={styles.footerColumn}>
+                {/* <View style={styles.footerColumn}>
                   <View style={styles.qrCode} />
                   <Text style={styles.signatureText}>Invoice QR Code</Text>
+                </View> */}
+                <View style={styles.footerColumn}>
+                  <View style={styles.signatureBox} />
+                  <Text style={styles.signatureText}>Supplier's Signature</Text>
+                  <Text style={styles.signatureText}>With Stamp</Text>
                 </View>
-
                 <View style={styles.footerColumn}>
                   <View style={styles.signatureBox} />
                   <Text style={styles.signatureText}>Receiver's Signature</Text>
