@@ -42,25 +42,25 @@ const DashDefault = () => {
     };
     fetchSupplier();
   }, []);
-  useEffect(() => {
-    const fetchToday = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockOuttoday`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setSupplier(response.data.data);
-        setFilteredSupplier(response.data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false); // Ensure loading state is updated here
-      }
-    };
-    fetchToday();
-  }, []);
+  // useEffect(() => {
+  //   const fetchToday = async () => {
+  //     try {
+  //       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockOuttoday`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       });
+  //       setSupplier(response.data.data);
+  //       setFilteredSupplier(response.data.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoading(false); // Ensure loading state is updated here
+  //     }
+  //   };
+  //   fetchToday();
+  // }, []);
   console.log(recentSupplier);
   const tabContent = (
     <React.Fragment>

@@ -133,14 +133,13 @@ const AddProduct = () => {
                                         <tr className="text-white" style={{ backgroundColor: '#3f4d67' }}>
                                             <th>Shade No</th>
                                             <th>Pur. Shade No</th>
-                                            <th>Width</th>
-                                            <th>Outer Diameter</th>
-                                            <th>Inner Diameter</th>
-                                            <th>Thickness</th>
-                                            <th>Length</th>
-                                            <th>Unit</th>
-                                            <th>Type</th>
-                                            <th>Quantity</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Width&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Outer&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Inner&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Thickness</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Length&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                            <th>&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -202,7 +201,7 @@ const AddProduct = () => {
                                                         onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
                                                     >
                                                         <option value="">Select Unit</option>
-                                                        <option value="meter">Meter</option>
+                                                        {/* <option value="meter">Meter</option> */}
                                                         <option value="inches">Inches</option>
                                                     </Form.Control>
                                                 </td>
@@ -216,13 +215,6 @@ const AddProduct = () => {
                                                         <option value="roll">Roll</option>
                                                         <option value="box">Box</option>
                                                     </Form.Control>
-                                                </td>
-                                                <td>
-                                                    <Form.Control
-                                                        type="number"
-                                                        value={item.qty}
-                                                        onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
-                                                    />
                                                 </td>
                                                 <td>
                                                     <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
