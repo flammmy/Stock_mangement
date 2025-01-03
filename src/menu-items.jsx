@@ -142,6 +142,13 @@ const menuItems = {
               url: '/all-stocks'
             },
             {
+              id: 'old_stock',
+              title: 'Old Stock',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stocks/add-radius'
+            },
+            {
               id: 'Available_stocks',
               title: 'Available Stocks',
               icon: 'feather icon-clipboard',

@@ -212,7 +212,7 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/stocks/add-radius/:id/:no',
+        path: '/stocks/add-radius/',
         element: lazy(() => import('./views/stock/Add_role')),
         allowedRoles: [1, 2, 3]
       },

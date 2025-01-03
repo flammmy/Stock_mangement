@@ -120,11 +120,6 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Quantity',
-      selector: (row) => row.qty,
-      sortable: true
-    },
-    {
       name: 'Area(m.sq.)',
       selector: (row) => row.area,
       sortable: true

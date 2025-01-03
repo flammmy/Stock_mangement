@@ -42,6 +42,25 @@ const DashDefault = () => {
     };
     fetchSupplier();
   }, []);
+  useEffect(() => {
+    const fetchToday = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockOuttoday`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setSupplier(response.data.data);
+        setFilteredSupplier(response.data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false); // Ensure loading state is updated here
+      }
+    };
+    fetchToday();
+  }, []);
   console.log(recentSupplier);
   const tabContent = (
     <React.Fragment>
@@ -56,76 +75,6 @@ const DashDefault = () => {
           <span className="float-end d-flex  align-items-center">
             <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
             3784
-          </span>
-        </div>
-      </div>
-      <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar2} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Julie Vad</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
-            3544
-          </span>
-        </div>
-      </div>
-      <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar3} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Storm Hanse</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
-            2739
-          </span>
-        </div>
-      </div>
-      <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar1} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Frida Thomse</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
-            1032
-          </span>
-        </div>
-      </div>
-      <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar2} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Silje Larsen</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
-            8750
-          </span>
-        </div>
-      </div>
-      <div className="d-flex friendlist-box align-items-center justify-content-center">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar3} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Storm Hanse</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
-            8750
           </span>
         </div>
       </div>

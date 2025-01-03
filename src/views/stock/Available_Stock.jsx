@@ -101,6 +101,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Purchased Length',
+      selector: (row) => row.length,
+      sortable: true
+    },
+    {
       name: 'Length',
       selector: (row) => row.available_height,
       sortable: true
