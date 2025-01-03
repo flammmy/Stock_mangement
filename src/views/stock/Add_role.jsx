@@ -16,9 +16,9 @@ const AddProduct = () => {
             D_inner: '',
             thickness: '',
             length: '',
-            unit: '',
+            // unit: '',
             type: '',
-            qty: 1,
+            // qty: 1,
         },
     ]);
     const [allProducts, setAllProducts] = useState([]);
@@ -52,9 +52,9 @@ const AddProduct = () => {
                 D_inner: '',
                 thickness: '',
                 length: '',
-                unit: '',
+                // unit: '',
                 type: '',
-                qty: 1,
+                // qty: 1,
             },
         ]);
     };
@@ -138,9 +138,9 @@ const AddProduct = () => {
                                             <th>Inner Diameter</th>
                                             <th>Thickness</th>
                                             <th>Length</th>
-                                            <th>Unit</th>
+                                            {/* <th>Unit</th> */}
                                             <th>Type</th>
-                                            <th>Quantity</th>
+                                            {/* <th>Quantity</th> */}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -195,7 +195,7 @@ const AddProduct = () => {
                                                 <td>
                                                     <Form.Control type="text" value={item.length} readOnly />
                                                 </td>
-                                                <td>
+                                                {/* <td>
                                                     <Form.Control
                                                         as="select"
                                                         value={item.unit}
@@ -205,7 +205,7 @@ const AddProduct = () => {
                                                         <option value="meter">Meter</option>
                                                         <option value="inches">Inches</option>
                                                     </Form.Control>
-                                                </td>
+                                                </td> */}
                                                 <td>
                                                     <Form.Control
                                                         as="select"
@@ -217,13 +217,13 @@ const AddProduct = () => {
                                                         <option value="box">Box</option>
                                                     </Form.Control>
                                                 </td>
-                                                <td>
+                                                {/* <td>
                                                     <Form.Control
                                                         type="number"
                                                         value={item.qty}
                                                         onChange={(e) => handleRowChange(index, 'qty', e.target.value)}
                                                     />
-                                                </td>
+                                                </td> */}
                                                 <td>
                                                     <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
                                                         <FaTrash />
