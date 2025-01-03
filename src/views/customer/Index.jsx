@@ -12,8 +12,10 @@ const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
   const [filteredCustomers, setFilteredCustomer] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
+  const [filteredSuppliers, setFilteredSuppliers] = useState([]);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -128,12 +130,59 @@ const CustomersPage = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
-      }
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Toggle Switch */}
+          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
+            <input
+              type="checkbox"
+              checked={row.status === 0} // Active if 0
+              onChange={() => handleToggleStatus(row.id, row.status)}
+              style={{ opacity: 0, width: 0, height: 0 }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+                transition: '0.4s',
+                borderRadius: '20px',
+              }}
+            ></span>
+            <span
+              style={{
+                position: 'absolute',
+                content: '',
+                height: '14px',
+                width: '14px',
+                left: row.status === 0 ? '18px' : '3px',
+                bottom: '3px',
+                backgroundColor: 'white',
+                transition: '0.4s',
+                borderRadius: '50%',
+              }}
+            ></span>
+          </label>
+      
+          {/* Status Badge */}
+          <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap', // Prevents text wrapping
+            }}
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
+        </div>
+      )
     },
     {
       name: 'Action',
@@ -150,6 +199,29 @@ const CustomersPage = () => {
     }
   ];
 
+  const handleToggleStatus = async (userId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      toast.success('Status updated successfully!');
+      setCustomer((prevCustomers) =>
+        prevCustomers.map((customer) =>
+          customer.id === userId ? { ...customer, status: updatedStatus } : customer
+        )
+      );
+    } catch (error) {
+      toast.error('Failed to update status!');
+    }
+  };
   const handleDelete = async (userId) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
@@ -172,14 +244,8 @@ const CustomersPage = () => {
       toast.error('Failed to delete user');
     }
   };
-
-  const handleEdit = (user) => {
-    setselectedCustomer(user);
-    setShowEditModal(true);
-  };
-  const handleUpdateUser = async () => {
+  const handleUpdateCustomer = async () => {
     try {
-      // Ensure the selectedCustomer is valid
       if (!selectedCustomer || !selectedCustomer.id) {
         toast.error('Invalid Customer selected for update!');
         return;
@@ -192,12 +258,8 @@ const CustomersPage = () => {
           'Content-Type': 'application/json'
         }
       });
-
-      // Check the response status
       if (response.status === 200) {
         toast.success('Customer updated successfully!');
-
-        // Update the Customers list
         setCustomer((prev) => prev.map((sup) => (sup.id === selectedCustomer.id ? selectedCustomer : sup)));
 
         // Update the filtered Customers list
@@ -213,7 +275,11 @@ const CustomersPage = () => {
       toast.error('Error updating Customer!');
     }
   };
-
+  const handleEdit = (user) => {
+    setselectedCustomer(user);
+    setShowEditModal(true);
+  };
+  
   const handleAddUser = () => {
     navigate('/add-Customer');
   };
@@ -226,59 +292,83 @@ const CustomersPage = () => {
   };
 
   const customStyles = {
-    header: {
-      style: {
-        backgroundColor: '#2E8B57',
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
-      }
-    },
-    rows: {
-      style: {
-        backgroundColor: '#f0fff4',
-        borderBottom: '1px solid #e0e0e0',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '16px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        padding: '15px'
-      }
-    },
-    cells: {
-      style: {
-        fontSize: '14px',
-        color: '#333',
-        padding: '12px'
-      }
-    },
-    pagination: {
-      style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px'
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
-  };
+     table: {
+       style: {
+         borderCollapse: 'separate', // Ensures border styles are separate
+         borderSpacing: 0, // Removes spacing between cells
+       },
+     },
+     header: {
+       style: {
+         backgroundColor: '#2E8B57',
+         color: '#fff',
+         fontSize: '18px',
+         fontWeight: 'bold',
+         padding: '15px',
+         borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+       },
+     },
+     rows: {
+       style: {
+         backgroundColor: '#f0fff4',
+         borderBottom: '1px solid #e0e0e0',
+         transition: 'background-color 0.3s ease',
+         '&:hover': {
+           backgroundColor: '#e6f4ea',
+           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+         },
+       },
+     },
+     headCells: {
+       style: {
+         justifyContent: 'center',
+         backgroundColor: '#20B2AA',
+         color: '#fff',
+         fontSize: '12px',
+         fontWeight: 'bold',
+         textTransform: 'uppercase',
+         padding: '15px',
+         borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+       },
+       lastCell: {
+         style: {
+           borderRight: 'none', // Removes border for the last cell
+         },
+       },
+     },
+     cells: {
+       style: {
+         justifyContent: 'center',
+         fontSize: '14px',
+         color: '#333',
+         padding: '12px',
+         borderRight: '1px solid grey', // Vertical lines between cells
+       },
+     },
+     pagination: {
+       style: {
+         backgroundColor: '#3f4d67',
+         color: '#fff',
+         borderRadius: '0 0 8px 8px',
+       },
+       pageButtonsStyle: {
+         backgroundColor: 'transparent',
+         color: 'black', // Makes the arrows white
+         border: 'none',
+         '&:hover': {
+           backgroundColor: 'rgba(255,255,255,0.2)',
+         },
+         '& svg':{
+           fill: 'white',
+         },
+         '&:focus': {
+           outline: 'none',
+           boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+         },
+       },
+     },
+   };
+  
   const exportToCSV = () => {
       const csv = Papa.unparse(filteredSuppliers);
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -327,10 +417,11 @@ const CustomersPage = () => {
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        <div className="col-md-4">
+      <div className="col-md-4">
+          <label htmlFor="search" className='me-2'>Search: </label>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Type here..."
             id="search"
             value={searchQuery}
             onChange={handleSearch}
@@ -346,6 +437,7 @@ const CustomersPage = () => {
       </div>
       <div className="row">
         <div className="col-12">
+          <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
           <div className="card  border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {/* <div
               className="card-header d-flex justify-content-between align-items-center"
@@ -378,6 +470,22 @@ const CustomersPage = () => {
           </div>
         </div>
       </div>
+      {/* Delete Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this Customer?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Edit User Modal */}
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
@@ -501,14 +609,15 @@ const CustomersPage = () => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               Close
             </Button>
-            <Button variant="success" onClick={handleUpdateUser}>
+            <Button variant="success" onClick={handleUpdateCustomer}>
               Update
             </Button>
           </Modal.Footer>
         </Modal>
       )}
-    </div>
-  );
-};
+      </div>
+      </div>
+    );
+  };
 
 export default CustomersPage;

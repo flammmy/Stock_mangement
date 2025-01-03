@@ -16,21 +16,23 @@ import {
   FaCity,
   FaSignature,
   FaQrcode
-} from 'react-icons/fa'; // Import suitable icons
+} from 'react-icons/fa';
 import FormField from '../../components/FormField';
 import { error } from 'jquery';
 import { color } from 'd3';
 
 const Add_inoice = () => {
+  const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     invoice_no: '',
     place_of_supply: '',
-    receiver_id: '1',
+    agent: '',
+    warehouse:'',
     supplier_id: '1',
-    date: undefined,
+    date: today,
     irn: '',
     ack_no: '',
-    ack_date: undefined,
+    ack_date: today,
     vehicle_no: '',
     station: '',
     ewaybill: '',
@@ -43,6 +45,7 @@ const Add_inoice = () => {
   });
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
   const [totalAmount, setTotalAmount] = useState(0);
   const handleAddRow = () => {
     setItems([
@@ -109,7 +112,7 @@ const Add_inoice = () => {
         const totalAmount = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
         formData.total_amount = totalAmount;
       }
-      
+
       // Sync with formData
       setFormData((prevFormData) => {
         const updatedProducts = [...prevFormData.products];
@@ -127,7 +130,6 @@ const Add_inoice = () => {
     });
   };
 
-  const [receivers, setReceivers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [banks, setBanks] = useState([]);
 
@@ -158,7 +160,6 @@ const Add_inoice = () => {
           }
         });
         setProducts(response.data.data);
-        // console.log(response.data.data);
       } catch (err) {
         console.log(err);
       }
@@ -183,24 +184,6 @@ const Add_inoice = () => {
     };
     fetchSupplierData();
   }, []);
-  useEffect(() => {
-    const fetchReceiverData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/receiver`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setReceivers(response.data.data);
-        // console.log(response.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchReceiverData();
-  }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -218,11 +201,11 @@ const Add_inoice = () => {
         }
       });
       toast.success('Invoice added successfully');
-      // navigate('/users');
+      navigate('/invoices');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
-      
+
     }
 
     console.log(formData);
@@ -274,7 +257,8 @@ const Add_inoice = () => {
                       options={suppliers}
                       add={'/add-Supplier'}
                     />
-                    <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
+                    {/* <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} /> */}
+                    <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
                     <FormField
                       icon={FaMapMarkerAlt}
                       label="Place of Supply"
@@ -282,37 +266,7 @@ const Add_inoice = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                    <FormField
-                      icon={FaUsers}
-                      label="Receiver"
-                      name="receiver_id"
-                      value={formData.receiver_id}
-                      onChange={handleChange}
-                      options={receivers}
-                      add={'/add-Receiver'}
-
-                    />
-                  </Col>
-                  <Col md={4}>
-                    <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
-                    <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
-                    <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
-                    <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
-                    <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} />
-                   
-                  </Col>
-
-                  <Col md={4}>
-                  <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
-                    <FormField icon={FaTruck} label="Transport" name="transport" value={formData.transport} onChange={handleChange} />
-                    <FormField
-                      icon={FaKey}
-                      label="Reverse Charge"
-                      name="reverse_charge"
-                      value={formData.reverse_charge}
-                      onChange={handleChange}
-                    />
-                    <FormField
+                     <FormField
                       icon={FaMoneyBillWave}
                       label="Bank"
                       name="bank_id"
@@ -323,6 +277,33 @@ const Add_inoice = () => {
 
                     />
                   </Col>
+                  <Col md={4}>
+                    <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
+                    <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
+                    <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
+                  </Col>
+
+                  <Col md={4}>
+                    <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
+                    <FormField icon={FaTruck} label="Transport" name="transport" value={formData.transport} onChange={handleChange} />
+                    <FormField
+                      icon={FaKey}
+                      label="Reverse Charge"
+                      name="reverse_charge"
+                      value={formData.reverse_charge}
+                      onChange={handleChange}
+                    />
+                     <FormField
+                      icon={FaKey}
+                      label="Warehouse"
+                      name="warehouse"
+                      value={formData.warehouse}
+                      onChange={handleChange}
+                    />
+                   
+                  </Col>
                 </Row>
 
                 <div>
@@ -332,7 +313,7 @@ const Add_inoice = () => {
                       <FaPlus /> Add Item
                     </Button>
                   </div>
-                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset'}}>
+                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset' }}>
                     <thead >
                       <tr className='text-white'>
                         <th>&nbsp;&nbsp;Shade Number&nbsp;&nbsp;</th>
@@ -340,7 +321,7 @@ const Add_inoice = () => {
                         <th>Total Product</th>
                         <th>&nbsp;&nbsp;Product Type&nbsp;&nbsp;</th>
                         <th>HSN/SAC</th>
-                        <th>Quantity</th>
+                        <th>Quantity/Area</th>
                         <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th>Rate</th>
                         <th>Amount</th>
@@ -392,12 +373,12 @@ const Add_inoice = () => {
                               onChange={(e) => handleRowChange(index, 'product_type', e.target.value)}
                               className='px-1'
 
-                              >
+                            >
                               <option value="" disabled>Select type</option>
                               <option value="roll">Roll</option>
                               <option value="box">Box</option>
 
-                              
+
                             </Form.Control>
                           </td>
 
@@ -418,7 +399,7 @@ const Add_inoice = () => {
                               onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
                             />
                           </td>
-                         
+
                           <td>
                             <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
                               <option value="" disabled>Select unit</option>
@@ -478,11 +459,11 @@ const Add_inoice = () => {
                         value={formData.cgst_percentage}
                         onChange={handleChange}
                       />
-                      
+
                     </Col>
 
                     <Col md={3}>
-                    <FormField
+                      <FormField
                         icon={FaCalendarAlt}
                         label="Ack Date"
                         type="date"

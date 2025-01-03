@@ -19,42 +19,24 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available-stocks`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-
         console.log('stocks data:', response.data);
-        if (Array.isArray(response.data.data)) {
-          const productsWithStocks = [];
-          response.data.data.forEach((product) => {
-            if (Array.isArray(product.stock_available)) {
-              product.stock_available.forEach((stock) => {
-                productsWithStocks.push({
-                  id: stock.id,
-                  lot_no: stock.id,
-                  invoice_no: product.id,
-                  date: stock.created_at,
-                  shadeNo: product.shadeNo,
-                  purchase_shade_no: product.purchase_shade_no,
-                  length: parseFloat(stock.length),
-                  width: parseFloat(stock.width),
-                  unit: stock.unit,
-                  qty: stock.qty,
-                  area: (parseFloat(stock.length) * parseFloat(stock.width) * stock.qty).toFixed(3),
-                  area_sq_ft: (parseFloat(stock.length) * parseFloat(stock.width) * stock.qty * 10.7639).toFixed(3)
-                });
-              });
-            }
-          });
-
-          setProducts(productsWithStocks);
-          setFilteredProducts(productsWithStocks);
-        } else {
-          console.error('Unexpected data format:', response.data);
-        }
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.available_height * product.available_width * product.qty;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3), // Area in square meters
+            area_sq_ft: areaSqFt.toFixed(3) // Area in square feet
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -68,7 +50,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['lot_no', 'length', 'width', 'shadeNo', 'purchase_shade_no']
+      ['available_width', 'available_height', 'invoice_no', 'lot_no']
         .map((key) => product[key]?.toString()?.toLowerCase() || '')
         .some((value) => value.includes(lowercasedQuery))
     );
@@ -89,35 +71,44 @@ const ShowProduct = () => {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
+    },{
+      name: 'Stock Code',
+      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Invoice No',
+      selector: (row) => row.stock_invoice?.invoice_no || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.stock_invoice?.date || 'N/A',
+      sortable: true
     },
     {
       name: 'Shade No',
-      selector: (row) => row.shadeNo,
+      selector: (row) => row.stock_product?.shadeNo || 'N/A',
       sortable: true
     },
     {
       name: 'Pur. Shade No',
-      selector: (row) => row.purchase_shade_no,
+      selector: (row) => row.stock_product?.purchase_shade_no || 'N/A',
       sortable: true
     },
     {
       name: 'Length',
-      selector: (row) => row.length,
+      selector: (row) => row.available_height,
       sortable: true
     },
     {
       name: 'Width',
-      selector: (row) => row.width,
+      selector: (row) => row.available_width,
       sortable: true
     },
     {
       name: 'Unit',
       selector: (row) => row.unit,
-      sortable: true
-    },
-    {
-      name: 'Qty',
-      selector: (row) => row.qty,
       sortable: true
     },
     {
@@ -131,42 +122,65 @@ const ShowProduct = () => {
       sortable: true
     }
   ];
-
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredProducts);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('Stocks List', 20, 10);
+    doc.text('stocks List', 20, 10);
     doc.autoTable({
-      head: [['Sr No', 'Lot No', 'Shade No', 'Pur. Shade No', 'Length', 'Width', 'Unit', 'Qty', 'Area (m²)', 'Area (sq. ft.)']],
-      body: filteredProducts.map((row, index) => [
-        index + 1,
+      head: [
+        [
+          'Sr No',
+          'Lot No',
+          'Stock Code',
+          'Invoice No',
+          'Date',
+          'Shade No',
+          'Pur. Shade No',
+          'Length',
+          'Width',
+          'Unit',
+          'Area (m²)',
+          'Area (sq. ft.)'
+        ]
+      ],
+      body: filteredProducts.map((row) => [
+        row.index,
         row.lot_no,
-        row.shadeNo,
-        row.purchase_shade_no,
-        row.length,
-        row.width,
+        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+        row.stock_invoice?.invoice_no || 'N/A',
+        row.stock_invoice?.date || 'N/A',
+        row.stock_product?.shadeNo || 'N/A',
+        row.stock_product?.purchase_shade_no || 'N/A',
+        row.available_height,
+        row.available_width,
         row.unit,
-        row.qty,
         row.area,
         row.area_sq_ft
       ])
     });
     doc.save('stocks_list.pdf');
   };
+
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0, // Removes spacing between cells
+      },
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
         color: '#fff',
         fontSize: '18px',
         fontWeight: 'bold',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+      },
     },
     rows: {
       style: {
@@ -174,9 +188,10 @@ const ShowProduct = () => {
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
         '&:hover': {
-          backgroundColor: '#e6f4ea'
-        }
-      }
+          backgroundColor: '#e6f4ea',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
@@ -185,31 +200,48 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none', // Removes border for the last cell
+        },
+      },
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
-      }
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+        '& svg':{
+          fill: 'white',
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
+      },
+    },
   };
+  
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -242,9 +274,9 @@ const ShowProduct = () => {
               <div>
                 {[...Array(8)].map((_, index) => (
                   <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
-                    <Skeleton width={50} height={20} />
-                    <Skeleton width={200} height={20} />
-                    <Skeleton width={200} height={20} />
+                    <Skeleton available_width={50} height={20} />
+                    <Skeleton available_width={200} height={20} />
+                    <Skeleton available_width={200} height={20} />
                   </div>
                 ))}
               </div>
@@ -256,8 +288,9 @@ const ShowProduct = () => {
                   pagination
                   highlightOnHover
                   striped
-                  customStyles={customStyles}
                   responsive
+                  customStyles={customStyles}
+                  defaultSortFieldId={1}
                 />
               </div>
             )}

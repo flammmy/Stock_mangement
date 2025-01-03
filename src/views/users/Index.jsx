@@ -591,7 +591,8 @@ const UsersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'Username',
@@ -623,47 +624,57 @@ const UsersPage = () => {
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-          <div style={{ marginLeft: '45px', marginTop: '-4px' }}>
-            <span className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`} style={{ padding: '5px 10px', borderRadius: '8px' }}>
-              {row.status === 0 ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={row.status === 0} // Active if 0
-            onChange={() => handleToggleStatus(row.id, row.status)}
-            style={{ opacity: 0, width: 0, height: 0 }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Toggle Switch */}
+          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
+            <input
+              type="checkbox"
+              checked={row.status === 0} // Active if 0
+              onChange={() => handleToggleStatus(row.id, row.status)}
+              style={{ opacity: 0, width: 0, height: 0 }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+                transition: '0.4s',
+                borderRadius: '20px',
+              }}
+            ></span>
+            <span
+              style={{
+                position: 'absolute',
+                content: '',
+                height: '14px',
+                width: '14px',
+                left: row.status === 0 ? '18px' : '3px',
+                bottom: '3px',
+                backgroundColor: 'white',
+                transition: '0.4s',
+                borderRadius: '50%',
+              }}
+            ></span>
+          </label>
+      
+          {/* Status Badge */}
           <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
             style={{
-              position: 'absolute',
-              cursor: 'pointer',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-              transition: '0.4s',
-              borderRadius: '20px'
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap', // Prevents text wrapping
             }}
-          ></span>
-          <span
-            style={{
-              position: 'absolute',
-              content: '',
-              height: '14px',
-              width: '14px',
-              left: row.status === 0 ? '18px' : '3px',
-              bottom: '3px',
-              backgroundColor: 'white',
-              transition: '0.4s',
-              borderRadius: '50%'
-            }}
-          ></span>
-        </label>
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
+        </div>
       )
+      
     },
     {
       name: 'Action',
@@ -726,59 +737,83 @@ const UsersPage = () => {
   };
 
   const customStyles = {
-    header: {
-      style: {
-        backgroundColor: '#2E8B57',
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
-      }
-    },
-    rows: {
-      style: {
-        backgroundColor: '#f0fff4',
-        borderBottom: '1px solid #e0e0e0',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        padding: '15px'
-      }
-    },
-    cells: {
-      style: {
-        fontSize: '14px',
-        color: '#333',
-        padding: '12px'
-      }
-    },
-    pagination: {
-      style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px'
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
-  };
+     table: {
+       style: {
+         borderCollapse: 'separate', // Ensures border styles are separate
+         borderSpacing: 0, // Removes spacing between cells
+       },
+     },
+     header: {
+       style: {
+         backgroundColor: '#2E8B57',
+         color: '#fff',
+         fontSize: '18px',
+         fontWeight: 'bold',
+         padding: '15px',
+         borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+       },
+     },
+     rows: {
+       style: {
+         backgroundColor: '#f0fff4',
+         borderBottom: '1px solid #e0e0e0',
+         transition: 'background-color 0.3s ease',
+         '&:hover': {
+           backgroundColor: '#e6f4ea',
+           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+         },
+       },
+     },
+     headCells: {
+       style: {
+         justifyContent: 'center',
+         backgroundColor: '#20B2AA',
+         color: '#fff',
+         fontSize: '12px',
+         fontWeight: 'bold',
+         textTransform: 'uppercase',
+         padding: '15px',
+         borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+       },
+       lastCell: {
+         style: {
+           borderRight: 'none', // Removes border for the last cell
+         },
+       },
+     },
+     cells: {
+       style: {
+         justifyContent: 'center',
+         fontSize: '14px',
+         color: '#333',
+         padding: '12px',
+         borderRight: '1px solid grey', // Vertical lines between cells
+       },
+     },
+     pagination: {
+       style: {
+         backgroundColor: '#3f4d67',
+         color: '#fff',
+         borderRadius: '0 0 8px 8px',
+       },
+       pageButtonsStyle: {
+         backgroundColor: 'transparent',
+         color: 'black', // Makes the arrows white
+         border: 'none',
+         '&:hover': {
+           backgroundColor: 'rgba(255,255,255,0.2)',
+         },
+         '& svg':{
+           fill: 'white',
+         },
+         '&:focus': {
+           outline: 'none',
+           boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+         },
+       },
+     },
+   };
+  
 
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredUsers);
@@ -799,9 +834,10 @@ const UsersPage = () => {
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
+          <label htmlFor="search" className='me-2'>Search: </label>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Type here..."
             id="search"
             value={searchQuery}
             onChange={handleSearch}

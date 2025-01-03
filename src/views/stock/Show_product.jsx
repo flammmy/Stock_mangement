@@ -79,6 +79,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Stock Code',
+      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      sortable: true
+    },
+    {
       name: 'Invoice no',
       selector: (row) => row.stock_invoice.invoice_no,
       sortable: true
@@ -364,15 +369,6 @@ const Show_product = () => {
           value={selectedProduct?.type || ''}
           onChange={handleChange}
           
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Quantity</Form.Label>
-        <Form.Control
-          type="number"
-          name="qty"
-          value={selectedProduct?.qty || ''}
-          onChange={handleChange}
         />
       </Form.Group>
     </Form>
