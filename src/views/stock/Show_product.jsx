@@ -28,7 +28,7 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        const productsWithArea = response.data.map((product) => {
+        const productsWithArea = response.data.filter((product) => product.qty > 0).map((product) => {
           const areaM2 = product.length * product.width * product.qty;
           const areaSqFt = areaM2 * 10.7639;
           return {
@@ -132,6 +132,11 @@ const Show_product = () => {
     {
       name: 'Area(sq.ft.)',
       selector: (row) => row.area_sq_ft,
+      sortable: true
+    },
+    {
+      name: 'Rack No',
+      selector: (row) => row.rack,
       sortable: true
     },
     {

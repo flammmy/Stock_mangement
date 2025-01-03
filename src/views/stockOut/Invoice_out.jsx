@@ -165,19 +165,46 @@ const Invoice_out = () => {
   };
 
   const handleInputChange = (id, field, value) => {
-    // Update selectedRows
     setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) => (row.stock_available_id === id ? { ...row, [field]: value } : row));
-
+      const updatedRows = prevSelectedRows.map((row) => {
+        if (row.stock_available_id === id) {
+          const updatedRow = { ...row, [field]: value };
+  
+          // Recalculate area when length, width, or unit changes
+          if (field === 'out_length' || field === 'out_width' || field === 'unit') {
+            const lengthInFeet =
+              updatedRow.unit === 'meter' ? Number(updatedRow.out_length) * 3.28084 : // Convert meters to feet
+              updatedRow.unit === 'inches' ? Number(updatedRow.out_length) / 12 :    // Convert inches to feet
+              Number(updatedRow.out_length); // Default to feet
+  
+            const widthInFeet =
+              updatedRow.unit === 'meter' ? Number(updatedRow.out_width) * 3.28084 : // Convert meters to feet
+              updatedRow.unit === 'inches' ? Number(updatedRow.out_width) / 12 :    // Convert inches to feet
+              Number(updatedRow.out_width); // Default to feet
+  
+            updatedRow.area = (lengthInFeet * widthInFeet).toFixed(2); // Calculate area
+          }
+  
+          // Recalculate amount when area or rate changes
+          if (field === 'rate' || field === 'out_length' || field === 'out_width' || field === 'unit') {
+            updatedRow.amount = (Number(updatedRow.area || 0) * Number(updatedRow.rate || 0)).toFixed(2);
+          }
+  
+          return updatedRow;
+        }
+        return row;
+      });
+  
       // Sync formData.out_products with updatedRows
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedRows
       }));
-
+  
       return updatedRows;
     });
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -475,6 +502,7 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         value={row.lot_no || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
                                       />
                                     </td>
@@ -486,6 +514,7 @@ const Invoice_out = () => {
                                         type="text"
                                         max={Number(row.out_width)}
                                         value={row.out_width || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
                                       />
                                     </td>
@@ -494,6 +523,7 @@ const Invoice_out = () => {
                                         type="text"
                                         max={Number(row.out_length)}
                                         value={row.out_length || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
                                       />
                                     </td>
@@ -515,6 +545,7 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         value={row.area || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'area', e.target.value)}
                                       />
                                     </td>
@@ -536,6 +567,7 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         value={row.rate || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'rate', e.target.value)}
                                       />
                                     </td>
@@ -543,6 +575,7 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         value={row.amount || ''}
+                                        className='py-2'
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'amount', e.target.value)}
                                       />
                                     </td>
@@ -577,7 +610,7 @@ const Invoice_out = () => {
                     <Col md={3}>
                       <FormField
                         icon={FaPercentage}
-                        label="SGST(%)"
+                        label="CGST(%)"
                         name="cgst_percentage"
                         value={formData.cgst_percentage}
                         onChange={handleChange}

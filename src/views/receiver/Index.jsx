@@ -157,75 +157,93 @@ const ReceiversPage = () => {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
+      cell: (row) => (
+        <details>
+          <summary style={{ 
+            cursor: 'pointer', 
+          }}>
+            {row.reg_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
+          </summary>
+          <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+        </details>
+      )
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
+      cell: (row) => (
+        <details>
+          <summary style={{ 
+            cursor: 'pointer', 
+          }}>
+            {row.work_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
+          </summary>
+          <span>{row.work_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+        </details>
+      )
     },
+    
     {
       name: 'Area',
       selector: (row) => row.area,
       sortable: true
     },
-    {
-      name: 'Logo',
-      cell: (row) => (
-        <img
-          src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
-          alt={`${row.name} logo`}
-          style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-        />
-      ),
-      sortable: false
-    },
+    
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-          <div style={{ marginLeft: '45px', marginTop: '-4px' }}>
-            <span className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`} style={{ padding: '5px 10px', borderRadius: '8px' }}>
-              {row.status === 0 ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={row.status === 0} // Active if 0
-            onChange={() => handleToggleStatus(row.id, row.status)}
-            style={{ opacity: 0, width: 0, height: 0 }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Toggle Switch */}
+          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
+            <input
+              type="checkbox"
+              checked={row.status === 0} // Active if 0
+              onChange={() => handleToggleStatus(row.id, row.status)}
+              style={{ opacity: 0, width: 0, height: 0 }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+                transition: '0.4s',
+                borderRadius: '20px',
+              }}
+            ></span>
+            <span
+              style={{
+                position: 'absolute',
+                content: '',
+                height: '14px',
+                width: '14px',
+                left: row.status === 0 ? '18px' : '3px',
+                bottom: '3px',
+                backgroundColor: 'white',
+                transition: '0.4s',
+                borderRadius: '50%',
+              }}
+            ></span>
+          </label>
+      
+          {/* Status Badge */}
           <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
             style={{
-              position: 'absolute',
-              cursor: 'pointer',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-              transition: '0.4s',
-              borderRadius: '20px'
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap', // Prevents text wrapping
             }}
-          ></span>
-          <span
-            style={{
-              position: 'absolute',
-              content: '',
-              height: '14px',
-              width: '14px',
-              left: row.status === 0 ? '18px' : '3px',
-              bottom: '3px',
-              backgroundColor: 'white',
-              transition: '0.4s',
-              borderRadius: '50%'
-            }}
-          ></span>
-        </label>
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
+        </div>
       )
     },
     {
@@ -340,6 +358,12 @@ const ReceiversPage = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0, // Removes spacing between cells
+      },
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -347,8 +371,8 @@ const ReceiversPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
-      }
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+      },
     },
     rows: {
       style: {
@@ -357,42 +381,60 @@ const ReceiversPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
+        justifyContent: 'center',
         backgroundColor: '#20B2AA',
         color: '#fff',
-        fontSize: '16px',
+        fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none', // Removes border for the last cell
+        },
+      },
     },
     cells: {
       style: {
+        justifyContent: 'center',
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
-      }
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+        '& svg':{
+          fill: 'white',
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
+      },
+    },
   };
+  
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredReceivers);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -443,10 +485,11 @@ const ReceiversPage = () => {
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        <div className="col-md-4">
+      <div className="col-md-4">
+          <label htmlFor="search" className='me-2'>Search: </label>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Type here..."
             id="search"
             value={searchQuery}
             onChange={handleSearch}

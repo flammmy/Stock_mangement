@@ -10,6 +10,8 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import Swal from 'sweetalert2';
+
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -57,10 +59,7 @@ const Index = () => {
   //   Update filtered users when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter(
-      (invoice) =>
-        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
-    );
+    const filtered = invoices.filter((invoice) => invoice.supplier_name.toLowerCase().includes(lowercasedQuery));
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
 
@@ -125,10 +124,89 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
         </div>
-      )
+      ),
+       width: '220px'
     }
   ];
+
+  const handleDelete = async (id) => {
+    try {
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+
+      if (result.isConfirmed) {
+        // Attempt to delete supplier
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        // Update state on successful deletion
+        setInvoices((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
+        setFilteredInvoices((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
+
+        toast.success('Invoice deleted successfully');
+        Swal.fire('Deleted!', 'The Invoice has been deleted.', 'success');
+      }
+    } catch (error) {
+      // Log error for debugging and notify user
+      console.error('Error deleting supplier:', error);
+
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the Invoice.');
+      }
+
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the Invoice.', 'error');
+    }
+  };
+
+  //   const handleUpdateUser = async () => {
+  //     try {
+  //       console.log(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`);
+  //       const response = await axios.put(
+  //         `${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${selectedUser.id}`,
+  //         {
+  //           username: selectedUser.username,
+  //           name: selectedUser.name,
+  //           email: selectedUser.email,
+  //           phone: selectedUser.phone,
+  //           role: selectedUser.role == 'operator' ? 2 : 3,
+  //           password: selectedUser.password,
+  //           status: selectedUser.status == 'active' ? 1 : 0
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //             'Content-Type': 'application/json'
+  //           }
+  //         }
+  //       );
+  //       toast.success('User updated successfully!');
+  //       setUsers((prevUsers) => prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user)));
+
+  //       setShowEditModal(false);
+  //     } catch (err) {
+  //       toast.error('Error updating user!');
+  //     }
+  //   };
+
   const handleAddInvoice = () => {
     navigate('/add-invoice');
   };
@@ -141,6 +219,12 @@ const Index = () => {
   //   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0 // Removes spacing between cells
+      }
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -148,7 +232,7 @@ const Index = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
       }
     },
     rows: {
@@ -169,14 +253,21 @@ const Index = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none' // Removes border for the last cell
+        }
       }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
+        padding: '12px',
+        borderRight: '1px solid grey' // Vertical lines between cells
       }
     },
     pagination: {
@@ -187,13 +278,37 @@ const Index = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)'
+        },
+        '& svg': {
+          fill: 'white'
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
       }
     }
   };
+
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredSuppliers);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'supplier_list.csv');
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 20, 10);
+    doc.autoTable({
+      head: [['Invoice Number', 'Supplier Name', 'Receiver Name', 'Date', 'Bank', 'Total Amount']],
+      body: filteredSuppliers.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
+    });
+    doc.save('user_list.pdf');
+  };
+
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -232,9 +347,7 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-                <div className="d-flex justify-content-end">
-                  
-                </div>
+                <div className="d-flex justify-content-end"></div>
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}

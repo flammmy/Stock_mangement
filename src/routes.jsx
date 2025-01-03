@@ -56,17 +56,6 @@ const routes = [
     path: '/signin/resetPassword',
     element: lazy(() => import('./views/auth/signin/resetPassword'))
   },
-  // {
-  //   exact: 'true',
-  //   path: '/auth/signin-1',
-  //   element: lazy(() => import('./views/auth/signin/SignIn1'))
-  // },
-  // {
-  //   exact: 'true',
-  //   path: '/auth/signup-1',
-  //   element: lazy(() => import('./views/auth/signup/SignUp1'))
-  // },
-
   {
     path: '*',
     layout: AdminLayout,
@@ -75,158 +64,162 @@ const routes = [
         exact: 'true',
         path: '/dashboard',
         element: lazy(() => import('./views/dashboard')),
-        allowedRoles : [1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/add-user',
         element: lazy(() => import('./views/users/AddUser')),
-        allowedRoles:[1,2,3]
-      }, {
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/Supplier',
         element: lazy(() => import('./views/supplier/Index')),
-        allowedRoles:[1,2,3]
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/add-Supplier',
         element: lazy(() => import('./views/supplier/AddSupplier')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/receiver',
         element: lazy(() => import('./views/receiver/Index')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/add-Receiver',
         element: lazy(() => import('./views/receiver/AddReceiver')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/customers',
         element: lazy(() => import('./views/customer/Index')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/add-Customer',
         element: lazy(() => import('./views/customer/AddCustomer')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/bank',
         element: lazy(() => import('./views/bank/Index')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/add-Bank',
         element: lazy(() => import('./views/bank/AddBank')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/products',
         element: lazy(() => import('./views/products/Index')),
-        allowedRoles:[1,2,3]
-
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/Add-Product',
         element: lazy(() => import('./views/products/AddProduct')),
-        allowedRoles:[1,2,3]
-
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/stocks',
         element: lazy(() => import('./views/stock/Index')),
-        allowedRoles:[1,2,3]
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/available-stocks',
         element: lazy(() => import('./views/stock/Available_Stock')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/add-invoice',
         element: lazy(() => import('./views/stock/Add_inoice')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/add-product/:id/:no',
         element: lazy(() => import('./views/stock/Add_product')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/show-product/:id',
         element: lazy(() => import('./views/stock/Show_product')),
-        allowedRoles:[1,2,3]
-      },
-      {
-        exact: 'true',
-        path: '/invoices',
-        element: lazy(() => import('./views/stock/Index')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/shades',
         element: lazy(() => import('./views/shades/Index')),
-        allowedRoles:[1,2,3]
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/add-shades',
         element: lazy(() => import('./views/shades/AddShade')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/all-stocks',
         element: lazy(() => import('./views/stock/All_Stock')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
-        allowedRoles:[1,2,3]
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/all-invoices-out',
         element: lazy(() => import('./views/stockOut/Index')),
-        allowedRoles:[1,2,3]
-      },{
+        allowedRoles: [1, 2, 3]
+      },
+      {
         exact: 'true',
         path: '/all-out-stock',
         element: lazy(() => import('./views/stockOut/all_out_stock')),
-        allowedRoles:[1,2,3]
+        allowedRoles: [1, 2, 3]
+      },
+      {
+        exact: 'true',
+        path: '/stocks/add-radius/:id/:no',
+        element: lazy(() => import('./views/stock/Add_role')),
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/basic/badges',
-        element: lazy(() => import('./views/ui-elements/basic/BasicBadges')),
-        
+        element: lazy(() => import('./views/ui-elements/basic/BasicBadges'))
       },
       {
         exact: 'true',

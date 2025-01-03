@@ -9,6 +9,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { color } from 'd3';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -32,13 +33,13 @@ const ShowProduct = () => {
         const flattenedData = response.data.data.flatMap((invoice) =>
           invoice.stock_out_details.map((detail, index) => ({
             sr_no: index + 1,
-            lot_no: detail.stock_available_id, // Assuming stock_available_id acts as lot number
+            lot_no: detail.product.shadeNo, // Assuming stock_available_id acts as lot number
             invoice_no: invoice.invoice_no,
             date: invoice.date,
             shade_no: detail.product?.shadeNo || 'N/A',
             pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.out_length,
-            width: detail.out_width,
+            length: detail.unit==='inches'?detail.out_length*39.3700:detail.out_length,
+            width: detail.unit==='inches'?detail.out_width*39.3700:detail.out_width,
             unit: detail.unit,
             qty: detail.out_quantity,
             waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length)*detail.out_quantity* 10.7639  || 0).toFixed(3),
@@ -134,14 +135,21 @@ const ShowProduct = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0, // Removes spacing between cells
+      },
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
         color: '#fff',
         fontSize: '18px',
         fontWeight: 'bold',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+      },
     },
     rows: {
       style: {
@@ -149,9 +157,10 @@ const ShowProduct = () => {
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
         '&:hover': {
-          backgroundColor: '#e6f4ea'
-        }
-      }
+          backgroundColor: '#e6f4ea',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
@@ -160,31 +169,47 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
-      }
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none', // Removes border for the last cell
+        },
+      },
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
-      }
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        }
-      }
-    }
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+        '& svg':{
+          fill: 'white',
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
+      },
+    },
   };
+  
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
