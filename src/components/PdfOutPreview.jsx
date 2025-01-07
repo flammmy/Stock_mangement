@@ -258,6 +258,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
                                         <Text style={styles.tableCell}>Unit</Text>
+                                        <Text style={styles.tableCell}>Area Sq.Ft</Text>
                                         <Text style={styles.tableCell}>Rate</Text>
                                         <Text style={styles.tableCell}>Amount</Text>
                                     </View>
@@ -269,10 +270,20 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{detail.product_type ?? '-'}</Text>
                                             {/* <Text style={styles.tableCell}>{detail.hsn_sac_code ?? '-'}</Text> */}
                                             <Text style={styles.tableCell}>{`${detail.product?.shadeNo ?? '-'}-${detail.product?.stock_in_id ?? '-'}`}</Text>
-                                            <Text style={styles.tableCell}>{detail.out_length ?? '-'}</Text>
-                                            <Text style={styles.tableCell}>{detail.out_width ?? '-'}</Text>
-                                            <Text style={styles.tableCell}>{detail.out_quantity ?? '-'}</Text>
+                                            <Text style={styles.tableCell}>
+                                                {detail.unit === 'inches'
+                                                    ? ((detail.out_length ?? 0) * 39.3701).toFixed(2)
+                                                    : (detail.out_length ?? '-')}
+                                            </Text>
+                                            <Text style={styles.tableCell}>
+                                                {detail.unit === 'inches'
+                                                    ? ((detail.out_width ?? 0) * 39.3701).toFixed(2)
+                                                    : (detail.out_width ?? '-')}
+                                            </Text>
+                                            <Text style={styles.tableCell}>{Math.round(detail.out_quantity) ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.unit ?? '-'}</Text>
+                                            <Text style={styles.tableCell}>{Number(detail.out_length*detail.out_width*10.7639
+                                            ).toFixed(2) ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{Number(detail.rate).toFixed(2) ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{Number(detail.amount).toFixed(2) ?? '-'}</Text>
                                         </View>

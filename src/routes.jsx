@@ -212,9 +212,21 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/stocks/add-radius/',
+        path: '/stocks/add-radius',
         element: lazy(() => import('./views/stock/Add_role')),
         allowedRoles: [1, 2, 3]
+      },
+      {
+        exact: 'true',
+        path: '/stocks/old-stock',
+        element: lazy(() => import('./views/stock/Old_stock')),
+        allowedRoles: [1, 2, 3]
+      },
+      {
+        exact: 'true',
+        path: '/stockout/approved',
+        element: lazy(() => import('./views/stockout/approve_stockout')),
+        allowedRoles: [1]
       },
       {
         exact: 'true',
