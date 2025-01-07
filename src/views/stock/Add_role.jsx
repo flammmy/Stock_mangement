@@ -16,7 +16,7 @@ const AddProduct = () => {
             D_inner: '',
             thickness: '',
             length: '',
-            // unit: '',
+            unit: 'inches',
             type: '',
             // qty: 1,
         },
@@ -52,7 +52,7 @@ const AddProduct = () => {
                 D_inner: '',
                 thickness: '',
                 length: '',
-                // unit: '',
+                unit: 'inches',
                 type: '',
                 // qty: 1,
             },
@@ -195,17 +195,7 @@ const AddProduct = () => {
                                                 <td>
                                                     <Form.Control type="text" value={item.length} readOnly />
                                                 </td>
-                                                {/* <td>
-                                                    <Form.Control
-                                                        as="select"
-                                                        value={item.unit}
-                                                        onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
-                                                    >
-                                                        <option value="">Select Unit</option>
-                                                        <option value="meter">Meter</option>
-                                                        <option value="inches">Inches</option>
-                                                    </Form.Control>
-                                                </td> */}
+                                            
                                                 <td>
                                                     <Form.Control
                                                         as="select"

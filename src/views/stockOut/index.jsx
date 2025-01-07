@@ -35,21 +35,22 @@ const Index = () => {
         setInvoiceAllDetails(invoicesDetails);
 
         const filteredFields = (data) => {
-            return data.map((invoice) => ({
-              invoice_no: invoice.invoice_no,
-              id: invoice.id,
-              supplier_name: invoice.customer?.name,
-              receiver_name: invoice.receiver?.name,
-              height: invoice.stock_out_details?.height,
-              date: invoice.date,
-              bank: invoice.payment_Bank,
-              payment_mode: invoice.payment_mode,
-              payment_status: invoice.payment_status,
-              total_amount: invoice.total_amount,
-            }));
-          };
-          setInvoices(filteredFields(invoicesDetails));
-          setFilteredInvoices(filteredFields(invoicesDetails));
+          return data.map((invoice) => ({
+            invoice_no: invoice.invoice_no,
+            id: invoice.id,
+            status: invoice.status,
+            supplier_name: invoice.customer?.name,
+            receiver_name: invoice.receiver?.name,
+            height: invoice.stock_out_details?.height,
+            date: invoice.date,
+            bank: invoice.payment_Bank,
+            payment_mode: invoice.payment_mode,
+            payment_status: invoice.payment_status,
+            total_amount: invoice.total_amount,
+          }));
+        };
+        setInvoices(filteredFields(invoicesDetails));
+        setFilteredInvoices(filteredFields(invoicesDetails));
       } catch (error) {
         console.error(error);
       } finally {
@@ -72,6 +73,21 @@ const Index = () => {
   };
 
   const navigate = useNavigate();
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockout/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      console.log(response.data);
+      toast.success('Invoice deleted successfully');
+      setInvoices(invoices.filter((invoice) => invoice.id !== id));
+      setFilteredInvoices(filteredInvoices.filter((invoice) => invoice.id !== id));
+    } catch (error) {
+      toast.error('Failed to delete Product');
+    }
+  };
 
   const columns = [
     {
@@ -108,22 +124,6 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          {/* <Button
-            variant="outline-warning"
-            size="sm"
-            className="me-2"
-            onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}
-          >
-            <MdAdd />
-          </Button> */}
-          {/* <Button
-            variant="outline-success"
-            size="sm"
-            className="me-2"
-            onClick={() => navigate(`/show-product/${row.id}`)}
-          >
-            <FaEye />
-          </Button> */}
           <Button
             variant="outline-primary"
             size="sm"
@@ -135,11 +135,32 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
         </div>
       )
+    }, {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
+      ),
     }
   ];
-  
+
   const handleAddInvoice = () => {
     navigate('/invoice-out');
   };
@@ -208,7 +229,7 @@ const Index = () => {
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',
         },
-        '& svg':{
+        '& svg': {
           fill: 'white',
         },
         '&:focus': {
@@ -218,7 +239,7 @@ const Index = () => {
       },
     },
   };
-  
+
 
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredInvoices);
@@ -245,7 +266,7 @@ const Index = () => {
         row.receiver_name,
         row.date,
         row.bank,
-        row.total_amount,        
+        row.total_amount,
       ])
     });
     doc.save('user_list.pdf');

@@ -24,7 +24,18 @@ import {
 } from 'react-icons/fa';
 import FormField from '../../components/FormField';
 
+
 const Invoice_out = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [receivers, setReceivers] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [shadeNo, setShadeNo] = useState([]);
+  const [invoice_no, SetInvoiceNo] = useState('');
+  const [selectedRows, setSelectedRows] = useState([]);
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: '',
@@ -54,14 +65,7 @@ const Invoice_out = () => {
     qr_code: '',
     out_products: []
   });
-  const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [receivers, setReceivers] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [banks, setBanks] = useState([]);
-  const [shadeNo, setShadeNo] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
+
 
   useEffect(() => {
     const fetchShadeNo = async () => {
@@ -72,8 +76,6 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-
-        console.log(response.data.data);
         setShadeNo(response.data.data);
       } catch (error) {
         console.error('Error fetching product data:', error);
@@ -82,9 +84,30 @@ const Invoice_out = () => {
     fetchShadeNo();
   }, []);
 
+  useEffect(() => {
+    const fetchInvoiceNo = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockout/invoiceno`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        SetInvoiceNo(response.data.data);
+        setFormData((prevData) => ({
+          ...prevData,
+          invoice_no: response.data.data,
+        }));
+      } catch (error) {
+        console.error('Error fetching Invoice No data:', error);
+      }
+    };
+    fetchInvoiceNo();
+  }, []);
+
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedProductId = event.target.value; // Get the selected product ID
+    const selectedProductId = event.target.value;
 
     if (selectedProductId) {
       try {
@@ -102,7 +125,7 @@ const Invoice_out = () => {
         console.error('Error fetching product data:', error);
       }
     } else {
-      setProducts(null); // Clear products state if no shade is selected
+      setProducts(null);
     }
   };
 
@@ -139,6 +162,7 @@ const Invoice_out = () => {
     };
     fetchCustomerData();
   }, []);
+
   useEffect(() => {
     const fetchReceiverData = async () => {
       try {
@@ -149,7 +173,6 @@ const Invoice_out = () => {
           }
         });
         setReceivers(response.data.data);
-        // console.log(response.data.data);
       } catch (err) {
         console.log(err);
       }
@@ -169,42 +192,39 @@ const Invoice_out = () => {
       const updatedRows = prevSelectedRows.map((row) => {
         if (row.stock_available_id === id) {
           const updatedRow = { ...row, [field]: value };
-  
-          // Recalculate area when length, width, or unit changes
+
           if (field === 'out_length' || field === 'out_width' || field === 'unit') {
             const lengthInFeet =
-              updatedRow.unit === 'meter' ? Number(updatedRow.out_length) * 3.28084 : // Convert meters to feet
-              updatedRow.unit === 'inches' ? Number(updatedRow.out_length) / 12 :    // Convert inches to feet
-              Number(updatedRow.out_length); // Default to feet
-  
+              updatedRow.unit === 'meter' ? Number(updatedRow.out_length) * 3.28084 :
+                updatedRow.unit === 'inches' ? Number(updatedRow.out_length) / 12 :    // Convert inches to feet
+                  Number(updatedRow.out_length); // Default to feet
+
             const widthInFeet =
               updatedRow.unit === 'meter' ? Number(updatedRow.out_width) * 3.28084 : // Convert meters to feet
-              updatedRow.unit === 'inches' ? Number(updatedRow.out_width) / 12 :    // Convert inches to feet
-              Number(updatedRow.out_width); // Default to feet
-  
+                updatedRow.unit === 'inches' ? Number(updatedRow.out_width) / 12 :    // Convert inches to feet
+                  Number(updatedRow.out_width); // Default to feet
+
             updatedRow.area = (lengthInFeet * widthInFeet).toFixed(2); // Calculate area
           }
-  
-          // Recalculate amount when area or rate changes
+
           if (field === 'rate' || field === 'out_length' || field === 'out_width' || field === 'unit') {
             updatedRow.amount = (Number(updatedRow.area || 0) * Number(updatedRow.rate || 0)).toFixed(2);
           }
-  
+
           return updatedRow;
         }
         return row;
       });
-  
-      // Sync formData.out_products with updatedRows
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedRows
       }));
-  
+
       return updatedRows;
     });
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -216,15 +236,13 @@ const Invoice_out = () => {
         }
       });
       toast.success('Stocks out successfully');
-      // navigate('/users');
+      navigate('/all-invoices-out');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
     }
-
     console.log(formData);
   };
-  const navigate = useNavigate();
 
   const columns = [
     { id: 'product_shadeNo', label: 'Shade No' },
@@ -243,19 +261,19 @@ const Invoice_out = () => {
       const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
 
       const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.stock_available_id !== id) 
+        ? prevSelected.filter((row) => row.stock_available_id !== id)
         : [...prevSelected, products.find((p) => p.stock_available_id === id)];
 
       console.log(updatedSelectedRows);
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedSelectedRows 
+        out_products: updatedSelectedRows
       }));
 
       return updatedSelectedRows;
     });
   };
-
+  console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
   return (
     <Container
@@ -290,8 +308,8 @@ const Invoice_out = () => {
                       icon={FaFileInvoice}
                       label="Invoice_no"
                       name="invoice_no"
-                      value={formData.invoice_no}
-                      onChange={handleChange}
+                      value={invoice_no}
+                      readOnly
                     />
                     <FormField
                       icon={FaUsers}
@@ -319,15 +337,15 @@ const Invoice_out = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                    
-                    
+
+
                     <FormField
                       icon={FaMoneyBillWave}
                       label="Payment Mode"
                       name="payment_mode"
                       value={formData.payment_mode}
                       onChange={handleChange}
-                      options={[{id:'cash', name:'cash'},{id:'card', name:'card'},{id:'online', name:'online'},{id:'cheque', name:'cheque'},{id:'other', name:'other'}]}
+                      options={[{ id: 'cash', name: 'cash' }, { id: 'card', name: 'card' }, { id: 'online', name: 'online' }, { id: 'cheque', name: 'cheque' }, { id: 'other', name: 'other' }]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
@@ -342,7 +360,7 @@ const Invoice_out = () => {
                       name="payment_status"
                       value={formData.payment_status}
                       onChange={handleChange}
-                      options={[{id:'paid', name:'paid'},{id:'pending', name:'pending'},{id:'failed', name:'failed'}]}
+                      options={[{ id: 'paid', name: 'paid' }, { id: 'pending', name: 'pending' }, { id: 'failed', name: 'failed' }]}
                     />
                   </Col>
                   <Col md={4}>
@@ -364,7 +382,7 @@ const Invoice_out = () => {
                       name="reverse_charge"
                       value={formData.reverse_charge}
                       onChange={handleChange}
-                      options={[{id:1, name:'true'},{id:0, name:'false'}]}
+                      options={[{ id: 1, name: 'true' }, { id: 0, name: 'false' }]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
@@ -449,8 +467,8 @@ const Invoice_out = () => {
                                       {/* Empty header for checkbox column */}
                                       <input
                                         type="checkbox"
-                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.stock_available_id) : [])}
-                                        // checked={selectedRows.length === products.length}
+                                      // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.stock_available_id) : [])}
+                                      // checked={selectedRows.length === products.length}
                                       />
                                     </th>
                                     {columns.map((column) => (
@@ -507,7 +525,7 @@ const Invoice_out = () => {
                                       />
                                     </td>
                                     <td key="Stock Code">
-                                    <td key="pur_shadeNo">{row.stock_code}</td>
+                                      <td key="pur_shadeNo">{row.stock_code}</td>
                                     </td>
                                     <td key="width">
                                       <input

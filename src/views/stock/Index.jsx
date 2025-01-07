@@ -147,16 +147,13 @@ const Index = () => {
       });
 
       if (result.isConfirmed) {
-        // Attempt to delete supplier
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-
-        // Update state on successful deletion
-        setInvoices((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
-        setFilteredInvoices((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
+        setInvoices((prevInvoices) => prevInvoices.filter((invoices) => invoices.id !== id));
+        setFilteredInvoices((prevFilteredInvoices) => prevFilteredInvoices.filter((invoices) => invoices.id !== id));
 
         toast.success('Invoice deleted successfully');
         Swal.fire('Deleted!', 'The Invoice has been deleted.', 'success');
@@ -295,16 +292,16 @@ const Index = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
+    const csv = Papa.unparse(filteredInvoices);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'supplier_list.csv');
   };
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
+    doc.text('Invoices List', 20, 10);
     doc.autoTable({
       head: [['Invoice Number', 'Supplier Name', 'Receiver Name', 'Date', 'Bank', 'Total Amount']],
-      body: filteredSuppliers.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
+      body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
     });
     doc.save('user_list.pdf');
   };

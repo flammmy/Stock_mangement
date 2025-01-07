@@ -224,6 +224,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/stockout/approved',
+        element: lazy(() => import('./views/stockout/approve_stockout')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
         path: '/basic/badges',
         element: lazy(() => import('./views/ui-elements/basic/BasicBadges'))
       },

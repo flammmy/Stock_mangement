@@ -191,9 +191,7 @@ const AddProduct = () => {
           <div className="card shadow-lg border-0 rounded-lg" style={{ borderRadius: '10px' }}>
             <div className="card-body p-5" style={{ borderRadius: '8px' }}>
               <h3 className="text-center mb-4 gap-2">Add Manually</h3>
-              <Button variant="success" onClick={handleRadius} className="px-1 py-1 ">
-                <FaPlus /> Add By Radius
-              </Button>
+              
               <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
                 <FaPlus /> Add Item
               </Button>

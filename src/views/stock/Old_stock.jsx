@@ -26,13 +26,30 @@ const Old_stock = () => {
           }
         });
         console.log('stocks data:', response.data);
-        const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width ;
-          const areaSqFt = areaM2 * 10.7639;
+        const productsWithArea = response.data.data.map((product) => {
+          // Check for unit type and calculate accordingly
+          let areaM2, areaSqFt;
+          if (product.unit === 'meter') {
+            // Length and width are in meters
+            areaM2 = product.length * product.width;
+            areaSqFt = areaM2 * 10.7639;
+          } else if (product.unit === 'inches') {
+            // Convert inches to meters for calculation
+            const lengthInMeters = product.length * 0.0254;
+            const widthInMeters = product.width * 0.0254;
+            areaM2 = lengthInMeters * widthInMeters;
+            areaSqFt = areaM2 * 10.7639;
+          } else {
+            console.warn(`Unknown unit type: ${product.unit}`);
+            areaM2 = 0;
+            areaSqFt = 0;
+          }
+
+          // Return the modified product object
           return {
             ...product,
-            area: areaM2.toFixed(3), 
-            area_sq_ft: areaSqFt.toFixed(3) 
+            area: areaM2.toFixed(3),
+            area_sq_ft: areaSqFt.toFixed(3),
           };
         });
         setProducts(productsWithArea);
@@ -67,33 +84,19 @@ const Old_stock = () => {
       selector: (_, index) => index + 1,
       sortable: true
     },
-    {
-      name: 'Lot No',
-      selector: (row) => row.lot_no,
-      sortable: true
-    }, {
-      name: 'Stock Code',
-      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      sortable: true
-    },
-    {
-      name: 'Invoice No',
-      selector: (row) => row.stock_invoice?.invoice_no || 'N/A',
-      sortable: true
-    },
-    {
-      name: 'Date',
-      selector: (row) => row.stock_invoice?.date || 'N/A',
-      sortable: true
-    },
+    // {
+    //   name: 'Date',
+    //   selector: (row) => row.stock_invoice?.date || 'N/A',
+    //   sortable: true
+    // },
     {
       name: 'Shade No',
-      selector: (row) => row.stock_product?.shadeNo || 'N/A',
+      selector: (row) => row.product?.shadeNo || 'N/A',
       sortable: true
     },
     {
       name: 'Pur. Shade No',
-      selector: (row) => row.stock_product?.purchase_shade_no || 'N/A',
+      selector: (row) => row.product?.purchase_shade_no || 'N/A',
       sortable: true
     },
     {
@@ -128,11 +131,11 @@ const Old_stock = () => {
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'Stock Code': `${row.product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
       'Date': row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Shade No': row.product?.shadeNo || 'N/A',
+      'Pur. Shade No': row.product?.purchase_shade_no || 'N/A',
       'Length': row.length,
       'Width': row.width,
       'Unit': row.unit,
@@ -168,11 +171,11 @@ const Old_stock = () => {
         index + 1,
         JSON.parse(localStorage.getItem('user')).username || 'N/A',
         row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+        `${row.product?.shadeNo}-${row.stock_code}` || 'N/A',
         row.stock_invoice?.invoice_no || 'N/A',
         row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
+        row.product?.shadeNo || 'N/A',
+        row.product?.purchase_shade_no || 'N/A',
         row.length,
         row.width,
         row.unit,
@@ -248,7 +251,7 @@ const Old_stock = () => {
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',
         },
-        '& svg':{
+        '& svg': {
           fill: 'white',
         },
         '&:focus': {
@@ -258,7 +261,7 @@ const Old_stock = () => {
       },
     },
   };
-  
+
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

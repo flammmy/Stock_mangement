@@ -26,28 +26,29 @@ const ShowProduct = () => {
             'Content-Type': 'application/json'
           }
         });
-  
+
         console.log('stocks data:', response.data);
-  
-        // Flatten data: Extract stock_out_details from each invoice
+
         const flattenedData = response.data.data.flatMap((invoice) =>
           invoice.stock_out_details.map((detail, index) => ({
             sr_no: index + 1,
-            lot_no: detail.product.shadeNo, // Assuming stock_available_id acts as lot number
+            lot_no: detail.product.shadeNo,
             invoice_no: invoice.invoice_no,
             date: invoice.date,
             shade_no: detail.product?.shadeNo || 'N/A',
             pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.unit==='inches'?detail.out_length*39.3700:detail.out_length,
-            width: detail.unit==='inches'?detail.out_width*39.3700:detail.out_width,
+            length: detail.unit === 'inches' ? detail.out_length * 39.3700 : detail.out_length,
+            width: detail.unit === 'inches' ? detail.out_width * 39.3700 : detail.out_width,
             unit: detail.unit,
             qty: detail.out_quantity,
-            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length)*detail.out_quantity* 10.7639  || 0).toFixed(3),
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
+            stock_code:detail.stock_code,
+            status: detail.status,
+            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length) * detail.out_quantity * 10.7639 || 0).toFixed(3),
+            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity || 0).toFixed(3), // Area in m²
+            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
           }))
         );
-  
+
         setProducts(flattenedData);
         setFilteredProducts(flattenedData);
       } catch (error) {
@@ -56,10 +57,10 @@ const ShowProduct = () => {
         setLoading(false);
       }
     };
-  
+
     fetchStocksData();
   }, []);
-  
+
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -80,17 +81,40 @@ const ShowProduct = () => {
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
+    {
+      name: 'Stock Code',
+      selector: (row) => `${row.shade_no}-${row.stock_code}` || 'N/A',
+      sortable: true
+    },
     { name: 'Shade No', selector: (row) => row.shade_no, sortable: true },
     { name: 'Pur. Shade No', selector: (row) => row.pur_shade_no, sortable: true },
-    { name: 'Length', selector: (row) => row.length, sortable: true },
-    { name: 'Width', selector: (row) => row.width, sortable: true },
+    { name: 'Length', selector: (row) => Math.round(row.length), sortable: true },
+    { name: 'Width', selector: (row) => Math.round(row.width), sortable: true },
     { name: 'Unit', selector: (row) => row.unit, sortable: true },
-    { name: 'Qty', selector: (row) => Number(row.qty).toFixed(0), sortable: true },
     { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
     { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true },
-    { name: 'Wastage Area (sq. ft.)', selector: (row) => row.waste, sortable: true }
+    { name: 'Wastage Area (sq. ft.)', selector: (row) => row.waste, sortable: true },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
+      ),
+    }
   ];
-  
+
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredProducts);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -117,14 +141,14 @@ const ShowProduct = () => {
         ]
       ],
       body: filteredProducts.map((row) => [
-        row.index,
+        row.sr_no,
         row.lot_no,
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
-        row.length,
-        row.width,
+        row.invoice_no,
+        row.date,
+        row.shade_no,
+        row.pur_shade_no,
+        Math.round(row.length),
+        Math.round(row.width),
         row.unit,
         row.qty,
         row.area,
@@ -199,7 +223,7 @@ const ShowProduct = () => {
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',
         },
-        '& svg':{
+        '& svg': {
           fill: 'white',
         },
         '&:focus': {
@@ -209,7 +233,7 @@ const ShowProduct = () => {
       },
     },
   };
-  
+
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

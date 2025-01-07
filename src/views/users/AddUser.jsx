@@ -25,7 +25,7 @@ const AddUser = () => {
 
   const navigate = useNavigate();
 
-  const roles = useMemo(() => [{id:'0',name:'Operator'}, {id:'1',name:'Supplier'}], []);
+  const roles = useMemo(() => [{id:'0',name:'Operator'}, {id:'1',name:'Supervisor'}], []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -123,7 +123,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
         <PDFViewer width="100%" height="100%">
           <Document>
             <Page size="A4" style={styles.page}>
-              <Text style={styles.header}>TAX INVOICE</Text>
+              <Text style={styles.header}>STOCK IN INVOICE</Text>
 
               <View style={styles.flexContainer}>
                 <View style={[styles.borderBox, styles.column]}>
@@ -230,10 +230,10 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                       <Text style={styles.tableCell}>{product.total_product ?? '-'}</Text>
                       <Text style={styles.tableCell}>{product.product_type ?? '-'}</Text>
                       <Text style={styles.tableCell}>{product.hsn_sac_code ?? '-'}</Text>
-                      <Text style={styles.tableCell}>{product.quantity ?? '-'}</Text>
-                      <Text style={styles.tableCell}>{product.unit ?? '-'}</Text>
-                      <Text style={styles.tableCell}>{product.rate ?? '-'}</Text>
-                      <Text style={styles.tableCell}>{product.amount ?? '-'}</Text>
+                      <Text style={styles.tableCell}>{Number(product.quantity).toFixed(2) ?? '-'}</Text>
+                      <Text style={styles.tableCell}>{product.unit ?? '-'}</Text>(2)
+                      <Text style={styles.tableCell}>{Number(product.rate).toFixed(2) ?? '-'}</Text>
+                      <Text style={styles.tableCell}>{Number(product.amount).toFixed(2) ?? '-'}</Text>
                     </View>
                   ))}
                 </View>

@@ -15,7 +15,7 @@ const menuItems = {
         }
       ]
     },
-    
+
 
     {
       id: '',
@@ -35,7 +35,7 @@ const menuItems = {
               icon: 'feather icon-user',
               type: 'item',
               url: '/users'
-            },{
+            }, {
               id: 'suppliers',
               title: 'Suppliers',
               icon: 'feather icon-share-2',
@@ -55,13 +55,13 @@ const menuItems = {
               icon: 'feather icon-user-check',
               type: 'item',
               url: '/customers'
-            },{
+            }, {
               id: 'banks',
               title: 'Banks',
               icon: 'feather icon-credit-card',
               type: 'item',
               url: '/bank'
-            },{
+            }, {
               id: 'Products',
               title: 'Products',
               icon: 'feather icon-package',
@@ -108,7 +108,7 @@ const menuItems = {
         }
       ]
     },
-    
+
     {
       id: 'stockin',
       title: 'Stock In',
@@ -149,6 +149,13 @@ const menuItems = {
               url: '/stocks/add-radius'
             },
             {
+              id: 'all_old_stock',
+              title: 'All Old Stock',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: 'stocks/old-stock'
+            },
+            {
               id: 'Available_stocks',
               title: 'Available Stocks',
               icon: 'feather icon-clipboard',
@@ -171,31 +178,39 @@ const menuItems = {
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
-           
+
             {
               id: 'invoice_out',
               title: 'Invoice',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/invoice-out'
-            },{
+            }, {
               id: 'invoice_out_index',
               title: 'All Out Invoice',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-invoices-out'
-            },{
-              id: 'invoice_out_stock',
-              title: 'All Out Stock',
+              }, {
+                id: 'invoice_out_stock',
+                title: 'All Out Stock',
+                icon: 'feather icon-file-minus',
+                type: 'item',
+                url: '/all-out-stock'
+              },
+            {
+              id: 'invoice_approved_stock',
+              title: 'Approve Stock',
               icon: 'feather icon-file-minus',
               type: 'item',
-              url: '/all-out-stock'
+              url: '/stockout/approved',
             }
+
           ]
         }
       ]
     },
-   
+
     // {
     //   id: 'chart-maps',
     //   title: 'Chart & Maps',
