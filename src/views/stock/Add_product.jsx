@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 const AddProduct = () => {
   const { id, no } = useParams();
   const navigate = useNavigate();
-  const [file, setFile ] = useState(null);
+  const [file, setFile] = useState(null);
   const [items, setItems] = useState([
     {
       invoice_no: no,
@@ -91,6 +91,9 @@ const AddProduct = () => {
     }
   };
 
+  const handleRadius = () => {
+    navigate(`/stocks/add-radius/${id}/${no}`);
+  };
   const handleFileUpload = async (e) => {
     e.preventDefault();
 
@@ -115,7 +118,7 @@ const AddProduct = () => {
       );
       if (response.status === 201) {
         toast.success("Stock added successfully");
-        setFile(null); 
+        setFile(null);
         navigate('/stocks');
       }
     } catch (error) {
@@ -131,7 +134,7 @@ const AddProduct = () => {
 
     const payload = items.map((item) => ({
       ...item,
-      invoice_id: id, 
+      invoice_id: id,
       invoice_no: no
     }));
 
@@ -170,7 +173,7 @@ const AddProduct = () => {
                       <FaFileExcel className="text-success" />
                     </label>
                     <div className="input-group">
-                      <input type="file" className="form-control" name="excel" id="excel"  onChange={handleFileChange} aria-describedby="fileHelpId" />
+                      <input type="file" className="form-control" name="excel" id="excel" onChange={handleFileChange} aria-describedby="fileHelpId" />
                       <button type="submit" className="btn btn-success d-flex align-items-center gap-2">
                         <FaUpload />
                         Upload
@@ -188,6 +191,9 @@ const AddProduct = () => {
           <div className="card shadow-lg border-0 rounded-lg" style={{ borderRadius: '10px' }}>
             <div className="card-body p-5" style={{ borderRadius: '8px' }}>
               <h3 className="text-center mb-4 gap-2">Add Manually</h3>
+              <Button variant="success" onClick={handleRadius} className="px-1 py-1 ">
+                <FaPlus /> Add By Radius
+              </Button>
               <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
                 <FaPlus /> Add Item
               </Button>

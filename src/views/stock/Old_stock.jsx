@@ -9,9 +9,8 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { color } from 'd3';
 
-const ShowProduct = () => {
+const Old_stock = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,46 +19,33 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/allstockout`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/oldstocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-  
         console.log('stocks data:', response.data);
-  
-        // Flatten data: Extract stock_out_details from each invoice
-        const flattenedData = response.data.data.flatMap((invoice) =>
-          invoice.stock_out_details.map((detail, index) => ({
-            sr_no: index + 1,
-            lot_no: detail.product.shadeNo, // Assuming stock_available_id acts as lot number
-            invoice_no: invoice.invoice_no,
-            date: invoice.date,
-            shade_no: detail.product?.shadeNo || 'N/A',
-            pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.unit==='inches'?detail.out_length*39.3700:detail.out_length,
-            width: detail.unit==='inches'?detail.out_width*39.3700:detail.out_width,
-            unit: detail.unit,
-            qty: detail.out_quantity,
-            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length)*detail.out_quantity* 10.7639  || 0).toFixed(3),
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width)*detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
-          }))
-        );
-  
-        setProducts(flattenedData);
-        setFilteredProducts(flattenedData);
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.length * product.width ;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3), 
+            area_sq_ft: areaSqFt.toFixed(3) 
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchStocksData();
   }, []);
-  
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -76,23 +62,84 @@ const ShowProduct = () => {
   };
 
   const columns = [
-    { name: 'Sr No', selector: (row) => row.sr_no, sortable: true },
-    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
-    { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
-    { name: 'Date', selector: (row) => row.date, sortable: true },
-    { name: 'Shade No', selector: (row) => row.shade_no, sortable: true },
-    { name: 'Pur. Shade No', selector: (row) => row.pur_shade_no, sortable: true },
-    { name: 'Length', selector: (row) => row.length, sortable: true },
-    { name: 'Width', selector: (row) => row.width, sortable: true },
-    { name: 'Unit', selector: (row) => row.unit, sortable: true },
-    { name: 'Qty', selector: (row) => Number(row.qty).toFixed(0), sortable: true },
-    { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
-    { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true },
-    { name: 'Wastage Area (sq. ft.)', selector: (row) => row.waste, sortable: true }
+    {
+      name: 'Sr No',
+      selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      name: 'Lot No',
+      selector: (row) => row.lot_no,
+      sortable: true
+    }, {
+      name: 'Stock Code',
+      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Invoice No',
+      selector: (row) => row.stock_invoice?.invoice_no || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.stock_invoice?.date || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Shade No',
+      selector: (row) => row.stock_product?.shadeNo || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Pur. Shade No',
+      selector: (row) => row.stock_product?.purchase_shade_no || 'N/A',
+      sortable: true
+    },
+    {
+      name: 'Length',
+      selector: (row) => row.length,
+      sortable: true
+    },
+    {
+      name: 'Width',
+      selector: (row) => row.width,
+      sortable: true
+    },
+    {
+      name: 'Unit',
+      selector: (row) => row.unit,
+      sortable: true
+    },
+    {
+      name: 'Area (m²)',
+      selector: (row) => row.area,
+      sortable: true
+    },
+    {
+      name: 'Area (sq. ft.)',
+      selector: (row) => row.area_sq_ft,
+      sortable: true
+    }
   ];
-  
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredProducts);
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
+      'Lot No': row.lot_no,
+      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
+      'Date': row.stock_invoice?.date || 'N/A',
+      'Shade No': row.stock_product?.shadeNo || 'N/A',
+      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Length': row.length,
+      'Width': row.width,
+      'Unit': row.unit,
+      'Area (m²)': row.area,
+      'Area (sq. ft.)': row.area_sq_ft
+    }));
+    const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
@@ -103,7 +150,9 @@ const ShowProduct = () => {
       head: [
         [
           'Sr No',
+          'User Name',
           'Lot No',
+          'Stock Code',
           'Invoice No',
           'Date',
           'Shade No',
@@ -111,14 +160,15 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Quantity',
           'Area (m²)',
           'Area (sq. ft.)'
         ]
       ],
-      body: filteredProducts.map((row) => [
-        row.index,
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        JSON.parse(localStorage.getItem('user')).username || 'N/A',
         row.lot_no,
+        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
         row.stock_invoice?.invoice_no || 'N/A',
         row.stock_invoice?.date || 'N/A',
         row.stock_product?.shadeNo || 'N/A',
@@ -126,7 +176,6 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.qty,
         row.area,
         row.area_sq_ft
       ])
@@ -270,4 +319,4 @@ const ShowProduct = () => {
   );
 };
 
-export default ShowProduct;
+export default Old_stock;

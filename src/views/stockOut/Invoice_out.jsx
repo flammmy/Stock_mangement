@@ -239,21 +239,17 @@ const Invoice_out = () => {
   ];
 
   const handleCheckboxChange = (id) => {
-    // console.log(id)
-    // console.log(selectedRows)
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
 
       const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.stock_available_id !== id) // Deselect: Remove the row
-        : [...prevSelected, products.find((p) => p.stock_available_id === id)]; // Select: Add the row
+        ? prevSelected.filter((row) => row.stock_available_id !== id) 
+        : [...prevSelected, products.find((p) => p.stock_available_id === id)];
 
       console.log(updatedSelectedRows);
-
-      // Update formData's out_products array
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedSelectedRows // Sync with selectedRows
+        out_products: updatedSelectedRows 
       }));
 
       return updatedSelectedRows;

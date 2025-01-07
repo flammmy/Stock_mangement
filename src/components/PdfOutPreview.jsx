@@ -253,6 +253,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>ShadeNo</Text>
                                         <Text style={styles.tableCell}>Product Type</Text>
                                         {/* <Text style={styles.tableCell}>HSN/SAC</Text> */}
+                                        <Text style={styles.tableCell}>Stock Code</Text>
                                         <Text style={styles.tableCell}>Length</Text>
                                         <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
@@ -267,11 +268,12 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{detail.product?.shadeNo ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.product_type ?? '-'}</Text>
                                             {/* <Text style={styles.tableCell}>{detail.hsn_sac_code ?? '-'}</Text> */}
+                                            <Text style={styles.tableCell}>{`${detail.product?.shadeNo ?? '-'}-${detail.product?.stock_in_id ?? '-'}`}</Text>
                                             <Text style={styles.tableCell}>{detail.out_length ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.out_width ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.out_quantity ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.unit ?? '-'}</Text>
-                                            <Text style={styles.tableCell}>{detail.rate ?? '-'}</Text>
+                                            <Text style={styles.tableCell}>{Number(detail.rate).toFixed(2) ?? '-'}</Text>
                                             <Text style={styles.tableCell}>{Number(detail.amount).toFixed(2) ?? '-'}</Text>
                                         </View>
                                     ))}
@@ -325,12 +327,11 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                                     <Text style={styles.termsText}>3. Subject to local jurisdiction</Text>
                                     <Text style={styles.termsText}>4. E.&O.E.</Text>
                                 </View>
-
                                 <View style={styles.footerColumn}>
-                                    <View style={styles.qrCode} />
-                                    <Text style={styles.signatureText}>Invoice QR Code</Text>
+                                    <View style={styles.signatureBox} />
+                                    <Text style={styles.signatureText}>Supplier's Signature</Text>
+                                    <Text style={styles.signatureText}>With Stamp</Text>
                                 </View>
-
                                 <View style={styles.footerColumn}>
                                     <View style={styles.signatureBox} />
                                     <Text style={styles.signatureText}>Receiver's Signature</Text>

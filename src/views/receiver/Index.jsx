@@ -189,17 +189,7 @@ const ReceiversPage = () => {
       selector: (row) => row.area,
       sortable: true
     },
-    {
-      name: 'Logo',
-      cell: (row) => (
-        <img
-          src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
-          alt={`${row.name} logo`}
-          style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-        />
-      ),
-      sortable: false
-    },
+    
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
