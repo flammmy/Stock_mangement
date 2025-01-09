@@ -108,6 +108,9 @@ button#submit-button:hover {
     width: 50px;
     font-size: 12px;
   }
+  .img-login{
+   display: none;
+  }
 
   
 }
@@ -151,7 +154,7 @@ button#submit-button:hover {
   }
 
   .form-control {
-    font-size: 18px;
+    font-size: 13px;
   }
 
   .container {
@@ -188,6 +191,14 @@ button#submit-button:hover {
   .card-body{
     
     width: 100%;
+  }
+  .input-cap{
+    display: grid !important;
+  }
+  .spin{
+    position: absolute;
+    margin-left: 129px;
+    margin-top: -49px;
   }
 }
 

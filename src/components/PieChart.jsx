@@ -3,17 +3,8 @@ import axios from "axios";
 import { PieChart, Pie, Cell } from "recharts";
 
 const PieChartData = () => {
-<<<<<<< HEAD
-  const pieData = [
-    { name: "Raj", value: 140 },
-    { name: "Shayam", value: 94.5 },
-    { name: "Sunder", value: 241.8 },
-    { name: "Parminder", value: 280 },
-  ];
-=======
   const [pieData, setPieData] = useState([]);
   const [loading, setLoading] = useState(true); // State for loading
->>>>>>> 321f06e344345e019e9f4fefea94bc939829ea71
 
   useEffect(() => {
     const fetchPieData = async () => {

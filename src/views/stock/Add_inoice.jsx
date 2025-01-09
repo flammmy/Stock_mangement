@@ -323,7 +323,7 @@ const Add_inoice = () => {
                         <th>HSN/SAC</th>
                         <th>Quantity/Area</th>
                         <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>Rate</th>
+                        <th>&nbsp;&nbsp;Rate&nbsp;&nbsp;</th>
                         <th>Amount</th>
                         <th>Actions</th>
                       </tr>

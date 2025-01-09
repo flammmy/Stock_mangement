@@ -225,7 +225,7 @@ const routes = [
       {
         exact: 'true',
         path: '/stockout/approved',
-        element: lazy(() => import('./views/stockout/approve_stockout')),
+        element: lazy(() => import('./views/stockOut/approve_stockout')),
         allowedRoles: [1]
       },
       {
