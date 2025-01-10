@@ -27,7 +27,7 @@ const Add_inoice = () => {
     invoice_no: '',
     place_of_supply: '',
     agent: '',
-    warehouse:'',
+    warehouse: '',
     supplier_id: '1',
     date: today,
     irn: '',
@@ -39,7 +39,6 @@ const Add_inoice = () => {
     gr_rr: '',
     transport: '',
     reverse_charge: '',
-    bank_id: '',
     qr_code: '',
     products: []
   });
@@ -131,25 +130,6 @@ const Add_inoice = () => {
   };
 
   const [suppliers, setSuppliers] = useState([]);
-  const [banks, setBanks] = useState([]);
-
-  useEffect(() => {
-    const fetchBanksData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operator/bank`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setBanks(response.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchBanksData();
-  }, []);
-
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -266,16 +246,6 @@ const Add_inoice = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                     <FormField
-                      icon={FaMoneyBillWave}
-                      label="Bank"
-                      name="bank_id"
-                      value={formData.bank}
-                      onChange={handleChange}
-                      options={banks}
-                      add={'/add-Bank'}
-
-                    />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
@@ -295,14 +265,14 @@ const Add_inoice = () => {
                       value={formData.reverse_charge}
                       onChange={handleChange}
                     />
-                     <FormField
+                    <FormField
                       icon={FaKey}
                       label="Warehouse"
                       name="warehouse"
                       value={formData.warehouse}
                       onChange={handleChange}
                     />
-                   
+
                   </Col>
                 </Row>
 

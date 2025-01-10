@@ -23,13 +23,7 @@ export const renderRoutes = (routes = []) => (
             element={
               <Guard>
                 <Layout>
-                  {route.allowedRoles ? (
-                    <ProtectedRoute allowedRoles={route.allowedRoles}>
-                      {route.routes ? renderRoutes(route.routes) : <Element />}
-                    </ProtectedRoute>
-                  ) : (
-                    route.routes ? renderRoutes(route.routes) : <Element />
-                  )}
+                  {route.routes ? renderRoutes(route.routes) : <Element />}
                 </Layout>
               </Guard>
             }
@@ -70,7 +64,7 @@ const routes = [
         exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
-        allowedRoles: [1, 2, 3]
+        allowedRoles: [1]
       },
       {
         exact: 'true',
@@ -112,18 +106,6 @@ const routes = [
         exact: 'true',
         path: '/add-Customer',
         element: lazy(() => import('./views/customer/AddCustomer')),
-        allowedRoles: [1, 2, 3]
-      },
-      {
-        exact: 'true',
-        path: '/bank',
-        element: lazy(() => import('./views/bank/Index')),
-        allowedRoles: [1, 2, 3]
-      },
-      {
-        exact: 'true',
-        path: '/add-Bank',
-        element: lazy(() => import('./views/bank/AddBank')),
         allowedRoles: [1, 2, 3]
       },
       {
@@ -200,6 +182,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/invoiceOut',
+        element: lazy(() => import('./views/stockOut/stock_to_godown')),
+        allowedRoles: [1, 2, 3]
+      },
+      {
+        exact: 'true',
         path: '/all-invoices-out',
         element: lazy(() => import('./views/stockOut/Index')),
         allowedRoles: [1, 2, 3]
@@ -226,6 +214,12 @@ const routes = [
         exact: 'true',
         path: '/stockout/approved',
         element: lazy(() => import('./views/stockout/approve_stockout')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/stockout/godown',
+        element: lazy(() => import('./views/godown/stock_send')),
         allowedRoles: [1]
       },
       {

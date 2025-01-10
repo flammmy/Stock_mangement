@@ -41,7 +41,6 @@ const Index = () => {
             supplier_name: invoice.supplier.name,
             agent: invoice.agent,
             date: invoice.date,
-            bank: invoice.bank.account_number,
             total_amount: invoice.total_amount
           }));
         };
@@ -88,11 +87,6 @@ const Index = () => {
     {
       name: 'Date',
       selector: (row) => row.date,
-      sortable: true
-    },
-    {
-      name: 'Bank',
-      selector: (row) => row.bank,
       sortable: true
     },
     {
@@ -301,7 +295,7 @@ const Index = () => {
     doc.text('Invoices List', 20, 10);
     doc.autoTable({
       head: [['Invoice Number', 'Supplier Name', 'Receiver Name', 'Date', 'Bank', 'Total Amount']],
-      body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
+      body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.total_amount])
     });
     doc.save('user_list.pdf');
   };
