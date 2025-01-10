@@ -161,25 +161,6 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
               <View style={[styles.borderBox, styles]}>
                 <View style={styles.flexContainer}>
                   <View style={styles.column}>
-                    <Text style={styles.sectionTitle}>Bank Details:</Text>
-                    <View style={styles.row}>
-                      <Text style={styles.label}>Bank Name:</Text>
-                      <Text style={styles.value}>{invoice.bank.name}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.label}>Branch:</Text>
-                      <Text style={styles.value}>{invoice.bank.branch}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.label}>IFSC:</Text>
-                      <Text style={styles.value}>{invoice.bank.ifsc_code}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.label}>Account No:</Text>
-                      <Text style={styles.value}>{invoice.bank.account_number}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.column}>
                     <Text style={styles.sectionTitle}>Transport Details:</Text>
                     <View style={styles.row}>
                       <Text style={styles.label}>E-way Bill:</Text>

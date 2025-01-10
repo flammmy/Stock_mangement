@@ -55,13 +55,7 @@ const menuItems = {
               icon: 'feather icon-user-check',
               type: 'item',
               url: '/customers'
-            }, {
-              id: 'banks',
-              title: 'Banks',
-              icon: 'feather icon-credit-card',
-              type: 'item',
-              url: '/bank'
-            }, {
+            },{
               id: 'Products',
               title: 'Products',
               icon: 'feather icon-package',
@@ -191,13 +185,13 @@ const menuItems = {
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-invoices-out'
-              }, {
-                id: 'invoice_out_stock',
-                title: 'All Out Stock',
-                icon: 'feather icon-file-minus',
-                type: 'item',
-                url: '/all-out-stock'
-              },
+            }, {
+              id: 'invoice_out_stock',
+              title: 'All Out Stock',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/all-out-stock'
+            },
             {
               id: 'invoice_approved_stock',
               title: 'Approve Stock',
@@ -205,7 +199,38 @@ const menuItems = {
               type: 'item',
               url: '/stockout/approved',
             }
+            , {
+              id: 'stock_to_godown',
+              title: 'Send To Godown',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/invoiceOut',
+            }
 
+          ]
+        }
+      ]
+    },
+    {
+      id: 'GoDown',
+      title: 'Go Down Out',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'send_to_godown',
+          title: 'Stocks Out Godown',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+
+            {
+              id: 'invoice_out',
+              title: 'Invoice',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stockout/godown'
+            }
           ]
         }
       ]
