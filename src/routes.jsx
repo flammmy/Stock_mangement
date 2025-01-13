@@ -509,6 +509,7 @@ const routes = [
       },
       {
         exact: 'true',
+<<<<<<< HEAD
         path: '/stockout/approved',
         element: lazy(() => import('./views/stockOut/approve_stockout')),
         allowedRoles:  ['superadmin']
@@ -518,6 +519,23 @@ const routes = [
         path: '/stockout/godown',
         element: lazy(() => import('./views/godown/stock_send')),
         allowedRoles:  ['superadmin']
+=======
+        path: '/stockout/godown',
+        element: lazy(() => import('./views/godown/stock_send')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/approve/godown/',
+        element: lazy(() => import('./views/godown/approve_godown')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/stocks/godown/',
+        element: lazy(() => import('./views/godown/index')),
+        allowedRoles: [1]
+>>>>>>> 6058e0c1390ac7d2292467a0366d8d444a77760b
       },
       {
         exact: 'true',

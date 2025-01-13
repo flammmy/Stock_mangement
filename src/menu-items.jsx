@@ -62,42 +62,42 @@ const menuItems = {
               type: 'item',
               url: '/shades'
             }
-            //,{
-            //   id: 'button',
-            //   title: 'Button',
-            //   type: 'item',
-            //   url: '/basic/button'
-            // },
-            // {
-            //   id: 'badges',
-            //   title: 'Badges',
-            //   type: 'item',
-            //   url: '/basic/badges'
-            // },
-            // {
-            //   id: 'breadcrumb',
-            //   title: 'Breadcrumb & Pagination',
-            //   type: 'item',
-            //   url: '/basic/breadcrumb-paging'
-            // },
-            // {
-            //   id: 'collapse',
-            //   title: 'Collapse',
-            //   type: 'item',
-            //   url: '/basic/collapse'
-            // },
-            // {
-            //   id: 'tabs-pills',
-            //   title: 'Tabs & Pills',
-            //   type: 'item',
-            //   url: '/basic/tabs-pills'
-            // },
-            // {
-            //   id: 'typography',
-            //   title: 'Typography',
-            //   type: 'item',
-            //   url: '/basic/typography'
-            // }
+            ,{
+              id: 'button',
+              title: 'Button',
+              type: 'item',
+              url: '/basic/button'
+            },
+            {
+              id: 'badges',
+              title: 'Badges',
+              type: 'item',
+              url: '/basic/badges'
+            },
+            {
+              id: 'breadcrumb',
+              title: 'Breadcrumb & Pagination',
+              type: 'item',
+              url: '/basic/breadcrumb-paging'
+            },
+            {
+              id: 'collapse',
+              title: 'Collapse',
+              type: 'item',
+              url: '/basic/collapse'
+            },
+            {
+              id: 'tabs-pills',
+              title: 'Tabs & Pills',
+              type: 'item',
+              url: '/basic/tabs-pills'
+            },
+            {
+              id: 'typography',
+              title: 'Typography',
+              type: 'item',
+              url: '/basic/typography'
+            }
           ]
         }
       ]
@@ -193,13 +193,6 @@ const menuItems = {
               url: '/all-out-stock'
             },
             {
-              id: 'invoice_approved_stock',
-              title: 'Approve Stock',
-              icon: 'feather icon-file-minus',
-              type: 'item',
-              url: '/stockout/approved',
-            }
-            , {
               id: 'stock_to_godown',
               title: 'Send To Godown',
               icon: 'feather icon-file-minus',
@@ -226,10 +219,24 @@ const menuItems = {
 
             {
               id: 'invoice_out',
-              title: 'Invoice',
+              title: 'GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/stockout/godown'
+            },
+            {
+              id: 'Approve_godown',
+              title: 'Approve Godown',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/approve/godown'
+            },
+            {
+              id: 'Godown_stock',
+              title: 'Godown Stocks',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stocks/godown'
             }
           ]
         }
