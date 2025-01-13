@@ -27,7 +27,7 @@ const Add_inoice = () => {
     invoice_no: '',
     place_of_supply: '',
     agent: '',
-    warehouse: '',
+    warehouse:'',
     supplier_id: '1',
     date: today,
     irn: '',
@@ -246,6 +246,7 @@ const Add_inoice = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
+                  
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
@@ -265,14 +266,14 @@ const Add_inoice = () => {
                       value={formData.reverse_charge}
                       onChange={handleChange}
                     />
-                    <FormField
+                     <FormField
                       icon={FaKey}
                       label="Warehouse"
                       name="warehouse"
                       value={formData.warehouse}
                       onChange={handleChange}
                     />
-
+                   
                   </Col>
                 </Row>
 

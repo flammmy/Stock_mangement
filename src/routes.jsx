@@ -212,14 +212,20 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/stockout/approved',
-        element: lazy(() => import('./views/stockout/approve_stockout')),
+        path: '/stockout/godown',
+        element: lazy(() => import('./views/godown/stock_send')),
         allowedRoles: [1]
       },
       {
         exact: 'true',
-        path: '/stockout/godown',
-        element: lazy(() => import('./views/godown/stock_send')),
+        path: '/approve/godown/',
+        element: lazy(() => import('./views/godown/approve_godown')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/stocks/godown/',
+        element: lazy(() => import('./views/godown/index')),
         allowedRoles: [1]
       },
       {
