@@ -370,3 +370,232 @@ const menuItems = {
 };
 
 export default menuItems;
+
+
+
+
+
+
+
+// const userRole = "superadmin"; // Change this value to "operator" or "supervisor" to test behavior
+
+// const menuItems = {
+//   items: [
+//     {
+//       id: "navigation",
+//       title: "Home",
+//       type: "group",
+//       icon: "icon-navigation",
+//       children: [
+//         {
+//           id: "dashboard",
+//           title: "Dashboard",
+//           type: "item",
+//           icon: "feather icon-home",
+//           url: "/dashboard",
+//         },
+//       ],
+//     },
+//     // Show "Users" section only for superadmin or admin
+//     ...(userRole === "superadmin" || userRole === "admin"
+//       ? [
+//           {
+//             id: "users_section",
+//             title: "Users",
+//             type: "group",
+//             icon: "icon-ui",
+//             children: [
+//               {
+//                 id: "Users",
+//                 title: "People",
+//                 type: "collapse",
+//                 icon: "feather icon-users",
+//                 children: [
+//                   {
+//                     id: "users",
+//                     title: "Users",
+//                     icon: "feather icon-user",
+//                     type: "item",
+//                     url: "/users",
+//                   },
+//                   {
+//                     id: "users_update",
+//                     title: "Update User",
+//                     icon: "feather icon-edit",
+//                     type: "item",
+//                     url: "/users/update",
+//                   },
+//                   {
+//                     id: "suppliers",
+//                     title: "Suppliers",
+//                     icon: "feather icon-share-2",
+//                     type: "item",
+//                     url: "/supplier",
+//                   },
+//                   {
+//                     id: "Purchaser",
+//                     title: "Purchaser",
+//                     icon: "feather icon-users",
+//                     type: "item",
+//                     url: "/receiver",
+//                   },
+//                   {
+//                     id: "customers",
+//                     title: "Customers",
+//                     icon: "feather icon-user-check",
+//                     type: "item",
+//                     url: "/customers",
+//                   },
+//                   {
+//                     id: "Products",
+//                     title: "Products",
+//                     icon: "feather icon-package",
+//                     type: "item",
+//                     url: "/shades",
+//                   },
+//                 ],
+//               },
+//             ],
+//           },
+//         ]
+//       : []),
+//     {
+//       id: "stockin",
+//       title: "Stock In",
+//       type: "group",
+//       icon: "icon-ui",
+//       children: [
+//         {
+//           id: "stocks",
+//           title: "Stocks In",
+//           type: "collapse",
+//           icon: "feather icon-box",
+//           children: [
+//             {
+//               id: "list_stock",
+//               title: "List",
+//               icon: "feather icon-list",
+//               type: "item",
+//               url: "/invoices",
+//             },
+//             {
+//               id: "add_invoice",
+//               title: "Add Invoice",
+//               icon: "feather icon-file-plus",
+//               type: "item",
+//               url: "/add-invoice",
+//             },
+//             {
+//               id: "all_stocks",
+//               title: "Purchase Stocks",
+//               icon: "feather icon-clipboard",
+//               type: "item",
+//               url: "/all-stocks",
+//             },
+//             {
+//               id: "old_stock",
+//               title: "Old Stock",
+//               icon: "feather icon-file-plus",
+//               type: "item",
+//               url: "/stocks/add-radius",
+//             },
+//             {
+//               id: "all_old_stock",
+//               title: "All Old Stock",
+//               icon: "feather icon-file-plus",
+//               type: "item",
+//               url: "stocks/old-stock",
+//             },
+//             {
+//               id: "Available_stocks",
+//               title: "Available Stocks",
+//               icon: "feather icon-clipboard",
+//               type: "item",
+//               url: "/available-stocks",
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//     {
+//       id: "stockout",
+//       title: "Stock Out",
+//       type: "group",
+//       icon: "icon-ui",
+//       children: [
+//         {
+//           id: "stocksout",
+//           title: "Stocks Out",
+//           type: "collapse",
+//           icon: "feather icon-box",
+//           children: [
+//             {
+//               id: "invoice_out",
+//               title: "Invoice",
+//               icon: "feather icon-file-plus",
+//               type: "item",
+//               url: "/invoice-out",
+//             },
+//             {
+//               id: "invoice_out_index",
+//               title: "All Out Invoice",
+//               icon: "feather icon-file-minus",
+//               type: "item",
+//               url: "/all-invoices-out",
+//             },
+//             {
+//               id: "invoice_out_stock",
+//               title: "All Out Stock",
+//               icon: "feather icon-file-minus",
+//               type: "item",
+//               url: "/all-out-stock",
+//             },
+//             {
+//               id: "invoice_approved_stock",
+//               title: "Approve Stock",
+//               icon: "feather icon-file-minus",
+//               type: "item",
+//               url: "/stockout/approved",
+//             },
+//             {
+//               id: "stock_to_godown",
+//               title: "Send To Godown",
+//               icon: "feather icon-file-minus",
+//               type: "item",
+//               url: "/invoiceOut",
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//     {
+//       id: "GoDown",
+//       title: "Go Down Out",
+//       type: "group",
+//       icon: "icon-ui",
+//       children: [
+//         {
+//           id: "send_to_godown",
+//           title: "Stocks Out Godown",
+//           type: "collapse",
+//           icon: "feather icon-box",
+//           children: [
+//             {
+//               id: "invoice_out",
+//               title: "Invoice",
+//               icon: "feather icon-file-plus",
+//               type: "item",
+//               url: "/stockout/godown",
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
+
+// // Debugging: Log the final menu items
+// console.log("Final Menu Items:", JSON.stringify(menuItems, null, 2));
+
+// // Export menu items
+// export default menuItems;
