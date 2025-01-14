@@ -241,299 +241,694 @@
 // export default AddQuatation;
 
 
-import React, { useState } from 'react';
-import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+// import React, { useState } from 'react';
+// import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+// import axios from 'axios';
+// import { toast } from 'react-toastify';
+// import { useNavigate } from 'react-router-dom';
+// import Papa from 'papaparse';
+// import { saveAs } from 'file-saver';
+// import jsPDF from 'jspdf';
+// import 'jspdf-autotable';
+
+// const AddQuotation = () => {
+//   const [formData, setFormData] = useState({
+//     name: '',
+//     gst_no: '',
+//     cin_no: '',
+//     pan_no: '',
+//     msme_no: '',
+//     reg_address: '',
+//     work_address: '',
+//     area: '',
+//     tel_no: '',
+//     email: '',
+//     owner_mobile: '',
+//     logo: null,
+//     date: '',
+//     serial_no: '',
+//     shade_no: '',
+//     vendor_code: '',
+//     operator: '',
+//     roll_no: '',
+//     lot_no: '',
+//     sft: '',
+//     rate: '',
+//     length: '',
+//     lengthUnit: 'meter', // Default value for length unit
+//     width: '',
+//     widthUnit: 'meter', // Default value for width unit
+//     units: '',
+//     payment_acc: '',
+//     price_rate: '',
+//     gst: '',
+//     total: '',
+//     remarks: ''
+//   });
+
+//   const [previewImage, setPreviewImage] = useState(null);
+//   const navigate = useNavigate();
+//   const [errors, setErrors] = useState({});
+
+//   // Handle text inputs
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   // Handle file input (logo)
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setFormData({ ...formData, logo: file });
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setPreviewImage(reader.result);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   // Validate required fields
+//   const validateForm = () => {
+//     const requiredFields = ['date', 'client_name', 'operator', 'length', 'width', 'sft'];
+//     let validationErrors = {};
+//     let isValid = true;
+
+//     requiredFields.forEach((field) => {
+//       if (!formData[field]) {
+//         validationErrors[field] = `${field.replace('_', ' ')} is required.`;
+//         isValid = false;
+//       }
+//     });
+
+//     setErrors(validationErrors);
+//     return isValid;
+//   };
+
+//   // Handle form submission
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!validateForm()) {
+//       return; // Stop submission if form is invalid
+//     }
+
+//     const submitData = new FormData();
+//     Object.keys(formData).forEach((key) => {
+//       submitData.append(key, formData[key]);
+//     });
+
+//     try {
+//       await axios.post(
+//         `${import.meta.env.VITE_API_BASE_URL}/api/stockout`, // API URL
+//         submitData,
+//         {
+//           headers: {
+//             'Content-Type': 'multipart/form-data',
+//             Authorization: `Bearer ${localStorage.getItem('token')}`
+//           }
+//         }
+//       );
+//       navigate('/quotations'); // Redirect after successful addition
+//       toast.success('Quotation added successfully');
+//     } catch (error) {
+//       console.error('Error adding quotation:', error);
+//       toast.error('Error adding quotation');
+//     }
+//   };
+
+//   // Export to CSV
+//   const exportToCSV = () => {
+//     const csvData = [
+//       {
+//         'Supplier Name': formData.name,
+//         'GST Number': formData.gst_no,
+//         'CIN Number': formData.cin_no,
+//         'PAN Number': formData.pan_no,
+//         'Telephone Number': formData.tel_no,
+//         Date: formData.date,
+//         'Client Name': formData.client_name,
+//         'Operator Name': formData.operator,
+//         Length: formData.length,
+//         'Length Unit': formData.lengthUnit,
+//         Width: formData.width,
+//         'Width Unit': formData.widthUnit,
+//         SFT: formData.sft,
+//         Remarks: formData.remarks
+//       }
+//     ];
+
+//     const csv = Papa.unparse(csvData);
+//     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+//     saveAs(blob, 'quotation_data.csv');
+//   };
+
+//   // Export to PDF
+//   const exportToPDF = () => {
+//     const doc = new jsPDF();
+//     doc.text('Quotation Details', 20, 10);
+
+//     doc.autoTable({
+//       head: [['Field', 'Value']],
+//       body: [
+//         ['Supplier Name', formData.name],
+//         ['GST Number', formData.gst_no],
+//         ['CIN Number', formData.cin_no],
+//         ['PAN Number', formData.pan_no],
+//         ['Telephone Number', formData.tel_no],
+//         ['Date', formData.date],
+//         ['Client Name', formData.client_name],
+//         ['Operator Name', formData.operator],
+//         ['Length', formData.length],
+//         ['Length Unit', formData.lengthUnit],
+//         ['Width', formData.width],
+//         ['Width Unit', formData.widthUnit],
+//         ['SFT', formData.sft],
+//         ['Remarks', formData.remarks]
+//       ]
+//     });
+
+//     doc.save('quotation_data.pdf');
+//   };
+
+//   return (
+//     <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+//       <div className="d-flex justify-content-end">
+//         <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+//           Export as CSV
+//         </button>
+//         <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+//           Export as PDF
+//         </button>
+//       </div>
+//       <Row className="justify-content-center">
+//         <Col md={12} lg={12}>
+//           <Card className="shadow-lg border-0" style={{ borderRadius: '15px', overflow: 'hidden' }}>
+//             <div
+//               className="p-4 text-white text-center"
+//               style={{ backgroundColor: '#20B2AA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+//             >
+//               <h2 className="m-0 text-white">Add Quotation</h2>
+//             </div>
+//             <Card.Body className="p-5">
+//               <Form onSubmit={handleSubmit}>
+//                 <Row>
+//                   {/* Column 1 */}
+//                   <Col md={6}>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Operator Name</Form.Label>
+//                       <Form.Control type="text" name="operator" value={formData.operator} onChange={handleChange} />
+//                       {errors.operator && <small className="text-danger">{errors.operator}</small>}
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>GST Number</Form.Label>
+//                       <Form.Control type="text" name="gst_no" value={formData.gst_no} onChange={handleChange} />
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>PAN Number</Form.Label>
+//                       <Form.Control type="text" name="pan_no" value={formData.pan_no} onChange={handleChange} />
+//                     </Form.Group>
+//                     {previewImage && <div className="mb-3"></div>}
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Length</Form.Label>
+//                       <div className="d-flex">
+//                         <Form.Control
+//                           type="text"
+//                           name="length"
+//                           value={formData.length}
+//                           onChange={handleChange}
+//                           placeholder="Enter length"
+//                         />
+//                         <Form.Select
+//                           name="lengthUnit"
+//                           value={formData.lengthUnit}
+//                           onChange={handleChange}
+//                           style={{ width: '150px', marginLeft: '10px' }}
+//                         >
+//                           <option value="meter">Meter</option>
+//                           <option value="cm">Centimeter</option>
+//                           <option value="sqft">Square Feet</option>
+//                           <option value="inches">Inches</option>
+//                         </Form.Select>
+//                       </div>
+//                       {errors.length && <small className="text-danger">{errors.length}</small>}
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Width</Form.Label>
+//                       <div className="d-flex">
+//                         <Form.Control
+//                           type="text"
+//                           name="width"
+//                           value={formData.width}
+//                           onChange={handleChange}
+//                           placeholder="Enter width"
+//                         />
+//                         <Form.Select
+//                           name="widthUnit"
+//                           value={formData.widthUnit}
+//                           onChange={handleChange}
+//                           style={{ width: '150px', marginLeft: '10px' }}
+//                         >
+//                           <option value="meter">Meter</option>
+//                           <option value="cm">Centimeter</option>
+//                           <option value="sqft">Square Feet</option>
+//                           <option value="inches">Inches</option>
+//                         </Form.Select>
+//                       </div>
+//                       {errors.width && <small className="text-danger">{errors.width}</small>}
+//                     </Form.Group>
+//                   </Col>
+
+//                   {/* Column 2 */}
+//                   <Col md={6}>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Date</Form.Label>
+//                       <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} />
+//                       {errors.date && <small className="text-danger">{errors.date}</small>}
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>CIN Number</Form.Label>
+//                       <Form.Control type="text" name="cin_no" value={formData.cin_no} onChange={handleChange} />
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Client Name</Form.Label>
+//                       <Form.Control type="text" name="client_name" value={formData.client_name} onChange={handleChange} />
+//                       {errors.client_name && <small className="text-danger">{errors.client_name}</small>}
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Supplier Name</Form.Label>
+//                       <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} />
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>Telephone Number</Form.Label>
+//                       <Form.Control type="text" name="tel_no" value={formData.tel_no} onChange={handleChange} />
+//                     </Form.Group>
+//                     <Form.Group className="mb-3">
+//                       <Form.Label>SFT</Form.Label>
+//                       <Form.Control type="text" name="sft" value={formData.sft} onChange={handleChange} />
+//                       {errors.sft && <small className="text-danger">{errors.sft}</small>}
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 <Button variant="primary" type="submit">
+//                   Add Quotation
+//                 </Button>
+//               </Form>
+              
+//             </Card.Body>
+//           </Card>
+//         </Col>
+//       </Row>
+//     </Container>
+//   );
+// };
+
+// export default AddQuotation;
+
+
+import React, { useState, useEffect } from 'react';
+import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import Papa from 'papaparse';
-import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaFileInvoice, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaKey, FaMoneyBillWave, FaPercentage } from 'react-icons/fa';
+import FormField from '../../components/FormField';
 
-const AddQuotation = () => {
+const Add_quotation = () => {
+  const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
-    name: '',
-    gst_no: '',
-    cin_no: '',
-    pan_no: '',
-    msme_no: '',
-    reg_address: '',
-    work_address: '',
-    area: '',
-    tel_no: '',
-    email: '',
-    owner_mobile: '',
-    logo: null,
-    date: '',
-    serial_no: '',
-    shade_no: '',
-    vendor_code: '',
-    operator: '',
-    roll_no: '',
+    date: today,
+    ack_date: today,
+    qr_code: '',
+    products: [],
+
+    transport: '',
+    warehouse: '',
+    reverse_charge: '',
+    agent: '',
+    vendor: '',
     lot_no: '',
     sft: '',
-    rate: '',
-    length: '',
-    lengthUnit: 'meter', // Default value for length unit
-    width: '',
-    widthUnit: 'meter', // Default value for width unit
+    palement: '',
     units: '',
-    payment_acc: '',
-    price_rate: '',
-    gst: '',
-    total: '',
-    remarks: ''
+    operator: '',
+    supplier_id: '1',
   });
-
-  const [previewImage, setPreviewImage] = useState(null);
+  const [items, setItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [godownProducts, setGodownProducts] = useState([]);
+  const [godownCheckout, setGodownCheckout] = useState({});
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
+  const [suppliers, setSuppliers] = useState([]);
 
-  // Handle text inputs
+  // Fetch Products
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setProducts(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchProductData();
+  }, []);
+
+  // Fetch Suppliers
+  useEffect(() => {
+    const fetchSupplierData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supplier`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setSuppliers(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSupplierData();
+  }, []);
+
+  // Fetch Godown Products
+  useEffect(() => {
+    const fetchGodownProducts = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownproducts`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setGodownProducts(response.data.data); // Ensure that godownProducts are being updated properly
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchGodownProducts();
+  }, []);
+
+  // Handle Checkout
+  const handleCheckout = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowncheckout`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setGodownCheckout(response.data);
+      toast.success('Checkout details fetched successfully');
+    } catch (err) {
+      console.log(err);
+      toast.error('Error fetching checkout details');
+    }
+  };
+
+  // Handle Stock Out
+  const handleStockOut = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      toast.success('Stock out submitted successfully');
+    } catch (err) {
+      console.log(err);
+      toast.error('Error submitting stock out');
+    }
+  };
+
+  // Handle Add Row
+  const handleAddRow = () => {
+    setItems([
+      ...items,
+      {
+        product_id: '',
+        purchase_shadeNo: '',
+        hsn_sac_code: '',
+        quantity: '',
+        product_type: '',
+        total_product: '',
+        unit: '',
+        rate: '',
+        amount: '',
+      },
+    ]);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      products: [
+        ...prevFormData.products,
+        {
+          product_id: '',
+          purchase_shadeNo: '',
+          hsn_sac_code: '',
+          quantity: 0,
+          product_type: '',
+          total_product: '',
+          unit: '',
+          rate: 0,
+          amount: 0,
+        },
+      ],
+    }));
+  };
+
+  // Handle Delete Row
+  const handleDeleteRow = (index) => {
+    setItems(items.filter((_, i) => i !== index));
+    setFormData((prevFormData) => {
+      const updatedProducts = prevFormData.products.filter((_, i) => i !== index);
+      return {
+        ...prevFormData,
+        products: updatedProducts,
+      };
+    });
+  };
+
+  // Handle Row Change
+  const handleRowChange = (index, field, value) => {
+    setItems((prevRows) => {
+      const updatedRows = [...prevRows];
+      updatedRows[index][field] = value;
+      setFormData((prevFormData) => {
+        const updatedProducts = [...prevFormData.products];
+        updatedProducts[index] = {
+          ...updatedProducts[index],
+          ...updatedRows[index],
+        };
+        return {
+          ...prevFormData,
+          products: updatedProducts,
+        };
+      });
+      return updatedRows;
+    });
+  };
+
+  // Handle Change in Form Fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Handle file input (logo)
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, logo: file });
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Validate required fields
-  const validateForm = () => {
-    const requiredFields = ['date', 'client_name', 'operator', 'length', 'width', 'sft'];
-    let validationErrors = {};
-    let isValid = true;
-
-    requiredFields.forEach((field) => {
-      if (!formData[field]) {
-        validationErrors[field] = `${field.replace('_', ' ')} is required.`;
-        isValid = false;
-      }
-    });
-
-    setErrors(validationErrors);
-    return isValid;
-  };
-
-  // Handle form submission
+  // Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return; // Stop submission if form is invalid
-    }
-
-    const submitData = new FormData();
-    Object.keys(formData).forEach((key) => {
-      submitData.append(key, formData[key]);
-    });
-
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/stockout`, // API URL
-        submitData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      navigate('/quotations'); // Redirect after successful addition
-      toast.success('Quotation added successfully');
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      toast.success('Invoice added successfully');
+      navigate('/invoices');
     } catch (error) {
-      console.error('Error adding quotation:', error);
-      toast.error('Error adding quotation');
+      const errorMessage = error.response?.data?.message || 'Error adding user';
+      toast.error(errorMessage);
     }
   };
 
-  // Export to CSV
-  const exportToCSV = () => {
-    const csvData = [
-      {
-        'Supplier Name': formData.name,
-        'GST Number': formData.gst_no,
-        'CIN Number': formData.cin_no,
-        'PAN Number': formData.pan_no,
-        'Telephone Number': formData.tel_no,
-        Date: formData.date,
-        'Client Name': formData.client_name,
-        'Operator Name': formData.operator,
-        Length: formData.length,
-        'Length Unit': formData.lengthUnit,
-        Width: formData.width,
-        'Width Unit': formData.widthUnit,
-        SFT: formData.sft,
-        Remarks: formData.remarks
-      }
-    ];
-
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'quotation_data.csv');
-  };
-
-  // Export to PDF
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Quotation Details', 20, 10);
-
-    doc.autoTable({
-      head: [['Field', 'Value']],
-      body: [
-        ['Supplier Name', formData.name],
-        ['GST Number', formData.gst_no],
-        ['CIN Number', formData.cin_no],
-        ['PAN Number', formData.pan_no],
-        ['Telephone Number', formData.tel_no],
-        ['Date', formData.date],
-        ['Client Name', formData.client_name],
-        ['Operator Name', formData.operator],
-        ['Length', formData.length],
-        ['Length Unit', formData.lengthUnit],
-        ['Width', formData.width],
-        ['Width Unit', formData.widthUnit],
-        ['SFT', formData.sft],
-        ['Remarks', formData.remarks]
-      ]
-    });
-
-    doc.save('quotation_data.pdf');
-  };
-
+  const mainColor = '#3f4d67';
   return (
-    <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
-      <div className="d-flex justify-content-end">
-        <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-          Export as CSV
-        </button>
-        <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-          Export as PDF
-        </button>
-      </div>
+    <Container fluid className="pt-1 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
         <Col md={12} lg={12}>
-          <Card className="shadow-lg border-0" style={{ borderRadius: '15px', overflow: 'hidden' }}>
-            <div
-              className="p-4 text-white text-center"
-              style={{ backgroundColor: '#20B2AA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              <h2 className="m-0 text-white">Add Quotation</h2>
+          <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
+            <div className="p-4 text-white text-center" style={{ backgroundColor: '#20B2AA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FaUserPlus size={40} className="me-3" />
+              <h2 className="m-0 text-white"> Add Quotation</h2>
             </div>
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
                 <Row>
-                  {/* Column 1 */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Operator Name</Form.Label>
-                      <Form.Control type="text" name="operator" value={formData.operator} onChange={handleChange} />
-                      {errors.operator && <small className="text-danger">{errors.operator}</small>}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>GST Number</Form.Label>
-                      <Form.Control type="text" name="gst_no" value={formData.gst_no} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>PAN Number</Form.Label>
-                      <Form.Control type="text" name="pan_no" value={formData.pan_no} onChange={handleChange} />
-                    </Form.Group>
-                    {previewImage && <div className="mb-3"></div>}
-                    <Form.Group className="mb-3">
-                      <Form.Label>Length</Form.Label>
-                      <div className="d-flex">
-                        <Form.Control
-                          type="text"
-                          name="length"
-                          value={formData.length}
-                          onChange={handleChange}
-                          placeholder="Enter length"
-                        />
-                        <Form.Select
-                          name="lengthUnit"
-                          value={formData.lengthUnit}
-                          onChange={handleChange}
-                          style={{ width: '150px', marginLeft: '10px' }}
-                        >
-                          <option value="meter">Meter</option>
-                          <option value="cm">Centimeter</option>
-                          <option value="sqft">Square Feet</option>
-                          <option value="inches">Inches</option>
-                        </Form.Select>
-                      </div>
-                      {errors.length && <small className="text-danger">{errors.length}</small>}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Width</Form.Label>
-                      <div className="d-flex">
-                        <Form.Control
-                          type="text"
-                          name="width"
-                          value={formData.width}
-                          onChange={handleChange}
-                          placeholder="Enter width"
-                        />
-                        <Form.Select
-                          name="widthUnit"
-                          value={formData.widthUnit}
-                          onChange={handleChange}
-                          style={{ width: '150px', marginLeft: '10px' }}
-                        >
-                          <option value="meter">Meter</option>
-                          <option value="cm">Centimeter</option>
-                          <option value="sqft">Square Feet</option>
-                          <option value="inches">Inches</option>
-                        </Form.Select>
-                      </div>
-                      {errors.width && <small className="text-danger">{errors.width}</small>}
-                    </Form.Group>
+                  <Col md={4}>
+                    <FormField icon={FaUser} label="Operator" name="Operator" value={formData.operator} onChange={handleChange} />
+                    <FormField icon={FaUser} label="Supplier" name="supplier_id" value={formData.supplier_id} onChange={handleChange} options={suppliers} />
+                    <FormField icon={FaMapMarkerAlt} label="Units" name="Units" value={formData.units} onChange={handleChange} />
                   </Col>
-
-                  {/* Column 2 */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Date</Form.Label>
-                      <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} />
-                      {errors.date && <small className="text-danger">{errors.date}</small>}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>CIN Number</Form.Label>
-                      <Form.Control type="text" name="cin_no" value={formData.cin_no} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Client Name</Form.Label>
-                      <Form.Control type="text" name="client_name" value={formData.client_name} onChange={handleChange} />
-                      {errors.client_name && <small className="text-danger">{errors.client_name}</small>}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Supplier Name</Form.Label>
-                      <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Telephone Number</Form.Label>
-                      <Form.Control type="text" name="tel_no" value={formData.tel_no} onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>SFT</Form.Label>
-                      <Form.Control type="text" name="sft" value={formData.sft} onChange={handleChange} />
-                      {errors.sft && <small className="text-danger">{errors.sft}</small>}
-                    </Form.Group>
+                  <Col md={4}>
+                    <FormField icon={FaFileInvoice} label="Palement" name="Palement" value={formData.palement} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Lot_No" name="Lot_No" value={formData.lot_no} onChange={handleChange} />
+                    <FormField icon={FaKey} label="SFT" name="SFT" value={formData.sft} onChange={handleChange} />
+                  </Col>
+                  <Col md={4}>
+                    <FormField icon={FaUser} label="Vendor" name="Vendor" value={formData.vendor} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
                   </Col>
                 </Row>
-                <Button variant="primary" type="submit">
-                  Add Quotation
-                </Button>
+
+                <div>
+                  <div className="d-flex justify-content-between">
+                    <h5>Invoice Items</h5>
+                    <Button variant="success" onClick={handleAddRow} className="px-1 py-1">
+                      <FaPlus /> Add Item
+                    </Button>
+                  </div>
+                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset' }}>
+                    <thead>
+                      <tr className='text-white'>
+                        <th>&nbsp;&nbsp;Shade Number&nbsp;&nbsp;</th>
+                        <th>Pur. Shade No</th>
+                        <th>Total Product</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Product Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>HSN/SAC</th>
+                        <th>Quantity/Area</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th>&nbsp;&nbsp;Rate&nbsp;&nbsp;</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((item, index) => (
+                        <tr key={index}>
+                          <td>
+                            <Form.Control
+                              as="select"
+                              value={item.product_id}
+                              onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
+                              className='px-1'
+                            >
+                              <option value="">Select Shade No.</option>
+                              {products.map((product, idx) => (
+                                <option key={product.id} value={product.id}>
+                                  {product.purchase_shade_no}
+                                </option>
+                              ))}
+                            </Form.Control>
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="text"
+                              value={item.purchase_shadeNo}
+                              onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
+                              className='px-1'
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="text"
+                              value={item.total_product}
+                              onChange={(e) => handleRowChange(index, 'total_product', e.target.value)}
+                              className='px-1'
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              as="select"
+                              value={item.product_type}
+                              onChange={(e) => handleRowChange(index, 'product_type', e.target.value)}
+                              className='px-1'
+                            >
+                              <option value="roll">Roll</option>
+                              <option value="box">Box</option>
+                            </Form.Control>
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="text"
+                              value={item.hsn_sac_code}
+                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
+                              className='px-1'
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.quantity}
+                              className='px-1'
+                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              as="select"
+                              value={item.unit}
+                              onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
+                              className='px-1'
+                            >
+                              <option value="sqft">Sq.ft.</option>
+                              <option value="pcs">Pcs.</option>
+                            </Form.Control>
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.rate}
+                              className='px-1'
+                              onChange={(e) => handleRowChange(index, 'rate', e.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.amount}
+                              className='px-1'
+                              onChange={(e) => handleRowChange(index, 'amount', e.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
+                              <FaTrash />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+
+                <Row className="mt-4">
+                  <Col md={3}>
+                    <FormField icon={FaMoneyBillWave} label="Total Amount" name="total_amount" value={formData.total_amount} onChange={handleChange} />
+                  </Col>
+                  <Col md={3}>
+                    <FormField icon={FaPercentage} label="SGST(%)" name="sgst" value={formData.sgst} onChange={handleChange} />
+                  </Col>
+                  <Col md={3}>
+                    <FormField icon={FaPercentage} label="CGST(%)" name="cgst" value={formData.cgst} onChange={handleChange} />
+                  </Col>
+                  <Col md={3}>
+                    <FormField icon={FaPercentage} label="IGST(%)" name="igst" value={formData.igst} onChange={handleChange} />
+                  </Col>
+                </Row>
+
+                <div className="text-center mt-5">
+                  <Button variant="primary" type="submit">Submit</Button>
+                </div>
               </Form>
             </Card.Body>
           </Card>
@@ -543,4 +938,4 @@ const AddQuotation = () => {
   );
 };
 
-export default AddQuotation;
+export default Add_quotation;
