@@ -4,7 +4,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv,FaTrash,FaCheck  } from 'react-icons/fa';
+import { FaEye, FaFileCsv, FaTrash, FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -12,7 +12,7 @@ import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
-    const id =JSON.parse(localStorage.getItem('user')).id || 4;
+    const id = JSON.parse(localStorage.getItem('user')).id || 4;
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -31,7 +31,15 @@ const Index = () => {
                     }
                 });
                 console.log(response.data);
-                const invoicesDetails = response.data;
+                const invoicesDetails = response.data.map((product) => {
+                    const areaM2 = product.get_length * product.get_width;
+                    const areaSqFt = areaM2 * 10.7639;
+                    return {
+                        ...product,
+                        area: areaM2.toFixed(3),
+                        area_sq_ft: areaSqFt.toFixed(3)
+                    };
+                });
                 console.log(invoicesDetails);
                 setInvoiceAllDetails(invoicesDetails);
                 setInvoices(invoicesDetails);
@@ -44,7 +52,7 @@ const Index = () => {
         };
         fetchInvoices();
     }, [id]);
-   
+
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -75,37 +83,37 @@ const Index = () => {
     const columns = [
         {
             name: 'Invoice Number',
-            selector: (row) => row.invoice_no, 
+            selector: (row) => row.invoice_no,
             sortable: true,
         },
         {
             name: 'Product Name',
-            selector: (row) => row.products.name, 
+            selector: (row) => row.products.name,
             sortable: true,
         },
         {
             name: 'Product Code',
-            selector: (row) => row.products.code,  
+            selector: (row) => row.products.code,
             sortable: true,
         },
         {
             name: 'Shade No',
-            selector: (row) => row.products.shadeNo,  
+            selector: (row) => row.products.shadeNo,
             sortable: true,
         },
         {
             name: 'Purchase Shade No',
-            selector: (row) => row.products.purchase_shade_no,  
+            selector: (row) => row.products.purchase_shade_no,
             sortable: true,
         },
         {
             name: 'Date',
-            selector: (row) => row.date, 
+            selector: (row) => row.date,
             sortable: true,
         },
         {
             name: 'Length',
-            selector: (row) => row.get_length, 
+            selector: (row) => row.get_length,
             sortable: true,
         },
         {
@@ -115,8 +123,18 @@ const Index = () => {
         },
         {
             name: 'unit',
-            selector: (row) => row.unit, 
+            selector: (row) => row.unit,
             sortable: true,
+        },
+        {
+            name: 'Area (m²)',
+            selector: (row) => row.area,
+            sortable: true
+        },
+        {
+            name: 'Area (sq. ft.)',
+            selector: (row) => row.area_sq_ft,
+            sortable: true
         }
     ];
 
@@ -126,7 +144,7 @@ const Index = () => {
     const customStyles = {
         table: {
             style: {
-                borderCollapse: 'separate', 
+                borderCollapse: 'separate',
                 borderSpacing: 0,
             },
         },
@@ -137,7 +155,7 @@ const Index = () => {
                 fontSize: '18px',
                 fontWeight: 'bold',
                 padding: '15px',
-                borderRadius: '8px 8px 0 0', 
+                borderRadius: '8px 8px 0 0',
             },
         },
         rows: {

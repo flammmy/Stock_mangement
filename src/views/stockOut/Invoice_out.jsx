@@ -70,13 +70,13 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchShadeNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownproducts`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        setShadeNo(response.data.data);
+        setShadeNo(response.data);
       } catch (error) {
         console.error('Error fetching product data:', error);
       }
@@ -111,7 +111,7 @@ const Invoice_out = () => {
 
     if (selectedProductId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowncheckout/${selectedProductId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -129,22 +129,7 @@ const Invoice_out = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchBanksData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operator/bank`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setBanks([...banks, ...response.data.data]);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchBanksData();
-  }, []);
+
 
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -155,7 +140,9 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-        setCustomers(response.data.data);
+        console.log(response.data.data);
+        const activeCustomers = response.data.data.filter(customer => customer.status === 1);
+        setCustomers(activeCustomers);
       } catch (err) {
         console.log(err);
       }
@@ -229,7 +216,7 @@ const Invoice_out = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout  `, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`

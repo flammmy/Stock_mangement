@@ -35,7 +35,7 @@ const menuItems = {
               icon: 'feather icon-user',
               type: 'item',
               url: '/users'
-            }, {
+            },{
               id: 'suppliers',
               title: 'Suppliers',
               icon: 'feather icon-share-2',
@@ -55,48 +55,6 @@ const menuItems = {
               icon: 'feather icon-user-check',
               type: 'item',
               url: '/customers'
-            },{
-              id: 'Products',
-              title: 'Products',
-              icon: 'feather icon-package',
-              type: 'item',
-              url: '/shades'
-            }
-            ,{
-              id: 'button',
-              title: 'Button',
-              type: 'item',
-              url: '/basic/button'
-            },
-            {
-              id: 'badges',
-              title: 'Badges',
-              type: 'item',
-              url: '/basic/badges'
-            },
-            {
-              id: 'breadcrumb',
-              title: 'Breadcrumb & Pagination',
-              type: 'item',
-              url: '/basic/breadcrumb-paging'
-            },
-            {
-              id: 'collapse',
-              title: 'Collapse',
-              type: 'item',
-              url: '/basic/collapse'
-            },
-            {
-              id: 'tabs-pills',
-              title: 'Tabs & Pills',
-              type: 'item',
-              url: '/basic/tabs-pills'
-            },
-            {
-              id: 'typography',
-              title: 'Typography',
-              type: 'item',
-              url: '/basic/typography'
             }
           ]
         }
@@ -114,52 +72,97 @@ const menuItems = {
           title: 'Stocks In',
           type: 'collapse',
           icon: 'feather icon-box',
-          children: [
-            {
-              id: 'list_stock',
-              title: 'List',
-              icon: 'feather icon-list',
-              type: 'item',
-              url: '/invoices'
-            },
-            {
-              id: 'add_invoice',
-              title: 'Add Invoice',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/add-invoice'
-            }, {
-              id: 'all_stocks',
-              title: 'Purchase Stocks',
-              icon: 'feather icon-clipboard',
-              type: 'item',
-              url: '/all-stocks'
-            },
-            {
-              id: 'old_stock',
-              title: 'Old Stock',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stocks/add-radius'
-            },
-            {
-              id: 'all_old_stock',
-              title: 'All Old Stock',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: 'stocks/old-stock'
-            },
-            {
-              id: 'Available_stocks',
-              title: 'Available Stocks',
-              icon: 'feather icon-clipboard',
-              type: 'item',
-              url: '/available-stocks'
-            }
+          children: [{
+            id: 'Products',
+            title: 'Products',
+            icon: 'feather icon-package',
+            type: 'item',
+            url: '/shades'
+          },{
+            id: 'add_invoice',
+            title: 'Add Invoice',
+            icon: 'feather icon-file-plus',
+            type: 'item',
+            url: '/add-invoice'
+          },
+          {
+            id: 'list_stock',
+            title: 'List',
+            icon: 'feather icon-list',
+            type: 'item',
+            url: '/invoices'
+          },
+          {
+            id: 'all_stocks',
+            title: 'Purchase Stocks',
+            icon: 'feather icon-clipboard',
+            type: 'item',
+            url: '/all-stocks'
+          },
+          {
+            id: 'Available_stocks',
+            title: 'Available Stocks',
+            icon: 'feather icon-clipboard',
+            type: 'item',
+            url: '/available-stocks'
+          },
+          {
+            id: 'old_stock',
+            title: 'Old Stock',
+            icon: 'feather icon-file-plus',
+            type: 'item',
+            url: '/stocks/add-radius'
+          },
+          {
+            id: 'all_old_stock',
+            title: 'All Old Stock',
+            icon: 'feather icon-file-plus',
+            type: 'item',
+            url: 'stocks/old-stock'
+          }
+
           ]
         }
       ]
     },
+    {
+      id: 'GoDown',
+      title: 'Go Down Out',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'send_to_godown',
+          title: 'Stocks Out Godown',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+
+            {
+              id: 'invoice_out',
+              title: 'GatePass',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stockout/godown'
+            },
+            {
+              id: 'Approve_godown',
+              title: 'Approve Godown',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/approve/godown'
+            },
+            {
+              id: 'Godown_stock',
+              title: 'Godown Stocks',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stocks/godown'
+            }
+          ]
+        }
+      ]
+    }, ,
     {
       id: 'stockout',
       title: 'Stock Out',
@@ -203,45 +206,7 @@ const menuItems = {
           ]
         }
       ]
-    },
-    {
-      id: 'GoDown',
-      title: 'Go Down Out',
-      type: 'group',
-      icon: 'icon-ui',
-      children: [
-        {
-          id: 'send_to_godown',
-          title: 'Stocks Out Godown',
-          type: 'collapse',
-          icon: 'feather icon-box',
-          children: [
-
-            {
-              id: 'invoice_out',
-              title: 'GatePass',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stockout/godown'
-            },
-            {
-              id: 'Approve_godown',
-              title: 'Approve Godown',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/approve/godown'
-            },
-            {
-              id: 'Godown_stock',
-              title: 'Godown Stocks',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stocks/godown'
-            }
-          ]
-        }
-      ]
-    },
+    }
 
     // {
     //   id: 'chart-maps',

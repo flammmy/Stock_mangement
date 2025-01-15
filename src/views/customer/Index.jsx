@@ -27,6 +27,7 @@ const CustomersPage = () => {
           }
         });
         console.log(response);
+        
         setCustomer(response.data.data);
         setFilteredCustomer(response.data.data);
       } catch (error) {
@@ -130,58 +131,54 @@ const CustomersPage = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
       sortable: true,
+
       cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Toggle Switch */}
-          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
-            <input
-              type="checkbox"
-              checked={row.status === 0} // Active if 0
-              onChange={() => handleToggleStatus(row.id, row.status)}
-              style={{ opacity: 0, width: 0, height: 0 }}
-            />
-            <span
-              style={{
-                position: 'absolute',
-                cursor: 'pointer',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-                transition: '0.4s',
-                borderRadius: '20px',
-              }}
-            ></span>
-            <span
-              style={{
-                position: 'absolute',
-                content: '',
-                height: '14px',
-                width: '14px',
-                left: row.status === 0 ? '18px' : '3px',
-                bottom: '3px',
-                backgroundColor: 'white',
-                transition: '0.4s',
-                borderRadius: '50%',
-              }}
-            ></span>
-          </label>
-      
-          {/* Status Badge */}
+        
+        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+          <div style={{marginLeft:"10px",marginTop:"4px"}}>
           <span
-            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-            style={{
-              padding: '5px 10px',
-              borderRadius: '8px',
-              whiteSpace: 'nowrap', // Prevents text wrapping
-            }}
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{ padding: '5px 10px', borderRadius: '8px' }}
           >
             {row.status === 0 ? 'Active' : 'Inactive'}
           </span>
-        </div>
+          </div>
+           
+          <input
+            type="checkbox"
+            checked={row.status === 1} 
+            onChange={() => handleToggleStatus(row.id, row.status)}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+              transition: '0.4s',
+              borderRadius: '20px'
+            }}
+          ></span>
+          <span
+            style={{
+              position: 'absolute',
+              content: "",
+              height: '14px',
+              width: '14px',
+              left: row.status === 0 ? '18px' : '3px',
+              bottom: '3px',
+              backgroundColor: 'white',
+              transition: '0.4s',
+              borderRadius: '50%'
+            }}
+          ></span>
+        </label>
       )
     },
     {
@@ -201,7 +198,7 @@ const CustomersPage = () => {
 
   const handleToggleStatus = async (userId, currentStatus) => {
     try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+      const updatedStatus = currentStatus === 1 ? 0 : 1; 
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
         { status: updatedStatus },
