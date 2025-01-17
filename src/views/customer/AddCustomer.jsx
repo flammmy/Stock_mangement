@@ -29,10 +29,7 @@ const AddCustomer = () => {
         tel_no: '',
         email: '',
         owner_mobile: '',
-        status: 'Active',
     });
-        const statuses = ['Active', 'Inactive'];
-    
      const navigate = useNavigate();
         const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,8 +39,6 @@ const AddCustomer = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Create a FormData object for file upload
         const submitData = new FormData();
         submitData.append('name', formData.name);
         submitData.append('code', formData.code);

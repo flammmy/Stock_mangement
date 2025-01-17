@@ -220,13 +220,13 @@ const routes = [
         exact: 'true',
         path: '/stockout/godown',
         element: lazy(() => import('./views/godown/stock_send')),
-        allowedRoles: [1]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
         path: '/approve/godown/',
         element: lazy(() => import('./views/godown/approve_godown')),
-        allowedRoles: [1]
+        allowedRoles: [1, 2, 3]
       },
       {
         exact: 'true',
@@ -244,7 +244,7 @@ const routes = [
         exact: 'true',
         path: '/stocks/godown/',
         element: lazy(() => import('./views/godown/index')),
-        allowedRoles: [1]
+        allowedRoles:[1, 2, 3]
       },
       {
         exact: 'true',
