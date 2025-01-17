@@ -81,7 +81,7 @@ const Add_inoice = () => {
     }));
   };
   const handleDeleteRow = (index) => {
-    setItems(items.filter((_, i) => i !== index));
+    setItems(items.filter((_,i) => i !== index));
     setFormData((prevFormData) => {
       const updatedProducts = prevFormData.products.filter((_, i) => i !== index);
       return {
