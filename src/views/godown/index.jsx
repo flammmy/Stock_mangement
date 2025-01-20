@@ -113,12 +113,12 @@ const Index = () => {
         },
         {
             name: 'Length',
-            selector: (row) => row.get_length,
+            selector: (row) =>  Number(row.get_length).toFixed(2),
             sortable: true,
         },
         {
             name: 'Width',
-            selector: (row) => row.get_width,
+            selector: (row) => Number(row.get_width).toFixed(2),
             sortable: true,
         },
         {
@@ -128,12 +128,12 @@ const Index = () => {
         },
         {
             name: 'Area (m²)',
-            selector: (row) => row.area,
+            selector: (row) => Number(row.area).toFixed(2),
             sortable: true
         },
         {
             name: 'Area (sq. ft.)',
-            selector: (row) => row.area_sq_ft,
+            selector: (row) => Number(row.area_sq_ft).toFixed(2),
             sortable: true
         }
     ];

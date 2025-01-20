@@ -76,6 +76,7 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
+        console.log(response.data);
         setShadeNo(response.data);
       } catch (error) {
         console.error('Error fetching product data:', error);

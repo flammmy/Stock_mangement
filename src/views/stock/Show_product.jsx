@@ -135,6 +135,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Warehouse',
+      selector: (row) => row.warehouse,
+      sortable: true
+    },
+    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">

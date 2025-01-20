@@ -187,6 +187,17 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                       <Text style={styles.value}>{invoice.place_of_supply}</Text>
                     </View>
                   </View>
+                  <View style={styles.column}>
+                    <Text style={styles.sectionTitle}>WareHouse Supervisor:</Text>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>UserName:</Text>
+                      <Text style={styles.value}>{invoice.user.name}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>Number:</Text>
+                      <Text style={styles.value}>{invoice.user.phone}</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
 
@@ -204,7 +215,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.tableCell}>Rate</Text>
                     <Text style={styles.tableCell}>Amount</Text>
                   </View>
-                  {invoice.products.map((product, index) => (
+                  {/* {invoice.products.map((product, index) => (
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{product.product.shadeNo ?? '-'}</Text>
                       <Text style={styles.tableCell}>{product.product.purchase_shade_no ?? '-'}</Text>
@@ -216,7 +227,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                       <Text style={styles.tableCell}>{Number(product.rate).toFixed(2) ?? '-'}</Text>
                       <Text style={styles.tableCell}>{Number(product.amount).toFixed(2) ?? '-'}</Text>
                     </View>
-                  ))}
+                  ))} */}
                 </View>
 
                 <View style={styles.totalSection}>

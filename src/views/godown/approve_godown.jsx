@@ -54,7 +54,7 @@ const Index = () => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/godown/approved/${invoiceId}`,
-                { status },
+                { status},
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -105,12 +105,12 @@ const Index = () => {
         },
         {
             name: 'Length',
-            selector: (row) => row.get_length,
+            selector: (row) => Math.round(row.get_length),
             sortable: true,
         },
         {
             name: 'Width',
-            selector: (row) => row.get_width,
+            selector: (row) => Math.round(row.get_width),
             sortable: true,
         },
         {

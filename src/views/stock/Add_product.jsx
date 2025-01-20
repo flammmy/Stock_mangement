@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
-import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaWarehouse } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -18,6 +18,8 @@ const AddProduct = () => {
       purchase_shadeNo: '',
       width: '',
       length: '',
+      rack:'',
+      Warehouse:'',
       unit: '',
       type: '',
       qty: 1
@@ -206,6 +208,8 @@ const AddProduct = () => {
                       <th>Length</th>
                       <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
                       <th>&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                      <th>Rack</th>
+                      <th>Warehouse</th>
                       <th>Quantity</th>
                       <th>Actions</th>
                     </tr>
@@ -266,6 +270,20 @@ const AddProduct = () => {
                             <option value="">Select Type</option>
                             <option value="roll">Roll</option>
                             <option value="box">Box</option>
+                          </Form.Control>
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            value={item.rack}
+                            onChange={(e) => handleRowChange(index, 'rack', e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control as="select" value={item.warehouse} onChange={(e) => handleRowChange(index, 'warehouse', e.target.value)}>
+                            <option value="">Select Warehouse</option>
+                            <option value="Dwarka">Dwarka</option>
+                            <option value="Gujrat">Gujrat</option>
                           </Form.Control>
                         </td>
                         <td>

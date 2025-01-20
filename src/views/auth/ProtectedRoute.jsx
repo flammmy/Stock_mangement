@@ -5,20 +5,21 @@ import Signin1 from './signin/SignIn1';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const {state} = useContext(AuthContext);
+  const { state } = useContext(AuthContext);
   const { isLoggedIn, user } = state;
   console.log(isLoggedIn)
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
-  
-  const userRole = state.user.role;
-  if(!allowedRoles.includes(userRole)) {
-    return <Unauthorised/>
+
+  const userRole = state.user.roles?.[0]?.name;
+  console.log(userRole);
+  if (!allowedRoles.includes(userRole)) {
+    return <Unauthorised />
   }
 
-  return children; 
+  return children;
 };
 
 export default ProtectedRoute;

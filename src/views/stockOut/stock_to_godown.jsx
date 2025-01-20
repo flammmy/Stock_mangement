@@ -128,24 +128,6 @@ const Invoice_out = () => {
       setProducts(null);
     }
   };
-
-  useEffect(() => {
-    const fetchBanksData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operator/bank`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setBanks([...banks, ...response.data.data]);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchBanksData();
-  }, []);
-
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
