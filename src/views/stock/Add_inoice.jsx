@@ -27,7 +27,7 @@ const Add_inoice = () => {
     invoice_no: '',
     place_of_supply: '',
     agent: '',
-    warehouse:'',
+    warehouse: '',
     supplier_id: '1',
     date: today,
     irn: '',
@@ -40,95 +40,9 @@ const Add_inoice = () => {
     transport: '',
     reverse_charge: '',
     qr_code: '',
-    products: []
   });
   const [items, setItems] = useState([]);
-  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const [totalAmount, setTotalAmount] = useState(0);
-  const handleAddRow = () => {
-    setItems([
-      ...items,
-      {
-        product_id: '',
-        purchase_shadeNo: '',
-        hsn_sac_code: '',
-        quantity: '',
-        product_type: '',
-        total_product: '',
-        unit: '',
-        rate: '',
-        amount: ''
-      }
-    ]);
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      products: [
-        ...prevFormData.products,
-        {
-          product_id: '',
-          purchase_shadeNo: '',
-          hsn_sac_code: '',
-          quantity: 0,
-          product_type: '',
-          total_product: '',
-          unit: '',
-          rate: 0,
-          amount: 0
-        }
-      ]
-    }));
-  };
-  const handleDeleteRow = (index) => {
-    setItems(items.filter((_,i) => i !== index));
-    setFormData((prevFormData) => {
-      const updatedProducts = prevFormData.products.filter((_, i) => i !== index);
-      return {
-        ...prevFormData,
-        products: updatedProducts
-      };
-    });
-  };
-
-  const handleRowChange = (index, field, value) => {
-    setItems((prevRows) => {
-      const updatedRows = [...prevRows];
-      if (field === 'product_id') {
-        const selectedProduct = products.find((product) => product.id == value);
-        if (selectedProduct) {
-          updatedRows[index].product_id = value;
-          updatedRows[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
-        } else {
-          updatedRows[index].purchase_shadeNo = '';
-        }
-      }
-      else {
-        updatedRows[index][field] = value;
-      }
-
-      if (field === 'amount') {
-        const totalAmount = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        formData.total_amount = totalAmount;
-      }
-
-      // Sync with formData
-      setFormData((prevFormData) => {
-        const updatedProducts = [...prevFormData.products];
-        updatedProducts[index] = {
-          ...updatedProducts[index],
-          ...updatedRows[index]
-        };
-        return {
-          ...prevFormData,
-          products: updatedProducts
-        };
-      });
-
-      return updatedRows;
-    });
-  };
-
   const [suppliers, setSuppliers] = useState([]);
   useEffect(() => {
     const fetchProductData = async () => {
@@ -164,6 +78,7 @@ const Add_inoice = () => {
     };
     fetchSupplierData();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(name, value);
@@ -246,14 +161,35 @@ const Add_inoice = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                  
+                    <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
+                    <FormField
+                      icon={FaPercentage}
+                      label="SGST(%)"
+                      name="cgst_percentage"
+                      value={formData.cgst_percentage}
+                      onChange={handleChange}
+                    />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
                     <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
                     <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
                     <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
-                    <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Total Amount"
+                      name="total_amount"
+                      value={formData.total_amount}
+                      onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaCalendarAlt}
+                      label="Ack Date"
+                      type="date"
+                      name="ack_date"
+                      value={formData.ack_date}
+                      onChange={handleChange}
+                    />
                   </Col>
 
                   <Col md={4}>
@@ -266,185 +202,23 @@ const Add_inoice = () => {
                       value={formData.reverse_charge}
                       onChange={handleChange}
                     />
-                     <FormField
+                    <FormField
                       icon={FaKey}
                       label="Warehouse"
                       name="warehouse"
                       value={formData.warehouse}
                       onChange={handleChange}
                     />
-                   
+                    <FormField
+                      icon={FaPercentage}
+                      label="SGST(%)"
+                      name="sgst_percentage"
+                      value={formData.sgst_percentage}
+                      onChange={handleChange}
+                    />
                   </Col>
                 </Row>
 
-                <div>
-                  <div className="d-flex justify-content-between">
-                    <h5>Invoice Items</h5>
-                    <Button variant="success" onClick={handleAddRow} className="px-1 py-1">
-                      <FaPlus /> Add Item
-                    </Button>
-                  </div>
-                  <Table bordered hover responsive style={{ '--bs-table-bg': '#20b2aa', '--bs-table-color': 'unset' }}>
-                    <thead >
-                      <tr className='text-white'>
-                        <th>&nbsp;&nbsp;Shade Number&nbsp;&nbsp;</th>
-                        <th>Pur. Shade No</th>
-                        <th>Total Product</th>
-                        <th>&nbsp;&nbsp;Product Type&nbsp;&nbsp;</th>
-                        <th>HSN/SAC</th>
-                        <th>Quantity/Area</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;Rate&nbsp;&nbsp;</th>
-                        <th>Amount</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((item, index) => (
-                        <tr key={index}>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.shadeNo}
-                              onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
-                              className='px-1'
-
-                            >
-                              <option value="">Select Shade No.</option>
-                              {products.map((product, idx) => (
-                                <option key={product.id} value={product.id}>
-                                  {product.shadeNo}
-                                </option>
-                              ))}
-                            </Form.Control>
-                          </td>
-
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.purchase_shadeNo}
-                              onChange={(e) => handleRowChange(index, 'purchase_shadeNo', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.total_product}
-                              onChange={(e) => handleRowChange(index, 'total_product', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.product_type}
-                              onChange={(e) => handleRowChange(index, 'product_type', e.target.value)}
-                              className='px-1'
-
-                            >
-                              <option value="" disabled>Select type</option>
-                              <option value="roll">Roll</option>
-                              <option value="box">Box</option>
-
-
-                            </Form.Control>
-                          </td>
-
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.hsn_sac_code}
-                              onChange={(e) => handleRowChange(index, 'hsn_sac_code', e.target.value)}
-                              className='px-1'
-
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.quantity}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
-                            />
-                          </td>
-
-                          <td>
-                            <Form.Control as="select" value={item.unit} onChange={(e) => handleRowChange(index, 'unit', e.target.value)} className='px-1' >
-                              <option value="" disabled>Select unit</option>
-                              <option value="sqft">Sq.ft.</option>
-                              <option value="pcs">Pcs.</option>
-                            </Form.Control>
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.rate}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'rate', e.target.value)}
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.amount}
-                              className='px-1'
-                              onChange={(e) => handleRowChange(index, 'amount', e.target.value)}
-                            />
-                          </td>
-                          <td>
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
-                              <FaTrash />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                  <Row className="mt-4">
-                    <Col md={3}>
-                      <FormField
-                        icon={FaMoneyBillWave}
-                        label="Total Amount"
-                        name="total_amount"
-                        value={formData.total_amount}
-                        onChange={handleChange}
-                      />
-                    </Col>
-                    <Col md={3}>
-                      <FormField
-                        icon={FaPercentage}
-                        label="SGST(%)"
-                        name="sgst_percentage"
-                        value={formData.sgst_percentage}
-                        onChange={handleChange}
-                      />
-                    </Col>
-                    <Col md={3}>
-                      <FormField
-                        icon={FaPercentage}
-                        label="SGST(%)"
-                        name="cgst_percentage"
-                        value={formData.cgst_percentage}
-                        onChange={handleChange}
-                      />
-
-                    </Col>
-
-                    <Col md={3}>
-                      <FormField
-                        icon={FaCalendarAlt}
-                        label="Ack Date"
-                        type="date"
-                        name="ack_date"
-                        value={formData.ack_date}
-                        onChange={handleChange}
-                      />
-                    </Col>
-                  </Row>
-                </div>
                 <Button
                   variant="primary"
                   type="submit"

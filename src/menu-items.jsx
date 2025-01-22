@@ -11,14 +11,13 @@
 //           title: 'Dashboard',
 //           type: 'item',
 //           icon: 'feather icon-home',
-//           url: '/dashboard'
-//         }
-//       ]
+//           url: '/dashboard',
+          
+//         },
+//       ],
 //     },
-
-
 //     {
-//       id: '',
+//       id: 'usersGroup',
 //       title: 'Users',
 //       type: 'group',
 //       icon: 'icon-ui',
@@ -28,81 +27,53 @@
 //           title: 'People',
 //           type: 'collapse',
 //           icon: 'feather icon-users',
+          
 //           children: [
+//                   {
+//                     id: 'users',
+//                     title: 'Users',
+//                     icon: 'feather icon-user',
+//                     type: 'item',
+//                     url: '/users',
+                  
+//                   },
+            
 //             {
-//               id: 'users',
-//               title: 'Users',
-//               icon: 'feather icon-user',
-//               type: 'item',
-//               url: '/users'
-//             }, {
 //               id: 'suppliers',
 //               title: 'Suppliers',
 //               icon: 'feather icon-share-2',
 //               type: 'item',
-//               url: '/supplier'
+//               url: '/supplier',
+             
 //             },
 //             {
-//               id: 'Purchaser',
+//               id: 'purchaser',
 //               title: 'Purchaser',
 //               icon: 'feather icon-users',
 //               type: 'item',
-//               url: '/receiver'
+//               url: '/receiver',
+              
 //             },
 //             {
 //               id: 'customers',
 //               title: 'Customers',
 //               icon: 'feather icon-user-check',
 //               type: 'item',
-//               url: '/customers'
-//             },{
-//               id: 'Products',
+//               url: '/customers',
+              
+//             },
+//             {
+//               id: 'products',
 //               title: 'Products',
 //               icon: 'feather icon-package',
 //               type: 'item',
-//               url: '/shades'
-//             }
-//             ,{
-//               id: 'button',
-//               title: 'Button',
-//               type: 'item',
-//               url: '/basic/button'
+//               url: '/shades',
+              
 //             },
-//             {
-//               id: 'badges',
-//               title: 'Badges',
-//               type: 'item',
-//               url: '/basic/badges'
-//             },
-//             {
-//               id: 'breadcrumb',
-//               title: 'Breadcrumb & Pagination',
-//               type: 'item',
-//               url: '/basic/breadcrumb-paging'
-//             },
-//             {
-//               id: 'collapse',
-//               title: 'Collapse',
-//               type: 'item',
-//               url: '/basic/collapse'
-//             },
-//             {
-//               id: 'tabs-pills',
-//               title: 'Tabs & Pills',
-//               type: 'item',
-//               url: '/basic/tabs-pills'
-//             },
-//             {
-//               id: 'typography',
-//               title: 'Typography',
-//               type: 'item',
-//               url: '/basic/typography'
-//             }
-//           ]
-//         }
-//       ]
+//           ],
+//         },
+//       ],
 //     },
-
 //     {
 //       id: 'stockin',
 //       title: 'Stock In',
@@ -120,45 +91,60 @@
 //               title: 'List',
 //               icon: 'feather icon-list',
 //               type: 'item',
-//               url: '/invoices'
+//               url: '/invoices',
+              
 //             },
 //             {
 //               id: 'add_invoice',
 //               title: 'Add Invoice',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/add-invoice'
-//             }, {
+//               url: '/add-invoice',
+              
+//             },
+//             {
+//               id: 'add_invoice',
+//               title: 'Add Accessories Invoice',
+//               icon: 'feather icon-file-plus',
+//               type: 'item',
+//               url: '/add_accessories',
+              
+//             },
+//             {
 //               id: 'all_stocks',
 //               title: 'Purchase Stocks',
 //               icon: 'feather icon-clipboard',
 //               type: 'item',
-//               url: '/all-stocks'
+//               url: '/all-stocks',
+              
 //             },
 //             {
 //               id: 'old_stock',
 //               title: 'Old Stock',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/stocks/add-radius'
+//               url: '/stocks/add-radius',
+             
 //             },
 //             {
 //               id: 'all_old_stock',
 //               title: 'All Old Stock',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: 'stocks/old-stock'
+//               url: '/stocks/old-stock',
+              
 //             },
 //             {
-//               id: 'Available_stocks',
+//               id: 'available_stocks',
 //               title: 'Available Stocks',
 //               icon: 'feather icon-clipboard',
 //               type: 'item',
-//               url: '/available-stocks'
-//             }
-//           ]
-//         }
-//       ]
+//               url: '/available-stocks',
+              
+//             },
+//           ],
+//         },
+//       ],
 //     },
 //     {
 //       id: 'stockout',
@@ -172,37 +158,42 @@
 //           type: 'collapse',
 //           icon: 'feather icon-box',
 //           children: [
-
 //             {
 //               id: 'invoice_out',
 //               title: 'Invoice',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/invoice-out'
-//             }, {
+//               url: '/invoice-out',
+              
+//             },
+
+//             {
 //               id: 'invoice_out_index',
 //               title: 'All Out Invoice',
 //               icon: 'feather icon-file-minus',
 //               type: 'item',
-//               url: '/all-invoices-out'
-//             }, {
+//               url: '/all-invoices-out',
+              
+//             },
+//             {
 //               id: 'invoice_out_stock',
 //               title: 'All Out Stock',
 //               icon: 'feather icon-file-minus',
 //               type: 'item',
-//               url: '/all-out-stock'
+//               url: '/all-out-stock',
+              
 //             },
-//             {
+//  {
 //               id: 'stock_to_godown',
 //               title: 'Send To Godown',
 //               icon: 'feather icon-file-minus',
 //               type: 'item',
 //               url: '/invoiceOut',
-//             }
-
-//           ]
-//         }
-//       ]
+            
+//             },
+//           ],
+//         },
+//       ],
 //     },
 //     {
 //       id: 'GoDown',
@@ -215,171 +206,100 @@
 //           title: 'Stocks Out Godown',
 //           type: 'collapse',
 //           icon: 'feather icon-box',
+          
 //           children: [
-
 //             {
 //               id: 'invoice_out',
 //               title: 'GatePass',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/stockout/godown'
-//             },
+//               url: '/stockout/godown',
+//                         },
 //             {
-//               id: 'Approve_godown',
+//               id: 'approve_godown',
 //               title: 'Approve Godown',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/approve/godown'
+//               url: '/approve/godown',
+              
 //             },
 //             {
-//               id: 'Godown_stock',
+//               id: 'godown_stock',
 //               title: 'Godown Stocks',
 //               icon: 'feather icon-file-plus',
 //               type: 'item',
-//               url: '/stocks/godown'
-//             }
-//           ]
-//         }
-//       ]
+//               url: '/stocks/godown',
+              
+//             },
+//           ],
+//         },
+//       ],
 //     },
-
-//     // {
-//     //   id: 'chart-maps',
-//     //   title: 'Chart & Maps',
-//     //   type: 'group',
-//     //   icon: 'icon-charts',
-//     //   children: [
-//     //     {
-//     //       id: 'charts',
-//     //       title: 'Charts',
-//     //       type: 'item',
-//     //       icon: 'feather icon-pie-chart',
-//     //       url: '/charts/nvd3'
-//     //     },
-//     //     {
-//     //       id: 'maps',
-//     //       title: 'Maps',
-//     //       type: 'item',
-//     //       icon: 'feather icon-map',
-//     //       url: '/maps/google-map'
-//     //     }
-//     //   ]
-//     // },
-//     // {
-//     //   id: 'pages',
-//     //   title: 'Pages',
-//     //   type: 'group',
-//     //   icon: 'icon-pages',
-//     //   children: [
-//     //     {
-//     //       id: 'auth',
-//     //       title: 'Authentication',
-//     //       type: 'collapse',
-//     //       icon: 'feather icon-lock',
-//     //       badge: {
-//     //         title: 'New',
-//     //         type: 'label-danger'
-//     //       },
-//     //       children: [
-//     //         {
-//     //           id: 'signup-1',
-//     //           title: 'Sign up',
-//     //           type: 'item',
-//     //           url: '/auth/signup-1',
-//     //           target: true,
-//     //           breadcrumbs: false
-//     //         },
-//     //         {
-//     //           id: 'signin-1',
-//     //           title: 'Sign in',
-//     //           type: 'item',
-//     //           url: '/auth/signin-1',
-//     //           target: true,
-//     //           breadcrumbs: false
-//     //         }
-//     //       ]
-//     //     },
-//     //     {
-//     //       id: 'sample-page',
-//     //       title: 'Sample Page',
-//     //       type: 'item',
-//     //       url: '/sample-page',
-//     //       classes: 'nav-item',
-//     //       icon: 'feather icon-sidebar'
-//     //     },
-//     //     {
-//     //       id: 'documentation',
-//     //       title: 'Documentation',
-//     //       type: 'item',
-//     //       icon: 'feather icon-book',
-//     //       classes: 'nav-item',
-//     //       url: 'https://codedthemes.gitbook.io/datta/',
-//     //       target: true,
-//     //       external: true
-//     //     },
-//     //     {
-//     //       id: 'menu-level',
-//     //       title: 'Menu Levels',
-//     //       type: 'collapse',
-//     //       icon: 'feather icon-menu',
-//     //       children: [
-//     //         {
-//     //           id: 'menu-level-1.1',
-//     //           title: 'Menu Level 1.1',
-//     //           type: 'item',
-//     //           url: '#!'
-//     //         },
-//     //         {
-//     //           id: 'menu-level-1.2',
-//     //           title: 'Menu Level 2.2',
-//     //           type: 'collapse',
-//     //           children: [
-//     //             {
-//     //               id: 'menu-level-2.1',
-//     //               title: 'Menu Level 2.1',
-//     //               type: 'item',
-//     //               url: '#'
-//     //             },
-//     //             {
-//     //               id: 'menu-level-2.2',
-//     //               title: 'Menu Level 2.2',
-//     //               type: 'collapse',
-//     //               children: [
-//     //                 {
-//     //                   id: 'menu-level-3.1',
-//     //                   title: 'Menu Level 3.1',
-//     //                   type: 'item',
-//     //                   url: '#'
-//     //                 },
-//     //                 {
-//     //                   id: 'menu-level-3.2',
-//     //                   title: 'Menu Level 3.2',
-//     //                   type: 'item',
-//     //                   url: '#'
-//     //                 }
-//     //               ]
-//     //             }
-//     //           ]
-//     //         }
-//     //       ]
-//     //     },
-//     //     {
-//     //       id: 'disabled-menu',
-//     //       title: 'Disabled Menu',
-//     //       type: 'item',
-//     //       url: '#',
-//     //       classes: 'nav-item disabled',
-//     //       icon: 'feather icon-power'
-//     //     }
-//     //   ]
-//     // }
-//   ]
+//     {
+//       id: "quotation_in",
+//       title: "Quotation IN",
+//       type: "group",
+//       icon: "icon-ui",
+//       children: [
+//         {
+//           id: "quotation",
+//           title: "Quotation",
+//           type: "collapse",
+//           icon: "feather icon-box",
+//           children: [
+//             {
+//               id: "operator",
+//               title: "Operator",
+//               icon: 'feather icon-users',
+//               type: "item",
+//               url: "/operator",
+             
+//             },
+//             {
+//               id: "quotation_invoice",
+//               title: "Quotation Invoice",
+//               icon: 'feather icon-file-minus',
+//               type: "item",
+//               url: "/quotation",
+//             },
+//             {
+//               id: 'approve_operator',
+//               title: 'Approve Operator',
+//               icon: 'feather icon-file-plus',
+//               type: 'item',
+//               url: '/approve_operator',
+              
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
 // };
 
 // export default menuItems;
 
 
 
+const user = JSON.parse(localStorage.getItem('user'));
+const userName = user?.name;
+const filterMenuItem = (menu) => {
+  const filterItems = (items) =>
+    items
+  .filter((item) => !(['Admin'].includes(userName) && ['users'].includes(item.id) )) 
+  .filter((item) => !(['Operator'].includes(userName) && ['invoice_out_index','users','suppliers','purchaser','products','stockin','stock_to_godown','GoDown'].includes(item.id) )) 
+  .filter((item) => !(['Supervisor'].includes(userName) && ['approve_godown','stockout','users','purchaser','customers','stock_to_godown','approve_operator','godown_stock',].includes(item.id) )) 
+  .filter((item) => !(['Sub_Supervisor'].includes(userName) && ['invoice_operator_index','generated_gate_pass','stockin','usersGroup','users','purchaser','customers','invoice_out','invoice_out_stock','stock_to_godown','Invoice','All Out Stock','Send To Godown'].includes(item.id) )) 
+  .map((item) =>
+        item.children
+          ? { ...item, children: filterItems(item.children) }
+          : item
+      );
+
+  return { ...menu, items: filterItems(menu.items) };
+};
+
+// Menu items
 const menuItems = {
   items: [
     {
@@ -394,6 +314,7 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-home',
           url: '/dashboard',
+          
           
         },
       ],
@@ -550,6 +471,14 @@ const menuItems = {
               
             },
             {
+              id: 'invoice_operator_index',
+              title: 'All Operator Invoice',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/operator_invoice',
+              
+            },
+            {
               id: 'invoice_out_stock',
               title: 'All Out Stock',
               icon: 'feather icon-file-minus',
@@ -598,6 +527,15 @@ const menuItems = {
               
             },
             {
+              id: 'generated_gate_pass',
+              title: 'Generated Gate Pass',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/generated_gate_pass',
+              
+            },
+            
+            {
               id: 'approve_operator',
               title: 'Approve Operator',
               icon: 'feather icon-file-plus',
@@ -617,38 +555,49 @@ const menuItems = {
         },
       ],
     },
-    {
-      id: "quotation_in",
-      title: "Quotation IN",
-      type: "group",
-      icon: "icon-ui",
-      children: [
-        {
-          id: "quotation",
-          title: "Quotation",
-          type: "collapse",
-          icon: "feather icon-box",
-          children: [
-            {
-              id: "operator",
-              title: "Operator",
-              icon: 'feather icon-users',
-              type: "item",
-              url: "/operator",
+    // {
+    //   id: "quotation_in",
+    //   title: "Quotation IN",
+    //   type: "group",
+    //   icon: "icon-ui",
+    //   children: [
+    //     {
+    //       id: "quotation",
+    //       title: "Quotation",
+    //       type: "collapse",
+    //       icon: "feather icon-box",
+    //       children: [
+    //         {
+    //           id: "operator",
+    //           title: "Operator",
+    //           icon: 'feather icon-users',
+    //           type: "item",
+    //           url: "/operator",
              
-            },
-            {
-              id: "quotation_invoice",
-              title: "Quotation Invoice",
-              icon: 'feather icon-file-minus',
-              type: "item",
-              url: "/quotation",
-            },
-          ],
-        },
-      ],
-    },
+    //         },
+    //         {
+    //           id: "quotation_invoice",
+    //           title: "Quotation Invoice",
+    //           icon: 'feather icon-file-minus',
+    //           type: "item",
+    //           url: "/quotation",
+    //         },
+    //         {
+    //                         id: 'approve_operator',
+    //                         title: 'Approve Operator',
+    //                         icon: 'feather icon-file-plus',
+    //                         type: 'item',
+    //                         url: '/approve_operator',
+                            
+    //                       },
+    //       ],
+    //     },
+    //   ],
+    // },
   ],
 };
 
-export default menuItems;
+// Filter the menu items
+const filteredMenuItems = filterMenuItem(menuItems);
+
+export default filteredMenuItems;
