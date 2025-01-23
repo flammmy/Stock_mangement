@@ -189,12 +189,6 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/invoiceOut',
-        element: lazy(() => import('./views/stockOut/stock_to_godown')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
-      },
-      {
-        exact: 'true',
         path: '/all-invoices-out',
         element: lazy(() => import('./views/stockOut/Index')),
        allowedRoles: ['admin','supervisor','sub_supervisor']

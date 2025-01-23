@@ -199,13 +199,7 @@ const menuItems = {
               type: 'item',
               url: '/all-out-stock'
             },
-            {
-              id: 'stock_to_godown',
-              title: 'Send To Godown',
-              icon: 'feather icon-file-minus',
-              type: 'item',
-              url: '/invoiceOut',
-            },{
+           {
               id: 'customers',
               title: 'Customers',
               icon: 'feather icon-user-check',
