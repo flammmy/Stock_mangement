@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import DataTableExtensions from 'react-data-table-component-extensions';
+import Swal from 'sweetalert2';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
@@ -190,6 +191,20 @@ const Show_product = () => {
   };
 
   const handleDelete = async (productId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+  
+    if (!result.isConfirmed) {
+      return; // Exit if user cancels
+    }
+  
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${productId}`, {
         headers: {
@@ -198,13 +213,14 @@ const Show_product = () => {
       });
       console.log(response.data);
       toast.success('Product deleted successfully');
-      setProducts(products.filter((product) => product.id !== productId));
-      setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
+      setFilteredProducts((prev) => prev.filter((product) => product.id !== productId));
     } catch (error) {
+      console.error(error);
       toast.error('Failed to delete Product');
     }
   };
-
+  
   const customStyles = {
     header: {
       style: {

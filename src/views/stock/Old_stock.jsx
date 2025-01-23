@@ -84,11 +84,6 @@ const Old_stock = () => {
       selector: (_, index) => index + 1,
       sortable: true
     },
-    // {
-    //   name: 'Date',
-    //   selector: (row) => row.stock_invoice?.date || 'N/A',
-    //   sortable: true
-    // },
     {
       name: 'Shade No',
       selector: (row) => row.product?.shadeNo || 'N/A',
@@ -189,8 +184,8 @@ const Old_stock = () => {
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
+        borderCollapse: 'separate', 
+        borderSpacing: 0, 
       },
     },
     header: {
@@ -200,7 +195,7 @@ const Old_stock = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0',
       },
     },
     rows: {
@@ -222,11 +217,11 @@ const Old_stock = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0', 
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
+          borderRight: 'none', 
         },
       },
     },
@@ -235,7 +230,7 @@ const Old_stock = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
+        borderRight: '1px solid grey', 
       },
     },
     pagination: {
@@ -246,7 +241,7 @@ const Old_stock = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: 'black', // Makes the arrows white
+        color: 'black', 
         border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',
@@ -264,7 +259,7 @@ const Old_stock = () => {
 
 
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px',background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input

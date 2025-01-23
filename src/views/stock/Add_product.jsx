@@ -297,6 +297,12 @@ const AddProduct = () => {
                       </tr>
                     ))}
                   </tbody>
+
+
+
+
+
+                  
                 </Table>
                 <Button
                   variant="primary"

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Button, Badge, Modal, Form } from 'react-bootstrap';
+import { Button,Badge, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv, FaTrash, FaCheck } from 'react-icons/fa';
+import { FaEye, FaFileCsv,FaTrash,FaCheck  } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -12,7 +12,7 @@ import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
-    const id = JSON.parse(localStorage.getItem('user')).id || 4;
+    const id =JSON.parse(localStorage.getItem('user')).id || 4;
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -44,7 +44,7 @@ const Index = () => {
         };
         fetchInvoices();
     }, [id]);
-
+   
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -54,7 +54,7 @@ const Index = () => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/godown/approved/${invoiceId}`,
-                { status},
+                { status },
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -75,27 +75,27 @@ const Index = () => {
     const columns = [
         {
             name: 'Invoice Number',
-            selector: (row) => row.invoice_no,
+            selector: (row) => row.invoice_no, 
             sortable: true,
         },
         {
             name: 'Product Name',
-            selector: (row) => row.products.name,
+            selector: (row) => row.products.name, 
             sortable: true,
         },
         {
             name: 'Product Code',
-            selector: (row) => row.products.code,
+            selector: (row) => row.products.code,  
             sortable: true,
         },
         {
             name: 'Shade No',
-            selector: (row) => row.products.shadeNo,
+            selector: (row) => row.products.shadeNo,  
             sortable: true,
         },
         {
             name: 'Purchase Shade No',
-            selector: (row) => row.products.purchase_shade_no,
+            selector: (row) => row.products.purchase_shade_no,  
             sortable: true,
         },
         {
@@ -105,12 +105,12 @@ const Index = () => {
         },
         {
             name: 'Length',
-            selector: (row) => Math.round(row.get_length),
+            selector: (row) => row.get_length, 
             sortable: true,
         },
         {
             name: 'Width',
-            selector: (row) => Math.round(row.get_width),
+            selector: (row) => row.get_width,
             sortable: true,
         },
         {
@@ -132,14 +132,14 @@ const Index = () => {
                                         className="me-2"
                                         onClick={() => handleAction(row.id, 1)}
                                     >
-                                        <FaCheck />
+                                      <FaCheck /> 
                                     </Button>
                                     <Button
                                         variant="outline-danger"
                                         size="sm"
                                         onClick={() => handleAction(row.id, 2)} // Reject action
                                     >
-                                        <FaTrash />
+                                        <FaTrash /> 
                                     </Button>
                                 </>
                             );
@@ -149,15 +149,10 @@ const Index = () => {
                                 <span class="badge bg-success">Accepted</span>
                             );
 
-                        case 2:
+                        case 2: 
                             return (
                                 <span class="badge bg-danger">Rejected</span>
                             );
-                        case 3:
-                            return (
-                                <span class="badge bg-warning">Sold</span>
-                            );
-
 
                         default:
                             return null;

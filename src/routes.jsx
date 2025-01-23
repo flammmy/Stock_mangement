@@ -65,151 +65,175 @@ const routes = [
         exact: 'true',
         path: '/dashboard',
         element: lazy(() => import('./views/dashboard')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
-        allowedRoles: ['admin']
+        allowedRoles:  ['superadmin','admin']
       },
       {
         exact: 'true',
         path: '/add-user',
         element: lazy(() => import('./views/users/AddUser')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/Supplier',
         element: lazy(() => import('./views/supplier/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-Supplier',
         element: lazy(() => import('./views/supplier/AddSupplier')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/quotation',
+        element: lazy(() => import('./views/operator/quotation')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/receiver',
         element: lazy(() => import('./views/receiver/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles: ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-Receiver',
         element: lazy(() => import('./views/receiver/AddReceiver')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/customers',
         element: lazy(() => import('./views/customer/Index')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-Customer',
         element: lazy(() => import('./views/customer/AddCustomer')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/products',
         element: lazy(() => import('./views/products/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles: ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/Add-Product',
         element: lazy(() => import('./views/products/AddProduct')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/stocks',
         element: lazy(() => import('./views/stock/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/available-stocks',
         element: lazy(() => import('./views/stock/Available_Stock')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-invoice',
         element: lazy(() => import('./views/stock/Add_inoice')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/add_accessories',
+        element: lazy(() => import('./views/Add_Accessories/add_accessories')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-product/:id/:no',
         element: lazy(() => import('./views/stock/Add_product')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/show-product/:id',
         element: lazy(() => import('./views/stock/Show_product')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/shades',
         element: lazy(() => import('./views/shades/Index')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/add-shades',
         element: lazy(() => import('./views/shades/AddShade')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/all-stocks',
         element: lazy(() => import('./views/stock/All_Stock')),
-        allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/invoiceOut',
+        element: lazy(() => import('./views/stockOut/stock_to_godown')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/all-invoices-out',
-        element: lazy(() => import('./views/stockOut/Index')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        element: lazy(() => import('./views/stockOut/index')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/operator_invoice',
+        element: lazy(() => import('./views/stockOut/operator_invoice')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/all-out-stock',
         element: lazy(() => import('./views/stockOut/all_out_stock')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/stocks/add-radius',
         element: lazy(() => import('./views/stock/Add_role')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/stocks/old-stock',
         element: lazy(() => import('./views/stock/Old_stock')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
@@ -221,19 +245,36 @@ const routes = [
         exact: 'true',
         path: '/approve/godown/',
         element: lazy(() => import('./views/godown/approve_godown')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/generated_gate_pass',
+        element: lazy(() => import('./views/godown/generated_gate_pass')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/approve_operator',
+        element: lazy(() => import('./views/godown/approve_operator')),
+        allowedRoles: [1]
+      },
+      {
+        exact: 'true',
+        path: '/stocks/old-stock',
+        element: lazy(() => import('./views/stock/Old_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/stocks/godown/',
         element: lazy(() => import('./views/godown/index')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        allowedRoles: [1]
       },
       {
         exact: 'true',
-        path: '/stockout/godown/approve',
-        element: lazy(() => import('./views/godown/all_operator_invoice')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+        path: '/operator',
+        element: lazy(() => import('./views/operator/operator'))
       },
       {
         exact: 'true',
@@ -299,9 +340,11 @@ const routes = [
         exact: 'true',
         path: '/NavRight/changePassword',
         element: lazy(() => import('./layouts/AdminLayout/NavBar/NavRight/changePassword'))
-      }
+      },
+      
     ]
   }
 ];
 
 export default routes;
+

@@ -7,6 +7,7 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import Swal from 'sweetalert2';
 
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -22,6 +23,37 @@ const ProductsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const handleToggleStatus = async (receiverId, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+
+      // Make the API call to update status
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      toast.success('Status updated successfully!');
+
+      // Update state for both Receivers and filteredReceivers
+      setReceiver((prevReceivers) =>
+        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+      );
+
+      setFilteredReceiver((prevFilteredReceivers) =>
+        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+      );
+    } catch (error) {
+      toast.error('Failed to update status!');
+      console.error(error);
+    }
+  };
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -82,12 +114,59 @@ const ProductsPage = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
-      cell: (row) => {
-        const statusText = row.status === 1 ? 'active' : 'inactive';
-        return <span className={`badge rounded-pill ${statusText === 'active' ? 'bg-success' : 'bg-danger'}`}>{statusText}</span>;
-      }
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Toggle Switch */}
+          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
+            <input
+              type="checkbox"
+              checked={row.status === 0} // Active if 0
+              onChange={() => handleToggleStatus(row.id, row.status)}
+              style={{ opacity: 0, width: 0, height: 0 }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
+                transition: '0.4s',
+                borderRadius: '20px',
+              }}
+            ></span>
+            <span
+              style={{
+                position: 'absolute',
+                content: '',
+                height: '14px',
+                width: '14px',
+                left: row.status === 0 ? '18px' : '3px',
+                bottom: '3px',
+                backgroundColor: 'white',
+                transition: '0.4s',
+                borderRadius: '50%',
+              }}
+            ></span>
+          </label>
+      
+          {/* Status Badge */}
+          <span
+            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap', // Prevents text wrapping
+            }}
+          >
+            {row.status === 0 ? 'Active' : 'Inactive'}
+          </span>
+        </div>
+      )
     },
     {
       name: 'Action',
@@ -104,27 +183,72 @@ const ProductsPage = () => {
     }
   ];
 
-  const handleDelete = async (productId) => {
+  // const handleDelete = async (productId) => {
+  //   try {
+  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     if (response.status === 200) {
+  //       toast.success('Product deleted successfully');
+  //       setProducts(products.filter((product) => product.id !== productId));
+  //       setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
+  //     } else {
+  //       throw new Error('Unexpected response status');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error('Failed to delete product');
+  //   }
+  // };
+
+  const handleDelete = async (receiverId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
 
-      if (response.status === 200) {
-        toast.success('Product deleted successfully');
-        setProducts(products.filter((product) => product.id !== productId));
-        setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
-      } else {
-        throw new Error('Unexpected response status');
+      if (result.isConfirmed) {
+        // Attempt to delete supplier
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${receiverId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        // Update state on successful deletion
+        setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
+        setFilteredReceiver((prevFilteredReceivers) => prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId));
+
+        toast.success('Receiver deleted successfully');
+        Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete product');
+      // Log error for debugging and notify user
+      console.error('Error deleting Receiver:', error);
+
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the Receiver.');
+      }
+
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
     }
   };
+
 
   const handleEdit = (product) => {
     setSelectedProduct(product);

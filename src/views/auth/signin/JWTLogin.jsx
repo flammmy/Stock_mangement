@@ -212,6 +212,7 @@ const JWTLogin = () => {
               />
               <button
                 type="button"
+                className='spin'
                 onClick={() => {
                   setIsLoading(true);
                   setTimeout(() => {
