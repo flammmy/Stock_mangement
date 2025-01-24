@@ -201,12 +201,6 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/invoiceOut',
-        element: lazy(() => import('./views/stockOut/stock_to_godown')),
-        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
-      },
-      {
-        exact: 'true',
         path: '/all-invoices-out',
         element: lazy(() => import('./views/stockOut/index')),
         allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
@@ -239,37 +233,37 @@ const routes = [
         exact: 'true',
         path: '/stockout/godown',
         element: lazy(() => import('./views/godown/stock_send')),
-       allowedRoles: ['admin','supervisor','sub_supervisor']
+       allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',
         path: '/approve/godown/',
         element: lazy(() => import('./views/godown/approve_godown')),
-        allowedRoles: [1]
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',
         path: '/generated_gate_pass',
         element: lazy(() => import('./views/godown/generated_gate_pass')),
-        allowedRoles: [1]
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',
         path: '/approve_operator',
         element: lazy(() => import('./views/godown/approve_operator')),
-        allowedRoles: [1]
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',
         path: '/stocks/old-stock',
         element: lazy(() => import('./views/stock/Old_stock')),
-        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',
         path: '/stocks/godown/',
         element: lazy(() => import('./views/godown/index')),
-        allowedRoles: [1]
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',

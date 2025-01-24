@@ -164,7 +164,7 @@ const Add_inoice = () => {
                     <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
                     <FormField
                       icon={FaPercentage}
-                      label="SGST(%)"
+                      label="CGST(%)"
                       name="cgst_percentage"
                       value={formData.cgst_percentage}
                       onChange={handleChange}

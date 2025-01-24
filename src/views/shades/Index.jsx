@@ -40,13 +40,11 @@ const ProductsPage = () => {
       );
 
       toast.success('Status updated successfully!');
-
-      // Update state for both Receivers and filteredReceivers
-      setReceiver((prevReceivers) =>
+      setProducts((prevReceivers) =>
         prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
 
-      setFilteredReceiver((prevFilteredReceivers) =>
+      setFilteredProducts((prevFilteredReceivers) =>
         prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
       );
     } catch (error) {
@@ -207,7 +205,6 @@ const ProductsPage = () => {
 
   const handleDelete = async (receiverId) => {
     try {
-      // Display confirmation modal
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -219,32 +216,24 @@ const ProductsPage = () => {
       });
 
       if (result.isConfirmed) {
-        // Attempt to delete supplier
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${receiverId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-
-        // Update state on successful deletion
-        setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
-        setFilteredReceiver((prevFilteredReceivers) => prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId));
+        setProducts((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
+        setFilteredProducts((prevFilteredReceivers) => prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId));
 
         toast.success('Receiver deleted successfully');
         Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
       }
     } catch (error) {
-      // Log error for debugging and notify user
       console.error('Error deleting Receiver:', error);
-
-      // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
       } else {
         toast.error('An unexpected error occurred while deleting the Receiver.');
       }
-
-      // Display error notification in confirmation dialog
       Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
     }
   };
@@ -261,14 +250,12 @@ const ProductsPage = () => {
         toast.error('Invalid product selected for update!');
         return;
       }
-
       const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/products/${selectedProduct.id}`, selectedProduct, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
-
       if (response.status === 200) {
         toast.success('Product updated successfully!');
         setProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? selectedProduct : prod)));
@@ -298,8 +285,8 @@ const ProductsPage = () => {
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
+        borderCollapse: 'separate', 
+        borderSpacing: 0, 
       },
     },
     header: {
@@ -309,7 +296,7 @@ const ProductsPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0', 
       },
     },
     rows: {
@@ -331,11 +318,11 @@ const ProductsPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0', 
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
+          borderRight: 'none', 
         },
       },
     },
@@ -344,7 +331,7 @@ const ProductsPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
+        borderRight: '1px solid grey', 
       },
     },
     pagination: {
@@ -355,7 +342,7 @@ const ProductsPage = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: 'black', // Makes the arrows white
+        color: 'black', 
         border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',

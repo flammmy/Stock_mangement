@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Button,Badge, Modal, Form } from 'react-bootstrap';
+import { Button, Badge, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv,FaTrash,FaCheck  } from 'react-icons/fa';
+import { FaEye, FaFileCsv, FaTrash, FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -12,7 +12,7 @@ import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
-    const id =JSON.parse(localStorage.getItem('user')).id || 4;
+    const id = JSON.parse(localStorage.getItem('user')).id || 4;
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +24,7 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sub_supervisor/godown/${id}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supervisor/godown/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
@@ -44,68 +44,44 @@ const Index = () => {
         };
         fetchInvoices();
     }, [id]);
-   
+
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
-
-    const navigate = useNavigate();
-    const handleAction = async (invoiceId, status) => {
-        try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/godown/approved/${invoiceId}`,
-                { status },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                }
-            );
-            const updatedInvoices = invoices.map((invoice) =>
-                invoice.id === invoiceId ? { ...invoice, status } : invoice
-            );
-            setInvoices(updatedInvoices);
-            setFilteredInvoices(updatedInvoices);
-        } catch (error) {
-            toast.error('Failed to update product status');
-            console.error('Error updating product status:', error);
-        }
-    };
-
     const columns = [
         {
             name: 'Invoice Number',
-            selector: (row) => row.invoice_no, 
+            selector: (row) => row.invoice_no,
             sortable: true,
         },
         {
             name: 'Product Name',
-            selector: (row) => row.products.name, 
+            selector: (row) => row.products.name,
             sortable: true,
         },
         {
             name: 'Product Code',
-            selector: (row) => row.products.code,  
+            selector: (row) => row.products.code,
             sortable: true,
         },
         {
             name: 'Shade No',
-            selector: (row) => row.products.shadeNo,  
+            selector: (row) => row.products.shadeNo,
             sortable: true,
         },
         {
             name: 'Purchase Shade No',
-            selector: (row) => row.products.purchase_shade_no,  
+            selector: (row) => row.products.purchase_shade_no,
             sortable: true,
         },
         {
             name: 'Date',
-            selector: (row) => row.date,  
+            selector: (row) => row.date,
             sortable: true,
         },
         {
             name: 'Length',
-            selector: (row) => row.get_length, 
+            selector: (row) => row.get_length,
             sortable: true,
         },
         {
@@ -115,68 +91,37 @@ const Index = () => {
         },
         {
             name: 'unit',
-            selector: (row) => row.unit,  
+            selector: (row) => row.unit,
             sortable: true,
-        },
-        {
-            name: 'Action',
-            cell: (row) => {
-                const renderButtons = () => {
-                    switch (row.status) {
-                        case 0:
-                            return (
-                                <>
-                                    <Button
-                                        variant="outline-success"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => handleAction(row.id, 1)}
-                                    >
-                                      <FaCheck /> 
-                                    </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={() => handleAction(row.id, 2)} // Reject action
-                                    >
-                                        <FaTrash /> 
-                                    </Button>
-                                </>
-                            );
-
-                        case 1:
-                            return (
-                                <span class="badge bg-success">Accepted</span>
-                            );
-
-                        case 2: 
-                            return (
-                                <span class="badge bg-danger">Rejected</span>
-                            );
-
-                        default:
-                            return null;
-                    }
-                };
-
-                return (
-                    <div className="d-flex align-items-center gap-2">
-                        {renderButtons()}
-                    </div>
-                );
-            },
+        }, {
+            name: 'Status',
+            selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+            sortable: true,
+            cell: (row) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                        className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        {row.status === 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+            ),
         }
-
     ];
-
+    const navigate = useNavigate();
     const handleAddInvoice = () => {
-        navigate('/invoice-out');
+        navigate('/stockout/godown');
     };
     const customStyles = {
         table: {
             style: {
-                borderCollapse: 'separate', 
-                borderSpacing: 0, 
+                borderCollapse: 'separate',
+                borderSpacing: 0,
             },
         },
         header: {
@@ -186,7 +131,7 @@ const Index = () => {
                 fontSize: '18px',
                 fontWeight: 'bold',
                 padding: '15px',
-                borderRadius: '8px 8px 0 0', 
+                borderRadius: '8px 8px 0 0',
             },
         },
         rows: {
@@ -208,11 +153,11 @@ const Index = () => {
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 padding: '15px',
-                borderRight: '1px solid #e0e0e0', 
+                borderRight: '1px solid #e0e0e0',
             },
             lastCell: {
                 style: {
-                    borderRight: 'none', 
+                    borderRight: 'none',
                 },
             },
         },
@@ -221,7 +166,7 @@ const Index = () => {
                 fontSize: '14px',
                 color: '#333',
                 padding: '12px',
-                borderRight: '1px solid grey', 
+                borderRight: '1px solid grey',
             },
         },
         pagination: {
@@ -296,7 +241,7 @@ const Index = () => {
                 </div>
                 <div className="col-md-8 text-end">
                     <Button variant="primary" onClick={handleAddInvoice}>
-                        <MdPersonAdd className="me-2" /> Add Invoice
+                        <MdPersonAdd className="me-2" />Generate GatePass
                     </Button>
                 </div>
             </div>

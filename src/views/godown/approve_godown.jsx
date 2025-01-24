@@ -137,7 +137,7 @@ const Index = () => {
                                     <Button
                                         variant="outline-danger"
                                         size="sm"
-                                        onClick={() => handleAction(row.id, 2)} // Reject action
+                                        onClick={() => handleAction(row.id, 2)}
                                     >
                                         <FaTrash />
                                     </Button>

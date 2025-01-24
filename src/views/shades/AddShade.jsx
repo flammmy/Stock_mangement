@@ -1,15 +1,10 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { FaPlus, FaUser, FaTrash, FaIdCard, FaUserPlus, FaFileExcel, FaUpload, FaWarehouse } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
-import {
-    FaUser,
-    FaIdCard,
-    FaCheckCircle,
-    FaUserPlus,
-} from 'react-icons/fa';
 
 const AddProduct = () => {
     const [formData, setFormData] = useState({
@@ -19,6 +14,8 @@ const AddProduct = () => {
         purchase_shade_no: '',
         status: 'Active',
     });
+    
+    const [file, setFile] = useState(null);
 
     const navigate = useNavigate();
     const mainColor = '#3f4d67';
@@ -29,6 +26,44 @@ const AddProduct = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+        }
+    };
+    const handleFileUpload = async (e) => {
+        e.preventDefault();
+
+        if (!file) {
+            toast.error("Please select a file to upload.");
+            return;
+        }
+        const formData = new FormData();
+        formData.append('csv_file', file);
+        console.log(formData.file)
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/product/import-csv`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            if (response.status === 201) {
+                toast.success("Stock added successfully");
+                setFile(null);
+                navigate('/shades');
+            }
+        } catch (error) {
+            console.error(error);
+            const errorMessage = error.response?.data?.error || 'Error adding stock';
+            toast.error(errorMessage);
+        }
+    };
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,19 +81,49 @@ const AddProduct = () => {
 
             if (response.status >= 200 && response.status < 300) {
                 navigate('/shades');
-                toast.success('Product added successfully'); 
+                toast.success('Product added successfully');
             } else {
                 throw new Error('Unexpected response status');
             }
         } catch (error) {
             console.error('Error adding product:', error);
-            toast.error('Error adding product'); 
+            toast.error('Error adding product');
         }
     };
 
     return (
         <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
             <Row className="justify-content-center">
+                <Col md={12} lg={12} className="position-relative">
+                    <h2 className="text-center mb-4">Add Product From File</h2>
+                    <div className="card shadow border-0 rounded-lg mb-4" style={{ borderRadius: '10px', marginInline: '10rem' }}>
+                        <div className="card-body p-4" style={{ borderRadius: '8px' }}>
+                            <div className="d-flex flex-column align-items-center">
+                                <h4 className="text-center mb-4 d-flex align-items-center gap-2">
+                                    <FaFileExcel />
+                                    Import Excel File
+                                </h4>
+                                <form onSubmit={handleFileUpload} encType="multipart/form-data">
+                                    <div className="mb-3 w-75">
+                                        <label htmlFor="excel" className="form-label d-flex justify-content-between align-items-center text-secondary">
+                                            <span>Choose file</span>
+                                            <FaFileExcel className="text-success" />
+                                        </label>
+                                        <div className="input-group">
+                                            <input type="file" className="form-control" name="excel" id="excel" onChange={handleFileChange} aria-describedby="fileHelpId" />
+                                            <button type="submit" className="btn btn-success d-flex align-items-center gap-2">
+                                                <FaUpload />
+                                                Upload
+                                            </button>
+                                        </div>
+                                        <small className="form-text text-muted">Supported formats: .xls, .xlsx</small>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+                <h4 className="text-center font-weight-bold">or</h4>
                 <Col md={12} lg={12}>
                     <Card
                         className="shadow-lg border-0"

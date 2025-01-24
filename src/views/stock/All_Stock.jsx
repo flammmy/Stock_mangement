@@ -123,7 +123,7 @@ const ShowProduct = () => {
     },
     {
       name: 'Warehouse',
-      selector: (row) => row.Warehouse,
+      selector: (row) => row.warehouse,
       sortable: true
     },
   ];
@@ -166,7 +166,8 @@ const ShowProduct = () => {
           'Width',
           'Unit',
           'Area (m²)',
-          'Area (sq. ft.)'
+          'Area (sq. ft.)',
+          'Warehouse'
         ]
       ],
       body: filteredProducts.map((row, index) => [
@@ -182,7 +183,8 @@ const ShowProduct = () => {
         row.width,
         row.unit,
         row.area,
-        row.area_sq_ft
+        row.area_sq_ft,
+        row.Warehouse
       ])
     });
     doc.save('stocks_list.pdf');

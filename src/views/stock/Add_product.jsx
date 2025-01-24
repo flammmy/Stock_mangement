@@ -19,7 +19,7 @@ const AddProduct = () => {
       width: '',
       length: '',
       rack:'',
-      Warehouse:'',
+      warehouse:'',
       unit: '',
       type: '',
       qty: 1

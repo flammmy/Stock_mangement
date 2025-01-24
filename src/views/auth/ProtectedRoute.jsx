@@ -38,13 +38,11 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // If logged in, but the role is not in allowedRoles, show the Unauthorized page
-  const userRole = user ? user.role : null;
+  const userRole = user?.roles?.[0]?.name;
+  console.log(userRole);
   if (!userRole || !allowedRoles.includes(userRole)) {
     return <Unauthorised />;
   }
-
-  // If all checks pass, render the children (protected content)
   return children; 
 };
 

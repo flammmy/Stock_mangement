@@ -272,10 +272,8 @@ const ProfilePage = () => {
     },
     buttonShowMore_main: {
       width: "100%",
-      textAlign: "center"
-    },
-    buttonShowMore_main :{
-     marginTop:"8px"
+      textAlign: "center",
+     marginTop:"8px",
     }
   };
 

@@ -94,7 +94,6 @@ const Show_product = () => {
       selector: (row) => row.stock_product.shadeNo,
       sortable: true
     },
-
     {
       name: 'Pur. Shade no',
       selector: (row) => row.stock_product.purchase_shade_no,
