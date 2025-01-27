@@ -572,25 +572,40 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchAccessories = async () => {
       try {
+        console.log('Fetching accessories...');
+        const token = localStorage.getItem('token');
+        if (!token) {
+          toast.error('Token is missing. Please login again.');
+          return;
+        }
+    
         const response = await axios.get(
           'https://demo2.techsseract.com/stocks/api/products/category/',
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           }
         );
-        console.log('Fetched Accessories:', response.data);
+    
+        console.log('Accessories fetched successfully:', response.data);
         setAccessories(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching accessories data:', error.response || error.message);
-        toast.error(`Failed to fetch accessories data: ${error.response?.data?.message || error.message}`);
+        console.error('Error fetching accessories:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
+        const errorMessage = error.response?.data?.message || 'Failed to fetch accessories. Please try again later.';
+        toast.error(errorMessage);
       }
     };
-  
+    
     fetchAccessories();
   }, []);
+  
+  
   
   const fetchShadeNo = async (accessoryId) => {
     try {
@@ -614,17 +629,18 @@ const Invoice_out = () => {
   };
   
   
+  
 
   const handleAccessoryChange = (event) => {
     const accessoryId = event.target.value;
-    console.log('Selected Accessory ID:', accessoryId);  // Log the selected accessory ID
+    console.log('Selected Accessory ID:', accessoryId);  
   
-    setSelectedAccessory(accessoryId);  // Assuming you are updating a state for the selected accessory
+    setSelectedAccessory(accessoryId);  
   
     if (accessoryId) {
-      fetchShadeNo(accessoryId);  // Call function to fetch shade numbers
+      fetchShadeNo(accessoryId);  
     } else {
-      setShadeNo([]);  // Clear shade numbers if no accessory is selected
+      setShadeNo([]);  /
     }
   };
   

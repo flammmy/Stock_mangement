@@ -338,6 +338,18 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
+  //
+  const [invoices, setInvoices] = useState([]); // State to hold unique invoices
+  const [showDropdown, setShowDropdown] = useState(false); // Toggle dropdown visibility
+  const [selectedInvoice, setSelectedInvoice] = useState(''); // Selected invoice
+  //
+
+  // for lot number
+  const [lotNumbers, setLotNumbers] = useState([]); // State for unique lot numbers
+  const [showLotDropdown, setShowLotDropdown] = useState(false); // Toggle lot dropdown visibility
+  const [selectedLotNumber, setSelectedLotNumber] = useState(''); // Selected lot number
+  // end of lot number
+
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
@@ -359,6 +371,16 @@ const ShowProduct = () => {
         });
         setProducts(productsWithArea);
         setFilteredProducts(productsWithArea);
+
+        // invoice
+        const uniqueInvoices = [...new Set(productsWithArea.map((product) => product.stock_invoice?.invoice_no).filter(Boolean))];
+        setInvoices(uniqueInvoices);
+        // end invoice.
+
+        // for lot number
+        const uniqueLotNumbers = [...new Set(productsWithArea.map((product) => product.lot_no).filter(Boolean))];
+        setLotNumbers(uniqueLotNumbers);
+        // end for lot number.
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -391,6 +413,22 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  // for invoice search filter.
+  const handleInvoiceSelect = (invoice) => {
+    setSelectedInvoice(invoice);
+    setFilteredProducts(products.filter((product) => product.stock_invoice?.invoice_no === invoice));
+    setShowDropdown(false);
+  };
+
+  // for lot number.
+  const handleLotSelect = (lotNumber) => {
+    setSelectedLotNumber(lotNumber);
+    setFilteredProducts(products.filter((product) => product.lot_no === lotNumber));
+    setShowLotDropdown(false);
+  };
+  
+  // End forlot number.
 
   const columns = [
     {
@@ -607,6 +645,67 @@ const ShowProduct = () => {
           />
         </div>
       </div>
+
+      {/* code for serach invoice */}
+      <div className="col-md-4">
+        <div className="position-relative" style={{
+          marginBottom: '20px'
+        }}>
+          <button
+            className="btn btn-info"
+            onClick={() => setShowDropdown((prev) => !prev)}
+            style={{
+              marginBottom: '15px',
+              width: '140px',
+              margin:'0px'
+            }}
+          >
+            {selectedInvoice || 'Search Invoice'}
+          </button>
+          {showDropdown && (
+            <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
+              {invoices.map((invoice) => (
+                <li key={invoice} className="list-group-item" onClick={() => handleInvoiceSelect(invoice)} style={{ cursor: 'pointer' }}>
+                  {invoice}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* lot number */}
+      <div className="col-md-4">
+        <div
+          className="position-relative"
+          style={{
+            marginBottom: '20px'
+          }}
+        >
+          <button
+            className="btn btn-info"
+            onClick={() => setShowLotDropdown((prev) => !prev)}
+            style={{
+              width: '140px',
+              margin:'0px'
+            }}
+          >
+            {selectedLotNumber || 'Search Lot No.'}
+          </button>
+          {showLotDropdown && (
+            <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
+              {lotNumbers.map((lotNumber) => (
+                <li key={lotNumber} className="list-group-item" onClick={() => handleLotSelect(lotNumber)} style={{ cursor: 'pointer' }}>
+                  {lotNumber}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* End of button filter. */}
+
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
