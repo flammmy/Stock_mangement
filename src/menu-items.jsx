@@ -252,14 +252,14 @@ const menuItems = {
               
             },
             
-            {
-              id: 'approve_operator',
-              title: 'Approve Operator',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/approve_operator',
+            // {
+            //   id: 'approve_operator',
+            //   title: 'Approve Operator',
+            //   icon: 'feather icon-file-plus',
+            //   type: 'item',
+            //   url: '/approve_operator',
               
-            },
+            // },
             {
               id: 'godown_stock',
               title: 'Godown Stocks',

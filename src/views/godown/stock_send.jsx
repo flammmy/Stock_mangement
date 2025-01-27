@@ -568,64 +568,92 @@ const Invoice_out = () => {
     out_products: []
   });
 
-  // Fetch Accessories Data
+
   useEffect(() => {
     const fetchAccessories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+        const response = await axios.get(
+          'https://demo2.techsseract.com/stocks/api/products/category/',
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           }
-        });
-        setAccessories(response.data.data);
+        );
+        console.log('Fetched Accessories:', response.data);
+        setAccessories(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching accessories data:', error);
+        console.error('Error fetching accessories data:', error.response || error.message);
+        toast.error(`Failed to fetch accessories data: ${error.response?.data?.message || error.message}`);
       }
     };
+  
     fetchAccessories();
   }, []);
-
-  const fetchShadeNo = async () => {
+  
+  const fetchShadeNo = async (accessoryId) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      setShadeNo(response.data.data);
-    } catch (error) {
-      console.error('Error fetching shade data:', error);
-    }
-  };
-
-  const handleAccessoryChange = (event) => {
-    const selectedAccessoryId = event.target.value;
-    if (selectedAccessoryId) {
-      fetchShadeNo();
-    } else {
-      setShadeNo([]);
-    }
-  };
-
-  useEffect(() => {
-    const fetchShadeNo = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
+      setLoading(true);
+      const response = await axios.get(
+        `https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${accessoryId}`,
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setShadeNo(response.data.data);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
-    fetchShadeNo();
-  }, []);
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Fetched Shade Numbers:', response.data);
+      setShadeNo(response.data.data || []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching shade numbers:', error);
+      setLoading(false);
+    }
+  };
+  
+  
 
+  const handleAccessoryChange = (event) => {
+    const accessoryId = event.target.value;
+    console.log('Selected Accessory ID:', accessoryId);  // Log the selected accessory ID
+  
+    setSelectedAccessory(accessoryId);  // Assuming you are updating a state for the selected accessory
+  
+    if (accessoryId) {
+      fetchShadeNo(accessoryId);  // Call function to fetch shade numbers
+    } else {
+      setShadeNo([]);  // Clear shade numbers if no accessory is selected
+    }
+  };
+  
+
+  const handleShadeNoChange = async (event) => {
+    const selectedProductId = event.target.value;
+    try {
+      setLoading(true);
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setProducts(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setLoading(false);
+    }
+  };
+
+
+
+
+
+
+
+  
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
@@ -647,30 +675,6 @@ const Invoice_out = () => {
     };
     fetchInvoiceNo();
   }, []);
-
-  const handleShadeNoChange = async (event) => {
-    setLoading(true);
-    const selectedProductId = event.target.value;
-
-    if (selectedProductId) {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setLoading(false);
-
-        console.log(response.data.data);
-        setProducts(response.data.data);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    } else {
-      setProducts(null);
-    }
-  };
 
   useEffect(() => {
     const fetchReceiverData = async () => {
@@ -1008,145 +1012,6 @@ const Invoice_out = () => {
         </Col>
       </Row>
     </Container>
-    // <Container
-    //   fluid
-    //   className="pt-1 px-2"
-    //   style={{
-    //     border: '3px dashed #14ab7f',
-    //     borderRadius: '8px',
-    //     background: '#ff9d0014'
-    //   }}
-    // >
-    //   <Row className="justify-content-center">
-    //     <Col md={12} lg={12}>
-    //       <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
-    //         <div
-    //           className="p-4 text-white text-center"
-    //           style={{
-    //             backgroundColor: mainColor,
-    //             display: 'flex',
-    //             alignItems: 'center',
-    //             justifyContent: 'center'
-    //           }}
-    //         >
-    //           <FaUserPlus size={40} className="me-3" />
-    //           <h2 className="m-0 text-white">Generate GatePass For GoDown</h2>
-    //         </div>
-    //         <Card.Body className="p-5">
-    //           <Form onSubmit={handleSubmit}>
-    //             <Row>
-    //               <Col md={4}>
-    //                 <Form.Group controlId="invoice_no">
-    //                   <Form.Label>
-    //                     <FaFileInvoice className="me-2" />
-    //                     GatePass No
-    //                   </Form.Label>
-    //                   <Form.Control type="text" value={invoice_no} readOnly />
-    //                 </Form.Group>
-    //               </Col>
-    //               <Col md={4}>
-    //                 <Form.Group controlId="date">
-    //                   <Form.Label>
-    //                     <FaCalendarAlt className="me-2" />
-    //                     Date
-    //                   </Form.Label>
-    //                   <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} />
-    //                 </Form.Group>
-    //               </Col>
-    //               <Col md={4}>
-    //                 <Form.Group controlId="godown_supervisor_id">
-    //                   <Form.Label>
-    //                     <FaUser className="me-2" />
-    //                     Godown Supervisor
-    //                   </Form.Label>
-    //                   <Form.Control as="select" name="godown_supervisor_id" value={formData.godown_supervisor_id} onChange={handleChange}>
-    //                     <option value="">Select</option>
-    //                     {sub_supervisors.map((supervisor) => (
-    //                       <option key={supervisor.id} value={supervisor.id}>
-    //                         {supervisor.name}
-    //                       </option>
-    //                     ))}
-    //                   </Form.Control>
-    //                 </Form.Group>
-    //               </Col>
-    //             </Row>
-    //             <hr />
-    //             <Row>
-    //               <Col md={4}>
-    //                 <Form.Label>Select Accessories</Form.Label>
-    //                 <Form.Control as="select" onChange={handleAccessoryChange}>
-    //                   <option value="">Select</option>
-    //                   {accessories.map((accessory) => (
-    //                     <option key={accessory.id} value={accessory.id}>
-    //                       {accessory.name}
-    //                     </option>
-    //                   ))}
-    //                 </Form.Control>
-    //               </Col>
-    //               <Col md={4}>
-    //                 <Form.Label>Select Shade No</Form.Label>
-    //                 <Form.Control as="select" onChange={handleShadeNoChange}>
-    //                   <option value="">Select</option>
-    //                   {shadeNo.map((shade) => (
-    //                     <option key={shade.id} value={shade.id}>
-    //                       {shade.shadeNo}
-    //                     </option>
-    //                   ))}
-    //                 </Form.Control>
-    //               </Col>
-    //             </Row>
-    //             <div className="table-container mt-4">
-    //               {loading ? (
-    //                 <Skeleton count={8} height={30} />
-    //               ) : (
-    //                 <div className="table-responsive">
-    //                   <table className="table table-hover table-bordered">
-    //                     <thead className="table-dark">
-    //                       <tr>
-    //                         <th scope="col" style={{ width: '50px' }}>
-    //                           <input type="checkbox" />
-    //                         </th>
-    //                         {columns.map((column) => (
-    //                           <th key={column.id} scope="col">
-    //                             {column.label}
-    //                           </th>
-    //                         ))}
-    //                       </tr>
-    //                     </thead>
-    //                     <tbody>
-    //                       {products.map((row) => (
-    //                         <tr key={row.stock_available_id}>
-    //                           <td>
-    //                             <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
-    //                           </td>
-    //                           {columns.map((column) => (
-    //                             <td key={column.id}>{row[column.id]}</td>
-    //                           ))}
-    //                         </tr>
-    //                       ))}
-    //                     </tbody>
-    //                   </table>
-    //                 </div>
-    //               )}
-    //             </div>
-    //             <Button
-    //               variant="primary"
-    //               type="submit"
-    //               className="mt-4 d-block m-auto"
-    //               style={{
-    //                 backgroundColor: mainColor,
-    //                 borderColor: mainColor,
-    //                 width: '10rem'
-    //               }}
-    //             >
-    //               <FaUserPlus className="me-2" /> Stock Out
-    //             </Button>
-    //           </Form>
-    //         </Card.Body>
-    //       </Card>
-    //     </Col>
-    //   </Row>
-    // </Container>
   );
 };
 
