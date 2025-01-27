@@ -12,7 +12,6 @@ import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
-    const id = JSON.parse(localStorage.getItem('user')).id || 4;
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +23,7 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sub_supervisor/godown/${id}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
@@ -43,7 +42,7 @@ const Index = () => {
             }
         };
         fetchInvoices();
-    }, [id]);
+    }, []);
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);

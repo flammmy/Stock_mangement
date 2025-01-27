@@ -26,8 +26,6 @@ const ProductsPage = () => {
   const handleToggleStatus = async (receiverId, currentStatus) => {
     try {
       const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-
-      // Make the API call to update status
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
         { status: updatedStatus },
@@ -61,6 +59,7 @@ const ProductsPage = () => {
             'Content-Type': 'application/json'
           }
         });
+        console.log('Products:', response.data.data);
         setProducts(response.data.data);
         setFilteredProducts(response.data.data);
       } catch (error) {
@@ -74,7 +73,6 @@ const ProductsPage = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) => {
       return (
-        product.name.toLowerCase().includes(lowercasedQuery) ||
         product.shadeNo.toLowerCase().includes(lowercasedQuery) ||
         product.code.toLowerCase().includes(lowercasedQuery) ||
         product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)
@@ -96,13 +94,18 @@ const ProductsPage = () => {
       sortable: true
     },
     {
-      name: 'Shade No',
-      selector: (row) => row.shadeNo,
+      name: 'Product Category',
+      selector: (row) => row.product_category.product_category,
       sortable: true
     },
     {
-      name: 'Code',
-      selector: (row) => row.code,
+      name: 'Name',
+      selector: (row) => row.name,
+      sortable: true
+    },
+    {
+      name: 'Shade No',
+      selector: (row) => row.shadeNo,
       sortable: true
     },
     {
@@ -180,29 +183,6 @@ const ProductsPage = () => {
       )
     }
   ];
-
-  // const handleDelete = async (productId) => {
-  //   try {
-  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     if (response.status === 200) {
-  //       toast.success('Product deleted successfully');
-  //       setProducts(products.filter((product) => product.id !== productId));
-  //       setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
-  //     } else {
-  //       throw new Error('Unexpected response status');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Failed to delete product');
-  //   }
-  // };
-
   const handleDelete = async (receiverId) => {
     try {
       const result = await Swal.fire({
@@ -430,7 +410,7 @@ const ProductsPage = () => {
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
-              <Form.Group className="mb-3">
+              {/* <Form.Group className="mb-3">
                 <Form.Label>Product Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -439,7 +419,7 @@ const ProductsPage = () => {
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
-              </Form.Group>
+              </Form.Group> */}
 
               <Form.Group className="mb-3">
                 <Form.Label>Shade No</Form.Label>

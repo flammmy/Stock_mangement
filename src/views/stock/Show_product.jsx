@@ -29,8 +29,8 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        const productsWithArea = response.data.filter((product) => product.qty > 0).map((product) => {
-          const areaM2 = product.length * product.width * product.qty;
+        const productsWithArea = response.data.filter((product) => (product.quantity-product.out_quantity) > 0).map((product) => {
+          const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
@@ -80,11 +80,6 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Stock Code',
-      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      sortable: true
-    },
-    {
       name: 'Invoice no',
       selector: (row) => row.stock_invoice.invoice_no,
       sortable: true
@@ -117,6 +112,11 @@ const Show_product = () => {
     {
       name: 'Unit',
       selector: (row) => row.unit,
+      sortable: true
+    },
+    {
+      name: 'Quantity',
+      selector: (row) => row.quantity,
       sortable: true
     },
     {

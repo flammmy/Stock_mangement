@@ -47,12 +47,13 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchShadeNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
+        console.log(response.data.data);
         setShadeNo(response.data.data);
       } catch (error) {
         console.error('Error fetching product data:', error);
@@ -64,7 +65,7 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/invoiceno`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepassno`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -89,7 +90,7 @@ const Invoice_out = () => {
 
     if (selectedProductId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedProductId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -143,7 +144,7 @@ const Invoice_out = () => {
               updatedRow.unit === 'meter'
                 ? Number(updatedRow.out_length) * 3.28084
                 : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_length) / 12 // Convert inches to feet
+                  ? Number(updatedRow.out_length) / 12
                   : Number(updatedRow.out_length);
 
             const widthInFeet =
@@ -168,10 +169,9 @@ const Invoice_out = () => {
       return updatedRows;
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Confirmation before submission
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -182,19 +182,19 @@ const Invoice_out = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, submit it!'
     });
-  
+
     if (!result.isConfirmed) {
       return; // Exit if user cancels
     }
-  
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godown`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-  
+
       // Success alert after successful submission
       await Swal.fire({
         title: 'Success!',
@@ -202,11 +202,11 @@ const Invoice_out = () => {
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-  
+
       toast.success('Stocks out successfully');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
-  
+
       // Error alert on failure
       await Swal.fire({
         title: 'Error!',
@@ -214,23 +214,22 @@ const Invoice_out = () => {
         icon: 'error',
         confirmButtonColor: '#d33'
       });
-  
+
       toast.error(errorMessage);
     }
-  
+
     console.log(formData);
   };
-  
+
   const columns = [
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'stock_code', label: 'Stock Code' },
     { id: 'out_width', label: 'Width' },
     { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
-    { id: 'area_sq_ft', label: 'Area(sqft)' },
-    { id: 'product_type', label: 'Type' }
+    { id: 'product_type', label: 'Type' },
+    { id: 'out_quantity', label: 'Quantity' },
   ];
 
   const handleCheckboxChange = (id) => {
@@ -390,70 +389,20 @@ const Invoice_out = () => {
                                   <tr key={row.stock_available_id}>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
-                                    <td key="lot_no">
+                                    <td key="lot_no">{row.lot_no}</td>
+                                    <td key="width">{row.out_width}</td>
+                                    <td key="length">{row.out_length}</td>
+                                    <td key="unit">{row.unit}</td>
+                                    <td key="type" >{row.product_type}</td>
+                                    <td key="out_quantity">
                                       <input
-                                        type="text"
-                                        value={row.lot_no || ''}
-                                        className="py-1"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="Stock Code">
-                                      <td key="pur_shadeNo">{row.stock_code}</td>
-                                    </td>
-                                    <td key="width">
-                                      <input
-                                        type="text"
-                                        max={Number(row.out_width)}
-                                        value={row.out_width || ''}
-                                        className="py-1"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="length">
-                                      <input
-                                        type="text"
-                                        max={Number(row.out_length)}
-                                        value={row.out_length || ''}
-                                        className="py-1"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="unit">
-                                      <select
+                                      type="number"
                                         className="form-control"
                                         style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.unit || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'unit', e.target.value)}
+                                        value={row.out_quantity || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
                                       >
-                                        <option value="" disabled>
-                                          Select
-                                        </option>
-                                        <option value="meter">meter</option>
-                                        <option value="inches">inches</option>
-                                      </select>
-                                    </td>
-                                    <td key="area">
-                                      <input
-                                        type="text"
-                                        value={row.area || ''}
-                                        className="py-1"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'area', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="type">
-                                      <select
-                                        className="form-control"
-                                        style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.product_type || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'product_type', e.target.value)}
-                                      >
-                                        <option value="" disabled>
-                                          Select
-                                        </option>
-                                        <option value="roll">Roll</option>
-                                        <option value="box">Box</option>
-                                      </select>
+                                      </input>
                                     </td>
                                   </tr>
                                 ))}

@@ -39,7 +39,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   const userRole = user?.roles?.[0]?.name;
-  console.log(userRole);
   if (!userRole || !allowedRoles.includes(userRole)) {
     return <Unauthorised />;
   }

@@ -71,10 +71,6 @@ const ShowProduct = () => {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
-    }, {
-      name: 'Stock Code',
-      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      sortable: true
     },
     {
       name: 'Invoice No',
@@ -109,6 +105,31 @@ const ShowProduct = () => {
     {
       name: 'Unit',
       selector: (row) => row.unit,
+      sortable: true
+    },
+    {
+      name: 'Quantity',
+      selector: (row) => row.quantity,
+      sortable: true
+    },
+    {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity??0,
+      sortable: true
+    },
+    {
+      name: 'Avaible Quantity',
+      selector: (row) => row.quantity-row.out_quantity,
+      sortable: true
+    },
+    {
+      name: 'Total Length',
+      selector: (row) => Number(row.length*row.quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Issue Length',
+      selector: (row) => Number(row.length*row.out_quantity).toFixed(2),
       sortable: true
     },
     {

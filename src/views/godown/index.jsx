@@ -12,7 +12,6 @@ import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const Index = () => {
-    const id = JSON.parse(localStorage.getItem('user')).id || 4;
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,14 +23,14 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/stock/${id}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
                 console.log(response.data);
-                const invoicesDetails = response.data.map((product) => {
+                const invoicesDetails = response.data.data.map((product) => {
                     const areaM2 = product.get_length * product.get_width;
                     const areaSqFt = areaM2 * 10.7639;
                     return {
@@ -51,7 +50,7 @@ const Index = () => {
             }
         };
         fetchInvoices();
-    }, [id]);
+    }, []);
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -82,18 +81,18 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'Invoice Number',
-            selector: (row) => row.invoice_no,
+            name: 'GatePass Number',
+            selector: (row) => row.gatepasses.gate_pass_no,
             sortable: true,
         },
         {
-            name: 'Product Name',
+            name: 'Product Category',
             selector: (row) => row.products.name,
             sortable: true,
         },
         {
-            name: 'Product Code',
-            selector: (row) => row.products.code,
+            name: 'Stock Code',
+            selector: (row) => row.stock_code,
             sortable: true,
         },
         {
