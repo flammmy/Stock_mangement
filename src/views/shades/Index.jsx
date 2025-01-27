@@ -23,13 +23,13 @@ const ProductsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handleToggleStatus = async (receiverId, currentStatus) => {
+  const handleToggleStatus = async (productId, currentStatus) => {
     try {
       const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-
+  
       // Make the API call to update status
       await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`,
         { status: updatedStatus },
         {
           headers: {
@@ -38,22 +38,27 @@ const ProductsPage = () => {
           }
         }
       );
-
+  
       toast.success('Status updated successfully!');
-
-      // Update state for both Receivers and filteredReceivers
-      setReceiver((prevReceivers) =>
-        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+  
+      // Update state for both Products and filteredProducts
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === productId ? { ...product, status: updatedStatus } : product
+        )
       );
-
-      setFilteredReceiver((prevFilteredReceivers) =>
-        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+  
+      setFilteredProducts((prevFilteredProducts) =>
+        prevFilteredProducts.map((product) =>
+          product.id === productId ? { ...product, status: updatedStatus } : product
+        )
       );
     } catch (error) {
       toast.error('Failed to update status!');
       console.error(error);
     }
   };
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -183,29 +188,7 @@ const ProductsPage = () => {
     }
   ];
 
-  // const handleDelete = async (productId) => {
-  //   try {
-  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     if (response.status === 200) {
-  //       toast.success('Product deleted successfully');
-  //       setProducts(products.filter((product) => product.id !== productId));
-  //       setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
-  //     } else {
-  //       throw new Error('Unexpected response status');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Failed to delete product');
-  //   }
-  // };
-
-  const handleDelete = async (receiverId) => {
+  const handleDelete = async (productId) => {
     try {
       // Display confirmation modal
       const result = await Swal.fire({
@@ -217,37 +200,38 @@ const ProductsPage = () => {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete it!'
       });
-
+  
       if (result.isConfirmed) {
-        // Attempt to delete supplier
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${receiverId}`, {
+        // Attempt to delete product
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/${productId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-
+  
         // Update state on successful deletion
-        setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
-        setFilteredReceiver((prevFilteredReceivers) => prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId));
-
-        toast.success('Receiver deleted successfully');
-        Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
+        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+        setFilteredProducts((prevFilteredProducts) => prevFilteredProducts.filter((product) => product.id !== productId));
+  
+        toast.success('Product deleted successfully');
+        Swal.fire('Deleted!', 'The product has been deleted.', 'success');
       }
     } catch (error) {
       // Log error for debugging and notify user
-      console.error('Error deleting Receiver:', error);
-
+      console.error('Error deleting product:', error);
+  
       // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
-        toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
+        toast.error(`Failed to delete product: ${error.response.data.message}`);
       } else {
-        toast.error('An unexpected error occurred while deleting the Receiver.');
+        toast.error('An unexpected error occurred while deleting the product.');
       }
-
+  
       // Display error notification in confirmation dialog
-      Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
+      Swal.fire('Error!', 'There was a problem deleting the product.', 'error');
     }
   };
+  
 
 
   const handleEdit = (product) => {

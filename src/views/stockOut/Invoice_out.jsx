@@ -109,7 +109,7 @@
 
 //     if (selectedProductId) {
 //       try {
-//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowncheckout/${selectedProductId}`, {
 //           headers: {
 //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 //             'Content-Type': 'application/json'
@@ -126,23 +126,6 @@
 //       setProducts(null);
 //     }
 //   };
-
-//   useEffect(() => {
-//     const fetchBanksData = async () => {
-//       try {
-//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operator/bank`, {
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//           }
-//         });
-//         setBanks([...banks, ...response.data.data]);
-//       } catch (err) {
-//         console.log(err);
-//       }
-//     };
-//     fetchBanksData();
-//   }, []);
 
 //   useEffect(() => {
 //     const fetchCustomerData = async () => {
@@ -230,7 +213,7 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, formData, {
+//       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
 //         headers: {
 //           'Content-Type': 'application/json',
 //           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -359,11 +342,12 @@
 //                   </Col>
 //                   <Col md={4}>
 //                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
+//                     {/* <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} /> */}
 //                     <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
-//                     <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
-//                     <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
+//                     <FormField icon={FaKey} label="Palement" name="palement" value={formData.ewaybill} onChange={handleChange} />
+//                     <FormField icon={FaKey} label="Supplier ID" name="supplier_id" value={formData.ack_no} onChange={handleChange} />
 //                     {/* <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} /> */}
-//                     <FormField icon={FaMoneyBillWave} label="QR Code" name="qr_code" value={formData.qr_code} onChange={handleChange} />
+//                     <FormField icon={FaUsers} label="Operator" name="operator" value={formData.qr_code} onChange={handleChange} />
 //                     <FormField
 //                       icon={FaMoneyBillWave}
 //                       label="Payment Bank"
@@ -685,6 +669,8 @@
 
 // export default Invoice_out;
 
+
+
 import React, { useState, useEffect } from 'react';
 import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
@@ -722,8 +708,6 @@ const Invoice_out = () => {
   const [shadeNo, setShadeNo] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-  const [godownProducts, setGodownProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: '',
@@ -736,7 +720,6 @@ const Invoice_out = () => {
     reverse_charge: false,
     gr_rr: '',
     transport: '',
-    products: [],
     irn: '',
     ack_no: '',
     ack_date: '',
@@ -750,28 +733,21 @@ const Invoice_out = () => {
     payment_account_no: '',
     payment_ref_no: '',
     payment_amount: '',
-    payment_remarks: '',
+    payment_tailoring: '',
     qr_code: '',
-    out_products: [],
-    lot_no: '', // New field
-    sft: '', // New field
-    paleament: '', // New field
-    units: '', // New field
-    operator: '', // New field
-    supplier_id: '1', // New field, default value
-    transport_agency: '' // New field
+    out_products: []
   });
 
   useEffect(() => {
     const fetchShadeNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownproducts`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        setShadeNo(response.data);
+        setShadeNo(response.data.data);
       } catch (error) {
         console.error('Error fetching product data:', error);
       }
@@ -833,9 +809,7 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-        console.log(response.data.data);
-        const activeCustomers = response.data.data.filter((customer) => customer.status === 1);
-        setCustomers(activeCustomers);
+        setCustomers(response.data.data);
       } catch (err) {
         console.log(err);
       }
@@ -900,12 +874,9 @@ const Invoice_out = () => {
         return row;
       });
 
-      // Calculate total amount and update formData
-      const totalAmount = calculateTotalAmount(updatedRows);
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows,
-        total_amount: totalAmount // Update total amount
+        out_products: updatedRows
       }));
 
       return updatedRows;
@@ -914,13 +885,6 @@ const Invoice_out = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation for required fields
-    if (!formData.receiver_id || !formData.customer_id || !formData.date || !formData.place_of_supply) {
-      toast.error('Please fill in all required fields: Seller, Customer, Date, and Place of Supply.');
-      return;
-    }
-
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
         headers: {
@@ -929,11 +893,12 @@ const Invoice_out = () => {
         }
       });
       toast.success('Stocks out successfully');
-      navigate('/quotation');
+      navigate('/all-invoices-out');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
     }
+    console.log(formData);
   };
 
   const columns = [
@@ -947,14 +912,6 @@ const Invoice_out = () => {
     { id: 'area_sq_ft', label: 'Area(sqft)' },
     { id: 'product_type', label: 'Type' }
   ];
-
-  const calculateTotalAmount = (rows) => {
-    return rows
-      .reduce((total, row) => {
-        return total + (Number(row.amount) || 0);
-      }, 0)
-      .toFixed(2);
-  };
 
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
@@ -975,8 +932,6 @@ const Invoice_out = () => {
   };
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
-
-  
   return (
     <Container
       fluid
@@ -1000,7 +955,7 @@ const Invoice_out = () => {
               }}
             >
               <FaUserPlus size={40} className="me-3" />
-              <h2 className="m-0 text-white">Add Quotation</h2>
+              <h2 className="m-0 text-white">Add Invoice</h2>
             </div>
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
@@ -1015,6 +970,7 @@ const Invoice_out = () => {
                       onChange={handleChange}
                       options={receivers}
                       add={'/add-Receiver'}
+                      required
                     />
                     <FormField
                       icon={FaUser}
@@ -1024,27 +980,17 @@ const Invoice_out = () => {
                       onChange={handleChange}
                       options={customers}
                       add={'/add-Customer'}
+                      required
                     />
-                    <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="Operator" name="operator" value={formData.operator} onChange={handleChange} />
-                     <FormField
-                      icon={FaMoneyBillWave}
-                      label="Payment Tailoring"
-                      name="payment_tailoring"
-                      value={formData.payment_tailoring}
+                    <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} required/>
+                    <FormField
+                      icon={FaMapMarkerAlt}
+                      label="Place of Supply"
+                      name="place_of_supply"
+                      value={formData.place_of_supply}
                       onChange={handleChange}
                     />
-                     <FormField
-                      icon={FaKey}
-                      label="Reverse Charge"
-                      name="reverse_charge"
-                      value={formData.reverse_charge}
-                      onChange={handleChange}
-                      options={[
-                        { id: 1, name: 'true' },
-                        { id: 0, name: 'false' }
-                      ]}
-                    />
+
                     <FormField
                       icon={FaMoneyBillWave}
                       label="Payment Mode"
@@ -1059,13 +1005,6 @@ const Invoice_out = () => {
                         { id: 'other', name: 'other' }
                       ]}
                     />
-                  </Col>
-                  <Col md={4}>
-                    <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
-                    <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="LOT No" name="lot_no" value={formData.lot_no} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="SFT" name="sft" value={formData.sft} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="Paleament" name="paleament" value={formData.paleament} onChange={handleChange} />
                     <FormField
                       icon={FaMoneyBillWave}
                       label="Payment Amount"
@@ -1073,12 +1012,19 @@ const Invoice_out = () => {
                       value={formData.payment_amount}
                       onChange={handleChange}
                     />
+                  </Col>
+                  <Col md={4}>
+                    <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
+                    <FormField icon={FaCity} label="Station" name="station" value={formData.station} onChange={handleChange} />
+                    <FormField icon={FaKey} label="eWaybill" name="ewaybill" value={formData.ewaybill} onChange={handleChange} />
+                    <FormField icon={FaKey} label="Ack No" name="ack_no" value={formData.ack_no} onChange={handleChange} />
+                    {/* <FormField icon={FaKey} label="IRN" name="irn" value={formData.irn} onChange={handleChange} /> */}
+                    <FormField icon={FaMoneyBillWave} label="QR Code" name="qr_code" value={formData.qr_code} onChange={handleChange} />
                     <FormField
                       icon={FaMoneyBillWave}
-                      type="date"
-                      label="Payment Date"
-                      name="payment_date"
-                      value={formData.payment_date}
+                      label="Payment Bank"
+                      name="payment_bank"
+                      value={formData.payment_bank}
                       onChange={handleChange}
                     />
                     <FormField
@@ -1098,20 +1044,16 @@ const Invoice_out = () => {
                   <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GR/RR" name="gr_rr" value={formData.gr_rr} onChange={handleChange} />
                     <FormField icon={FaTruck} label="Transport" name="transport" value={formData.transport} onChange={handleChange} />
-                    <FormField icon={FaFileInvoice} label="Units" name="units" value={formData.units} onChange={handleChange} />
                     <FormField
-                      icon={FaMapMarkerAlt}
-                      label="Place of Supply"
-                      name="place_of_supply"
-                      value={formData.place_of_supply}
+                      icon={FaKey}
+                      label="Reverse Charge"
+                      name="reverse_charge"
+                      value={formData.reverse_charge}
                       onChange={handleChange}
-                    />
-                    <FormField
-                      icon={FaMoneyBillWave}
-                      label="Payment Bank"
-                      name="payment_bank"
-                      value={formData.payment_bank}
-                      onChange={handleChange}
+                      options={[
+                        { id: 1, name: 'true' },
+                        { id: 0, name: 'false' }
+                      ]}
                     />
                     <FormField
                       icon={FaMoneyBillWave}
@@ -1127,6 +1069,22 @@ const Invoice_out = () => {
                       value={formData.payment_ref_no}
                       onChange={handleChange}
                     />
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      type="date"
+                      label="Payment Date"
+                      name="payment_date"
+                      value={formData.payment_date}
+                      onChange={handleChange}
+                    />
+
+                    <FormField
+                      icon={FaMoneyBillWave}
+                      label="Payment Tailoring"
+                      name="payment_tailoring"
+                      value={formData.payment_tailoring}
+                      onChange={handleChange}
+                    />
                   </Col>
                 </Row>
                 <hr />
@@ -1140,23 +1098,20 @@ const Invoice_out = () => {
                       as="select"
                       id="shadeNo"
                       className="form-select px-2"
-                      style={{
-                        width: '8rem',
-                        minWidth: 'fit-content',
-                        maxHeight: '150px', // Set maximum height for the dropdown
-                        overflowY: 'auto' // Enable vertical scrolling
-                      }}
+                      style={{ width: '8rem', minWidth: 'fit-content' }}
                       onChange={handleShadeNoChange}
                     >
                       <option value="">Select</option>
-                      {shadeNo.map((shade) => (
-                        <option key={shade.id} value={shade.id}>
-                          {shade.shadeNo}
-                        </option>
-                      ))}
+
+                      {shadeNo.map((shade) => {
+                        return (
+                          <option key={shade.id} value={shade.id}>
+                            {shade.shadeNo}
+                          </option>
+                        );
+                      })}
                     </Form.Control>
                   </div>
-
                   <div className="row">
                     <div className="col-12">
                       <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
@@ -1180,9 +1135,11 @@ const Invoice_out = () => {
                                 <thead className="table-dark">
                                   <tr>
                                     <th scope="col" style={{ width: '50px' }}>
+                                      {/* Empty header for checkbox column */}
                                       <input
                                         type="checkbox"
-                                        
+                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.stock_available_id) : [])}
+                                        // checked={selectedRows.length === products.length}
                                       />
                                     </th>
                                     {columns.map((column) => (

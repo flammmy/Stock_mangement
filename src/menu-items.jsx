@@ -4,9 +4,9 @@ const filterMenuItem = (menu) => {
   const filterItems = (items) =>
     items
   .filter((item) => !(['Admin'].includes(userName) && ['users'].includes(item.id) )) 
-  .filter((item) => !(['Operator'].includes(userName) && ['invoice_out_index','users','suppliers','purchaser','products','stockin','stock_to_godown','GoDown'].includes(item.id) )) 
+  .filter((item) => !(['Operator'].includes(userName) && ['godown_stock',,'generated_gate_pass','approve_godown','invoice_out_index','users','suppliers','purchaser','products','stockin', 'invoice_out'].includes(item.id) )) 
   .filter((item) => !(['Supervisor'].includes(userName) && ['approve_godown','stockout','users','purchaser','customers','stock_to_godown','approve_operator','godown_stock',].includes(item.id) )) 
-  .filter((item) => !(['Sub_Supervisor'].includes(userName) && ['invoice_operator_index','generated_gate_pass','stockin','usersGroup','users','purchaser','customers','invoice_out','invoice_out_stock','stock_to_godown','Invoice','All Out Stock','Send To Godown'].includes(item.id) )) 
+  .filter((item) => !(['Sub_Supervisor'].includes(userName) && ['approve_operator','invoice_operator_index','generated_gate_pass','stockin','usersGroup','users','purchaser','customers','invoice_out','invoice_out_stock','stock_to_godown','Invoice','All Out Stock','Send To Godown'].includes(item.id) )) 
   .map((item) =>
         item.children
           ? { ...item, children: filterItems(item.children) }
@@ -318,3 +318,6 @@ const menuItems = {
 const filteredMenuItems = filterMenuItem(menuItems);
 
 export default filteredMenuItems;
+
+
+

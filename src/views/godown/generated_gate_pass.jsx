@@ -24,7 +24,9 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sub_supervisor/godown/${id}`, {
+                // const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/sub_supervisor/godown/${id}`, {
+                    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}supervisor/godown/${id}`, {
+                    
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'

@@ -10,6 +10,8 @@
 // import 'react-loading-skeleton/dist/skeleton.css';
 // import PdfPreview from 'components/PdfOutPreview';
 // import { AiOutlineFilePdf } from 'react-icons/ai';
+// import { FaFileExcel } from "react-icons/fa";
+// import * as XLSX from 'xlsx';
 // import jsPDF from 'jspdf';
 // import 'jspdf-autotable';
 // import Papa from 'papaparse';
@@ -23,6 +25,7 @@
 //   const [loading, setLoading] = useState(true);
 //   const [selectedInvoice, setSelectedInvoice] = useState(null);
 //   const [showPdfModal, setShowPdfModal] = useState(false);
+//   // const [showExModal, setShowExModal]  = useState(flase);
 
 //   useEffect(() => {
 //     const fetchInvoices = async () => {
@@ -50,7 +53,7 @@
 //             bank: invoice.payment_Bank,
 //             payment_mode: invoice.payment_mode,
 //             payment_status: invoice.payment_status,
-//             total_amount: invoice.total_amount
+//             total_amount: invoice.total_amount,
 //           }));
 //         };
 //         setInvoices(filteredFields(invoicesDetails));
@@ -78,7 +81,6 @@
 
 //   const navigate = useNavigate();
 //   const handleDelete = async (id) => {
-    
 //     try {
 //       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockout/${id}`, {
 //         headers: {
@@ -92,6 +94,13 @@
 //     } catch (error) {
 //       toast.error('Failed to delete Product');
 //     }
+//   };
+
+//   const exportToExcel = (invoice) => {
+//     const worksheet = XLSX.utils.json_to_sheet([invoice]);
+//     const workbook = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoice');
+//     XLSX.writeFile(workbook, `Invoice_${invoice.invoice_no}.xlsx`);
 //   };
 
 //   const columns = [
@@ -128,7 +137,7 @@
 //     {
 //       name: 'Action',
 //       cell: (row) => (
-//         <div className="d-flex">
+//         <div className="d-flex " >
 //           <Button
 //             variant="outline-primary"
 //             size="sm"
@@ -140,13 +149,21 @@
 //           >
 //             <MdPrint />
 //           </Button>
-//           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+//           <Button
+//             variant="outline-danger"
+//             size="sm" onClick={() => handleDelete(row.id)}>
 //             <MdDelete />
+//           </Button>
+//           <Button
+//             variant="outline-primary"
+//             size="sm"
+//             onClick={() => exportToExcel(row)}
+//           >
+//             <FaFileExcel />
 //           </Button>
 //         </div>
 //       )
-//     },
-//     {
+//     }, {
 //       name: 'Status',
 //       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
 //       sortable: true,
@@ -157,13 +174,13 @@
 //             style={{
 //               padding: '5px 10px',
 //               borderRadius: '8px',
-//               whiteSpace: 'nowrap'
+//               whiteSpace: 'nowrap',
 //             }}
 //           >
 //             {row.status === 1 ? 'Approved' : 'Pending'}
 //           </span>
 //         </div>
-//       )
+//       ),
 //     }
 //   ];
 
@@ -174,8 +191,8 @@
 //     table: {
 //       style: {
 //         borderCollapse: 'separate', // Ensures border styles are separate
-//         borderSpacing: 0 // Removes spacing between cells
-//       }
+//         borderSpacing: 0, // Removes spacing between cells
+//       },
 //     },
 //     header: {
 //       style: {
@@ -184,19 +201,21 @@
 //         fontSize: '18px',
 //         fontWeight: 'bold',
 //         padding: '15px',
-//         borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
-//       }
+//         borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+//       },
 //     },
 //     rows: {
 //       style: {
 //         backgroundColor: '#f0fff4',
 //         borderBottom: '1px solid #e0e0e0',
 //         transition: 'background-color 0.3s ease',
+//         width: '1350px',
+
 //         '&:hover': {
 //           backgroundColor: '#e6f4ea',
-//           boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-//         }
-//       }
+//           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+//         },
+//       },
 //     },
 //     headCells: {
 //       style: {
@@ -206,44 +225,45 @@
 //         fontWeight: 'bold',
 //         textTransform: 'uppercase',
 //         padding: '15px',
-//         borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+
+//         borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
 //       },
 //       lastCell: {
 //         style: {
-//           borderRight: 'none' // Removes border for the last cell
-//         }
-//       }
+//           borderRight: 'none', // Removes border for the last cell
+//         },
+//       },
 //     },
 //     cells: {
 //       style: {
 //         fontSize: '14px',
 //         color: '#333',
 //         padding: '12px',
-//         borderRight: '1px solid grey' // Vertical lines between cells
-//       }
+//         borderRight: '1px solid grey', // Vertical lines between cells
+//       },
 //     },
 //     pagination: {
 //       style: {
 //         backgroundColor: '#3f4d67',
 //         color: '#fff',
-//         borderRadius: '0 0 8px 8px'
+//         borderRadius: '0 0 8px 8px',
 //       },
 //       pageButtonsStyle: {
 //         backgroundColor: 'transparent',
 //         color: 'black', // Makes the arrows white
 //         border: 'none',
 //         '&:hover': {
-//           backgroundColor: 'rgba(255,255,255,0.2)'
+//           backgroundColor: 'rgba(255,255,255,0.2)',
 //         },
 //         '& svg': {
-//           fill: 'white'
+//           fill: 'white',
 //         },
 //         '&:focus': {
 //           outline: 'none',
-//           boxShadow: '0 0 5px rgba(255,255,255,0.5)'
-//         }
-//       }
-//     }
+//           boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+//         },
+//       },
+//     },
 //   };
 
 //   const exportToCSV = () => {
@@ -252,8 +272,8 @@
 //       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 //       saveAs(blob, 'supplier_list.csv');
 //     } catch (error) {
-//       console.error('Error generating CSV:', error);
-//       toast.error('Failed to export CSV');
+//       console.error("Error generating CSV:", error);
+//       toast.error("Failed to export CSV");
 //     }
 //   };
 //   const exportToPDF = () => {
@@ -262,13 +282,29 @@
 //       doc.setFontSize(14);
 //       doc.text('Supplier List', 14, 10);
 //       doc.autoTable({
-//         head: [['Invoice Number', 'Customer Name', 'Supplier Name', 'Date', 'Bank', 'Total Amount']],
-//         body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
+//         head: [
+//           [
+//             'Invoice Number',
+//             'Customer Name',
+//             'Supplier Name',
+//             'Date',
+//             'Bank',
+//             'Total Amount',
+//           ]
+//         ],
+//         body: filteredInvoices.map((row) => [
+//           row.invoice_no,
+//           row.supplier_name,
+//           row.receiver_name,
+//           row.date,
+//           row.bank,
+//           row.total_amount,
+//         ])
 //       });
 //       doc.save('supplier_list.pdf');
 //     } catch (error) {
-//       console.error('Error generating PDF:', error);
-//       toast.error('Failed to export PDF');
+//       console.error("Error generating PDF:", error);
+//       toast.error("Failed to export PDF");
 //     }
 //   };
 
@@ -347,79 +383,68 @@
 
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Button, Modal, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { MdPrint, MdDelete, MdPersonAdd } from 'react-icons/md';
+import { FaCheck, FaTimes, FaFileCsv } from 'react-icons/fa';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import PdfPreview from 'components/PdfOutPreview';
-import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FaFileExcel } from "react-icons/fa";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useNavigate } from 'react-router-dom';
+import PdfPreview from 'components/PdfOutPreview';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]); // For search
-  const [searchQuery, setSearchQuery] = useState(''); // Search query
-  const [invoiceAllDetails, setInvoiceAllDetails] = useState([]);
+  const [filteredInvoices, setFilteredInvoices] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [invoiceAllDetails, setInvoiceAllDetails] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
-  // const [showExModal, setShowExModal]  = useState(flase);
-
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/stockout`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           }
-        });
-        console.log(response.data.data);
+        );
         const invoicesDetails = response.data.data;
-        console.log(invoicesDetails);
-        setInvoiceAllDetails(invoicesDetails);
 
-        const filteredFields = (data) => {
-          return data.map((invoice) => ({
-            invoice_no: invoice.invoice_no,
-            id: invoice.id,
-            status: invoice.status,
-            supplier_name: invoice.customer?.name,
-            receiver_name: invoice.receiver?.name,
-            height: invoice.stock_out_details?.height,
-            date: invoice.date,
-            bank: invoice.payment_Bank,
-            payment_mode: invoice.payment_mode,
-            payment_status: invoice.payment_status,
-            total_amount: invoice.total_amount,
-          }));
-        };
-        setInvoices(filteredFields(invoicesDetails));
-        setFilteredInvoices(filteredFields(invoicesDetails));
+        // Load status from localStorage or set default to 'Pending'
+        const formattedInvoices = invoicesDetails.map((invoice) => ({
+          ...invoice,
+          status: localStorage.getItem(`invoice_${invoice.id}_status`) || 'Pending',
+        }));
+
+        setInvoices(formattedInvoices);
+        setFilteredInvoices(formattedInvoices);
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
     fetchInvoices();
   }, []);
+
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = invoices.filter(
       (invoice) =>
-        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
+        invoice.customer?.name.toLowerCase().includes(lowercasedQuery) ||
+        invoice.receiver?.name.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
@@ -428,28 +453,20 @@ const Index = () => {
     setSearchQuery(e.target.value);
   };
 
-  const navigate = useNavigate();
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stockout/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      console.log(response.data);
-      toast.success('Invoice deleted successfully');
-      setInvoices(invoices.filter((invoice) => invoice.id !== id));
-      setFilteredInvoices(filteredInvoices.filter((invoice) => invoice.id !== id));
-    } catch (error) {
-      toast.error('Failed to delete Product');
-    }
+  const handleStatusChange = (id, newStatus) => {
+    const updatedInvoices = invoices.map((invoice) =>
+      invoice.id === id ? { ...invoice, status: newStatus } : invoice
+    );
+    setInvoices(updatedInvoices);
+    setFilteredInvoices(updatedInvoices);
+
+    // Save the new status to localStorage
+    localStorage.setItem(`invoice_${id}_status`, newStatus);
   };
-  
-  const exportToExcel = (invoice) => {
-    const worksheet = XLSX.utils.json_to_sheet([invoice]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoice');
-    XLSX.writeFile(workbook, `Invoice_${invoice.invoice_no}.xlsx`);
+
+  const handleAddInvoice = () => {
+    // Implement the logic for adding an invoice
+    console.log("Add Invoice clicked");
   };
 
   const columns = [
@@ -460,87 +477,119 @@ const Index = () => {
     },
     {
       name: 'Customer Name',
-      selector: (row) => row.supplier_name,
+      selector: (row) => row.customer?.name || 'N/A', // Ensure it defaults to 'N/A' if empty
       sortable: true
     },
     {
       name: 'Supplier Name',
-      selector: (row) => row.receiver_name,
+      selector: (row) => row.receiver?.name || 'N/A', // Ensure it defaults to 'N/A' if empty
       sortable: true
     },
     {
       name: 'Date',
-      selector: (row) => row.date,
+      selector: (row) => row.date || 'N/A', // Ensure it defaults to 'N/A' if empty
       sortable: true
     },
     {
       name: 'Bank',
-      selector: (row) => row.bank,
+      selector: (row) => row.payment_Bank || 'N/A', // Ensure it defaults to 'N/A' if empty
       sortable: true
     },
     {
       name: 'Total Amount',
-      selector: (row) => row.total_amount,
+      selector: (row) => row.total_amount || 'N/A', // Ensure it defaults to 'N/A' if empty
       sortable: true
     },
     {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex " >
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => {
-              setSelectedInvoice(row.id);
-              setShowPdfModal(true);
-              console.log(row.id);            
-            }}
-          >
-            <MdPrint />
-          </Button>
-          <Button 
-            variant="outline-danger" 
-            size="sm" onClick={() => handleDelete(row.id)}>
-            <MdDelete />
-          </Button>
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => exportToExcel(row)}
-          >
-            <FaFileExcel />
-          </Button>
-        </div>
-      )
-    }, {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
-      sortable: true,
+      width: '200px',
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {row.status === 'Pending' && (
+            <>
+              <Button
+                variant="success"
+                size="sm"
+                onClick={() => handleStatusChange(row.id, 'Approved')}
+              >
+                <FaCheck />
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => handleStatusChange(row.id, 'Rejected')}
+              >
+                <FaTimes />
+              </Button>
+            </>
+          )}
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            className={`badge ${
+              row.status === 'Approved'
+                ? 'bg-success'
+                : row.status === 'Rejected'
+                ? 'bg-danger'
+                : 'bg-warning'
+            }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap',
             }}
           >
-            {row.status === 1 ? 'Approved' : 'Pending'}
+            {row.status}
           </span>
         </div>
       ),
-    }
+    },
   ];
 
-  const handleAddInvoice = () => {
-    navigate('/invoice-out');
+  const exportToCSV = () => {
+    try {
+      const csv = Papa.unparse(filteredInvoices);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'supplier_list.csv');
+    } catch (error) {
+      console.error("Error generating CSV:", error);
+      toast.error("Failed to export CSV");
+    }
   };
+
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF('landscape');
+      doc.setFontSize(14);
+      doc.text('Supplier List', 14, 10);
+      doc.autoTable({
+        head: [
+          [
+            'Invoice Number',
+            'Customer Name',
+            'Supplier Name',
+            'Date',
+            'Total Amount',
+          ]
+        ],
+        body: filteredInvoices.map((row) => [
+          row.invoice_no,
+          row.customer?.name || 'N/A',
+          row.receiver?.name || 'N/A',
+          row.date || 'N/A',
+          row.total_amount || 'N/A',
+        ])
+      });
+      doc.save('supplier_list.pdf');
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to export PDF");
+    }
+  };
+
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
+        borderCollapse: 'separate',
+        borderSpacing: 0,
       },
     },
     header: {
@@ -550,7 +599,7 @@ const Index = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0',
       },
     },
     rows: {
@@ -559,8 +608,6 @@ const Index = () => {
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
         width: '1350px',
-        
-     
         '&:hover': {
           backgroundColor: '#e6f4ea',
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
@@ -575,12 +622,11 @@ const Index = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0',
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
+          borderRight: 'none',
         },
       },
     },
@@ -589,7 +635,7 @@ const Index = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
+        borderRight: '1px solid grey',
       },
     },
     pagination: {
@@ -600,7 +646,7 @@ const Index = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: 'black', // Makes the arrows white
+        color: 'black',
         border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)',
@@ -616,51 +662,8 @@ const Index = () => {
     },
   };
 
-
-  const exportToCSV = () => {
-    try {
-      const csv = Papa.unparse(filteredInvoices);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, 'supplier_list.csv');
-    } catch (error) {
-      console.error("Error generating CSV:", error);
-      toast.error("Failed to export CSV");
-    }
-  };
-  const exportToPDF = () => {
-    try {
-      const doc = new jsPDF('landscape');
-      doc.setFontSize(14);
-      doc.text('Supplier List', 14, 10);
-      doc.autoTable({
-        head: [
-          [
-            'Invoice Number',
-            'Customer Name',
-            'Supplier Name',
-            'Date',
-            'Bank',
-            'Total Amount',
-          ]
-        ],
-        body: filteredInvoices.map((row) => [
-          row.invoice_no,
-          row.supplier_name,
-          row.receiver_name,
-          row.date,
-          row.bank,
-          row.total_amount,
-        ])
-      });
-      doc.save('supplier_list.pdf');
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to export PDF");
-    }
-  };
-
   return (
-    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
