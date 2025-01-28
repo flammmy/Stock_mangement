@@ -47,12 +47,13 @@
 //   useEffect(() => {
 //     const fetchShadeNo = async () => {
 //       try {
-//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
+//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
 //           headers: {
 //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 //             'Content-Type': 'application/json'
 //           }
 //         });
+//         console.log(response.data.data);
 //         setShadeNo(response.data.data);
 //       } catch (error) {
 //         console.error('Error fetching product data:', error);
@@ -64,7 +65,7 @@
 //   useEffect(() => {
 //     const fetchInvoiceNo = async () => {
 //       try {
-//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/invoiceno`, {
+//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepassno`, {
 //           headers: {
 //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 //             'Content-Type': 'application/json'
@@ -89,7 +90,7 @@
 
 //     if (selectedProductId) {
 //       try {
-//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
+//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedProductId}`, {
 //           headers: {
 //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 //             'Content-Type': 'application/json'
@@ -143,7 +144,7 @@
 //               updatedRow.unit === 'meter'
 //                 ? Number(updatedRow.out_length) * 3.28084
 //                 : updatedRow.unit === 'inches'
-//                   ? Number(updatedRow.out_length) / 12 // Convert inches to feet
+//                   ? Number(updatedRow.out_length) / 12
 //                   : Number(updatedRow.out_length);
 
 //             const widthInFeet =
@@ -168,14 +169,13 @@
 //       return updatedRows;
 //     });
 //   };
-
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
 //     // Confirmation before submission
 //     const result = await Swal.fire({
 //       title: 'Are you sure?',
-//       text: 'Do you want to submit the form?',
+//       text: "Do you want to submit the form?",
 //       icon: 'question',
 //       showCancelButton: true,
 //       confirmButtonColor: '#3085d6',
@@ -188,7 +188,7 @@
 //     }
 
 //     try {
-//       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godown`, formData, {
+//       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
 //         headers: {
 //           'Content-Type': 'application/json',
 //           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -225,12 +225,11 @@
 //     { id: 'product_shadeNo', label: 'Shade No' },
 //     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
 //     { id: 'lot_no', label: 'LOT No' },
-//     { id: 'stock_code', label: 'Stock Code' },
 //     { id: 'out_width', label: 'Width' },
 //     { id: 'out_length', label: 'Length' },
 //     { id: 'unit', label: ' Unit' },
-//     { id: 'area_sq_ft', label: 'Area(sqft)' },
-//     { id: 'product_type', label: 'Type' }
+//     { id: 'product_type', label: 'Type' },
+//     { id: 'out_quantity', label: 'Quantity' },
 //   ];
 
 //   const handleCheckboxChange = (id) => {
@@ -370,7 +369,7 @@
 //                             </div>
 //                           </div>
 //                         )}
-//                         {/* <div className="mt-3">
+//                         <div className="mt-3">
 //                           <h4 className="ms-4 mb-3">Selected Rows:</h4>
 //                         </div>
 //                         <div className="card-body p-0" style={{ borderRadius: '8px' }}>
@@ -390,104 +389,21 @@
 //                                   <tr key={row.stock_available_id}>
 //                                     <td key="shadeNo">{row.product_shadeNo}</td>
 //                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
-//                                     <td key="lot_no">
+//                                     <td key="lot_no">{row.lot_no}</td>
+//                                     <td key="width">{row.out_width}</td>
+//                                     <td key="length">{row.out_length}</td>
+//                                     <td key="unit">{row.unit}</td>
+//                                     <td key="type" >{row.product_type}</td>
+//                                     <td key="out_quantity">
 //                                       <input
-//                                         type="text"
-//                                         value={row.lot_no || ''}
-//                                         className="py-1"
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
-//                                       />
-//                                     </td>
-//                                     <td key="Stock Code">
-//                                       <td key="pur_shadeNo">{row.stock_code}</td>
-//                                     </td>
-//                                     <td key="width">
-//                                       <input
-//                                         type="text"
-//                                         max={Number(row.out_width)}
-//                                         value={row.out_width || ''}
-//                                         className="py-1"
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
-//                                       />
-//                                     </td>
-//                                     <td key="length">
-//                                       <input
-//                                         type="text"
-//                                         max={Number(row.out_length)}
-//                                         value={row.out_length || ''}
-//                                         className="py-1"
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
-//                                       />
-//                                     </td>
-//                                     <td key="unit">
-//                                       <select
+//                                       type="number"
 //                                         className="form-control"
 //                                         style={{ width: '5rem', paddingInline: '10px' }}
-//                                         value={row.unit || ''}
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'unit', e.target.value)}
+//                                         value={row.out_quantity || ''}
+//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
 //                                       >
-//                                         <option value="" disabled>
-//                                           Select
-//                                         </option>
-//                                         <option value="meter">meter</option>
-//                                         <option value="inches">inches</option>
-//                                       </select>
+//                                       </input>
 //                                     </td>
-//                                     <td key="area">
-//                                       <input
-//                                         type="text"
-//                                         value={row.area || ''}
-//                                         className="py-1"
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'area', e.target.value)}
-//                                       />
-//                                     </td>
-//                                     <td key="type">
-//                                       <select
-//                                         className="form-control"
-//                                         style={{ width: '5rem', paddingInline: '10px' }}
-//                                         value={row.product_type || ''}
-//                                         onChange={(e) => handleInputChange(row.stock_available_id, 'product_type', e.target.value)}
-//                                       >
-//                                         <option value="" disabled>
-//                                           Select
-//                                         </option>
-//                                         <option value="roll">Roll</option>
-//                                         <option value="box">Box</option>
-//                                       </select>
-//                                     </td>
-//                                   </tr>
-//                                 ))}
-//                               </tbody>
-//                             </table>
-//                           </div>
-//                         </div> */}
-//                         <div className="mt-3">
-//                           <h4 className="ms-4 mb-3">Selected Rows:</h4>
-//                         </div>
-//                         <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-//                           <div className="table-responsive">
-//                             <table className="table table-hover table-bordered align-middle">
-//                               <thead className="table-dark">
-//                                 <tr>
-//                                   {columns.map((column) => (
-//                                     <th key={column.id} scope="col">
-//                                       {column.label}
-//                                     </th>
-//                                   ))}
-//                                 </tr>
-//                               </thead>
-//                               <tbody>
-//                                 {selectedRows.map((row) => (
-//                                   <tr key={row.stock_available_id}>
-//                                     <td>{row.product_shadeNo}</td>
-//                                     <td>{row.product_purchase_shade_no}</td>
-//                                     <td>{row.lot_no}</td>
-//                                     <td>{row.stock_code}</td>
-//                                     <td>{row.out_width}</td>
-//                                     <td>{row.out_length}</td>
-//                                     <td>{row.unit}</td>
-//                                     <td>{row.area}</td>
-//                                     <td>{row.product_type}</td>
 //                                   </tr>
 //                                 ))}
 //                               </tbody>
@@ -555,10 +471,10 @@ const Invoice_out = () => {
   const [products, setProducts] = useState([]);
   const [sub_supervisors, setSub_supervisor] = useState([]);
   const [shadeNo, setShadeNo] = useState([]);
-  const [accessories, setAccessories] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const today = new Date().toISOString().split('T')[0];
+  const [categories, setCategories] = useState([]);
   const warehouse_supervisor_id = JSON.parse(localStorage.getItem('user')).id || 'N/A';
   const [formData, setFormData] = useState({
     invoice_no: '',
@@ -568,112 +484,67 @@ const Invoice_out = () => {
     out_products: []
   });
 
-
+  // Fetch Categories for the Product Dropdown
   useEffect(() => {
-    const fetchAccessories = async () => {
+    const fetchCategories = async () => {
       try {
-        console.log('Fetching accessories...');
-        const token = localStorage.getItem('token');
-        if (!token) {
-          toast.error('Token is missing. Please login again.');
-          return;
-        }
-    
-        const response = await axios.get(
-          'https://demo2.techsseract.com/stocks/api/products/category/',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-    
-        console.log('Accessories fetched successfully:', response.data);
-        setAccessories(response.data.data || []);
-      } catch (error) {
-        console.error('Error fetching accessories:', {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message,
-        });
-        const errorMessage = error.response?.data?.message || 'Failed to fetch accessories. Please try again later.';
-        toast.error(errorMessage);
-      }
-    };
-    
-    fetchAccessories();
-  }, []);
-  
-  
-  
-  const fetchShadeNo = async (accessoryId) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${accessoryId}`,
-        {
+        const response = await axios.get('https://demo2.techsseract.com/stocks/api/products/category', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      console.log('Fetched Shade Numbers:', response.data);
-      setShadeNo(response.data.data || []);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching shade numbers:', error);
-      setLoading(false);
-    }
-  };
-  
-  
-  
+            'Content-Type': 'application/json'
+          }
+        });
+        setCategories(response.data.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  const handleAccessoryChange = (event) => {
-    const accessoryId = event.target.value;
-    console.log('Selected Accessory ID:', accessoryId);  
-  
-    setSelectedAccessory(accessoryId);  
-  
-    if (accessoryId) {
-      fetchShadeNo(accessoryId);  
+  // Fetch ShadeNo based on selected category
+  const handleCategoryChange = async (event) => {
+    const selectedCategoryId = event.target.value; // Get selected category ID
+    if (selectedCategoryId) {
+      try {
+        const response = await axios.get(`https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${selectedCategoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Fetched Shade Numbers:', response.data.data);
+        setShadeNo(response.data.data); // Update Shade Numbers based on selected category
+      } catch (error) {
+        console.error('Error fetching ShadeNo:', error);
+      }
     } else {
-      setShadeNo([]);  /
-    }
-  };
-  
-
-  const handleShadeNoChange = async (event) => {
-    const selectedProductId = event.target.value;
-    try {
-      setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/checkstocks/${selectedProductId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      setProducts(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setLoading(false);
+      setShadeNo([]); // Reset shade numbers if no category is selected
     }
   };
 
+  useEffect(() => {
+    const fetchShadeNo = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log(response.data.data);
+        setShadeNo(response.data.data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+    fetchShadeNo();
+  }, []);
 
-
-
-
-
-
-  
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/invoiceno`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepassno`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -691,6 +562,30 @@ const Invoice_out = () => {
     };
     fetchInvoiceNo();
   }, []);
+
+  const handleShadeNoChange = async (event) => {
+    setLoading(true);
+    const selectedProductId = event.target.value;
+
+    if (selectedProductId) {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedProductId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setLoading(false);
+
+        console.log(response.data.data);
+        setProducts(response.data.data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    } else {
+      setProducts(null);
+    }
+  };
 
   useEffect(() => {
     const fetchReceiverData = async () => {
@@ -728,7 +623,7 @@ const Invoice_out = () => {
               updatedRow.unit === 'meter'
                 ? Number(updatedRow.out_length) * 3.28084
                 : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_length) / 12 // Convert inches to feet
+                  ? Number(updatedRow.out_length) / 12
                   : Number(updatedRow.out_length);
 
             const widthInFeet =
@@ -753,7 +648,6 @@ const Invoice_out = () => {
       return updatedRows;
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -773,7 +667,7 @@ const Invoice_out = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godown`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -810,12 +704,11 @@ const Invoice_out = () => {
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'stock_code', label: 'Stock Code' },
     { id: 'out_width', label: 'Width' },
     { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
-    { id: 'area_sq_ft', label: 'Area(sqft)' },
-    { id: 'product_type', label: 'Type' }
+    { id: 'product_type', label: 'Type' },
+    { id: 'out_quantity', label: 'Quantity' }
   ];
 
   const handleCheckboxChange = (id) => {
@@ -885,43 +778,45 @@ const Invoice_out = () => {
                 <hr />
 
                 <div>
-                  <div className="d-flex align-items-center gap-4 mb-3">
-                    <div style={{ flex: 1 }}>
-                      <Form.Label>Select Accessories</Form.Label>
+                  <div>
+                    <h3>Category and Shade Selector</h3>
+
+                    {/* Category Dropdown */}
+                    <Form.Group>
+                      <Form.Label>Select Category:</Form.Label>
                       <Form.Control
                         as="select"
-                        onChange={handleAccessoryChange}
+                        id="category"
                         className="form-select px-2"
-                        style={{ width: '13rem', minWidth: 'fit-content' }}
+                        style={{ width: '8rem', minWidth: 'fit-content',color: "black" }}
+                        onChange={handleCategoryChange} // Trigger fetchShadeNo when category changes
                       >
                         <option value="">Select</option>
-                        {accessories.map((accessory) => (
-                          <option key={accessory.id} value={accessory.id}>
-                            {accessory.name}
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id} style={{color:"black"}}>
+                            {category.name}
                           </option>
                         ))}
                       </Form.Control>
-                    </div>
+                    </Form.Group>
 
-                    <div className="d-flex align-items-center gap-3" style={{ flex: 1 }}>
-                      <label htmlFor="shadeNo" className="form-label mb-0 fw-medium">
-                        Select Shade No
-                      </label>
+                    {/* Shade Number Dropdown */}
+                    <Form.Group>
+                      <Form.Label>Select Shade Number:</Form.Label>
                       <Form.Control
                         as="select"
                         id="shadeNo"
                         className="form-select px-2"
-                        style={{ width: '13rem', minWidth: 'fit-content' }}
-                        onChange={handleShadeNoChange}
+                        style={{ width: '8rem', minWidth: 'fit-content' }}
                       >
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                            {shade.name}
                           </option>
                         ))}
                       </Form.Control>
-                    </div>
+                    </Form.Group>
                   </div>
 
                   <div className="row">
@@ -990,15 +885,22 @@ const Invoice_out = () => {
                               <tbody>
                                 {selectedRows.map((row) => (
                                   <tr key={row.stock_available_id}>
-                                    <td>{row.product_shadeNo}</td>
-                                    <td>{row.product_purchase_shade_no}</td>
-                                    <td>{row.lot_no}</td>
-                                    <td>{row.stock_code}</td>
-                                    <td>{row.out_width}</td>
-                                    <td>{row.out_length}</td>
-                                    <td>{row.unit}</td>
-                                    <td>{row.area}</td>
-                                    <td>{row.product_type}</td>
+                                    <td key="shadeNo">{row.product_shadeNo}</td>
+                                    <td key="pur_shadeNo">{row.product_shadeNo}</td>
+                                    <td key="lot_no">{row.lot_no}</td>
+                                    <td key="width">{row.out_width}</td>
+                                    <td key="length">{row.out_length}</td>
+                                    <td key="unit">{row.unit}</td>
+                                    <td key="type">{row.product_type}</td>
+                                    <td key="out_quantity">
+                                      <input
+                                        type="number"
+                                        className="form-control"
+                                        style={{ width: '5rem', paddingInline: '10px' }}
+                                        value={row.out_quantity || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
+                                      ></input>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1009,7 +911,6 @@ const Invoice_out = () => {
                     </div>
                   </div>
                 </div>
-
                 <Button
                   variant="primary"
                   type="submit"

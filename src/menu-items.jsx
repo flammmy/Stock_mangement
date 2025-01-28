@@ -146,14 +146,14 @@ const menuItems = {
               url: '/stocks/old-stock',
               
             },
-            {
-              id: 'available_stocks',
-              title: 'Available Stocks',
-              icon: 'feather icon-clipboard',
-              type: 'item',
-              url: '/available-stocks',
+            // {
+            //   id: 'available_stocks',
+            //   title: 'Available Stocks',
+            //   icon: 'feather icon-clipboard',
+            //   type: 'item',
+            //   url: '/available-stocks',
               
-            },
+            // },
           ],
         },
       ],

@@ -16,6 +16,18 @@
 //   const [searchQuery, setSearchQuery] = useState('');
 //   const [loading, setLoading] = useState(true);
 
+//   //
+//   const [invoices, setInvoices] = useState([]); // State to hold unique invoices
+//   const [showDropdown, setShowDropdown] = useState(false); // Toggle dropdown visibility
+//   const [selectedInvoice, setSelectedInvoice] = useState(''); // Selected invoice
+//   //
+
+//   // for lot number
+//   const [lotNumbers, setLotNumbers] = useState([]); // State for unique lot numbers
+//   const [showLotDropdown, setShowLotDropdown] = useState(false); // Toggle lot dropdown visibility
+//   const [selectedLotNumber, setSelectedLotNumber] = useState(''); // Selected lot number
+//   // end of lot number
+
 //   useEffect(() => {
 //     const fetchStocksData = async () => {
 //       try {
@@ -27,16 +39,26 @@
 //         });
 //         console.log('stocks data:', response.data);
 //         const productsWithArea = response.data.map((product) => {
-//           const areaM2 = product.length * product.width ;
+//           const areaM2 = product.length * product.width;
 //           const areaSqFt = areaM2 * 10.7639;
 //           return {
 //             ...product,
-//             area: areaM2.toFixed(3),
-//             area_sq_ft: areaSqFt.toFixed(3)
+//             area: areaM2.toFixed(2),
+//             area_sq_ft: areaSqFt.toFixed(2)
 //           };
 //         });
 //         setProducts(productsWithArea);
 //         setFilteredProducts(productsWithArea);
+
+//         // invoice
+//         const uniqueInvoices = [...new Set(productsWithArea.map((product) => product.stock_invoice?.invoice_no).filter(Boolean))];
+//         setInvoices(uniqueInvoices);
+//         // end invoice.
+
+//         // for lot number
+//         const uniqueLotNumbers = [...new Set(productsWithArea.map((product) => product.lot_no).filter(Boolean))];
+//         setLotNumbers(uniqueLotNumbers);
+//         // end for lot number.
 //       } catch (error) {
 //         console.error('Error fetching stocks data:', error);
 //       } finally {
@@ -50,9 +72,18 @@
 //   useEffect(() => {
 //     const lowercasedQuery = searchQuery.toLowerCase();
 //     const filtered = products.filter((product) =>
-//       ['width', 'length', 'invoice_no', 'lot_no']
-//         .map((key) => product[key]?.toString()?.toLowerCase() || '')
-//         .some((value) => value.includes(lowercasedQuery))
+//       [
+//         product.width?.toString(),
+//         product.length?.toString(),
+//         product.lot_no?.toString(),
+//         product.stock_invoice?.invoice_no?.toString(),
+//         product.stock_invoice?.date?.toString(),
+//         product.stock_product?.shadeNo?.toString(),
+//         product.stock_product?.purchase_shade_no?.toString(),
+//         `${product.stock_product?.shadeNo}-${product.stock_code}` // Combined stockCode format
+//       ]
+//         .filter(Boolean) // Removes undefined or null values
+//         .some((value) => value.toLowerCase().includes(lowercasedQuery))
 //     );
 //     setFilteredProducts(filtered);
 //   }, [searchQuery, products]);
@@ -61,6 +92,22 @@
 //     setSearchQuery(e.target.value);
 //   };
 
+//   // for invoice search filter.
+//   const handleInvoiceSelect = (invoice) => {
+//     setSelectedInvoice(invoice);
+//     setFilteredProducts(products.filter((product) => product.stock_invoice?.invoice_no === invoice));
+//     setShowDropdown(false);
+//   };
+
+//   // for lot number.
+//   const handleLotSelect = (lotNumber) => {
+//     setSelectedLotNumber(lotNumber);
+//     setFilteredProducts(products.filter((product) => product.lot_no === lotNumber));
+//     setShowLotDropdown(false);
+//   };
+  
+//   // End forlot number.
+
 //   const columns = [
 //     {
 //       name: 'Sr No',
@@ -68,12 +115,8 @@
 //       sortable: true
 //     },
 //     {
-//       name: 'Lot No',
-//       selector: (row) => row.lot_no,
-//       sortable: true
-//     }, {
-//       name: 'Stock Code',
-//       selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+//       name: 'Date',
+//       selector: (row) => row.stock_invoice?.date || 'N/A',
 //       sortable: true
 //     },
 //     {
@@ -82,8 +125,8 @@
 //       sortable: true
 //     },
 //     {
-//       name: 'Date',
-//       selector: (row) => row.stock_invoice?.date || 'N/A',
+//       name: 'Stock Code',
+//       selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
 //       sortable: true
 //     },
 //     {
@@ -98,12 +141,12 @@
 //     },
 //     {
 //       name: 'Length',
-//       selector: (row) => row.length,
+//       selector: (row) => parseFloat(row.length).toFixed(2),
 //       sortable: true
 //     },
 //     {
 //       name: 'Width',
-//       selector: (row) => row.width,
+//       selector: (row) => parseFloat(row.width).toFixed(2),
 //       sortable: true
 //     },
 //     {
@@ -120,6 +163,11 @@
 //       name: 'Area (sq. ft.)',
 //       selector: (row) => row.area_sq_ft,
 //       sortable: true
+//     },
+//     {
+//       name: 'Lot No',
+//       selector: (row) => row.lot_no,
+//       sortable: true
 //     }
 //   ];
 //   const exportToCSV = () => {
@@ -130,12 +178,12 @@
 //       'Lot No': row.lot_no,
 //       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
 //       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-//       'Date': row.stock_invoice?.date || 'N/A',
+//       Date: row.stock_invoice?.date || 'N/A',
 //       'Shade No': row.stock_product?.shadeNo || 'N/A',
 //       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-//       'Length': row.length,
-//       'Width': row.width,
-//       'Unit': row.unit,
+//       Length: row.length,
+//       Width: row.width,
+//       Unit: row.unit,
 //       'Area (m²)': row.area,
 //       'Area (sq. ft.)': row.area_sq_ft
 //     }));
@@ -187,8 +235,8 @@
 //     table: {
 //       style: {
 //         borderCollapse: 'separate', // Ensures border styles are separate
-//         borderSpacing: 0, // Removes spacing between cells
-//       },
+//         borderSpacing: 0 // Removes spacing between cells
+//       }
 //     },
 //     header: {
 //       style: {
@@ -197,8 +245,8 @@
 //         fontSize: '18px',
 //         fontWeight: 'bold',
 //         padding: '15px',
-//         borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-//       },
+//         borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+//       }
 //     },
 //     rows: {
 //       style: {
@@ -207,9 +255,9 @@
 //         transition: 'background-color 0.3s ease',
 //         '&:hover': {
 //           backgroundColor: '#e6f4ea',
-//           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-//         },
-//       },
+//           boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+//         }
+//       }
 //     },
 //     headCells: {
 //       style: {
@@ -218,45 +266,46 @@
 //         fontSize: '12px',
 //         fontWeight: 'bold',
 //         textTransform: 'uppercase',
-//         padding: '15px',
-//         borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+//         padding: '10px',
+//         width: '130px',
+//         borderRight: '1px solid #e0e0e0'
 //       },
 //       lastCell: {
 //         style: {
-//           borderRight: 'none', // Removes border for the last cell
-//         },
-//       },
+//           borderRight: 'none' // Removes border for the last cell
+//         }
+//       }
 //     },
 //     cells: {
 //       style: {
 //         fontSize: '14px',
 //         color: '#333',
-//         padding: '12px',
-//         borderRight: '1px solid grey', // Vertical lines between cells
-//       },
+//         padding: '20px',
+//         borderRight: '1px solid grey' // Vertical lines between cells
+//       }
 //     },
 //     pagination: {
 //       style: {
 //         backgroundColor: '#3f4d67',
 //         color: '#fff',
-//         borderRadius: '0 0 8px 8px',
+//         borderRadius: '0 0 8px 8px'
 //       },
 //       pageButtonsStyle: {
 //         backgroundColor: 'transparent',
 //         color: 'black', // Makes the arrows white
 //         border: 'none',
 //         '&:hover': {
-//           backgroundColor: 'rgba(255,255,255,0.2)',
+//           backgroundColor: 'rgba(255,255,255,0.2)'
 //         },
-//         '& svg':{
-//           fill: 'white',
+//         '& svg': {
+//           fill: 'white'
 //         },
 //         '&:focus': {
 //           outline: 'none',
-//           boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-//         },
-//       },
-//     },
+//           boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+//         }
+//       }
+//     }
 //   };
 
 //   return (
@@ -274,6 +323,67 @@
 //           />
 //         </div>
 //       </div>
+
+//       {/* code for serach invoice */}
+//       <div className="col-md-4">
+//         <div className="position-relative" style={{
+//           marginBottom: '20px'
+//         }}>
+//           <button
+//             className="btn btn-info"
+//             onClick={() => setShowDropdown((prev) => !prev)}
+//             style={{
+//               marginBottom: '15px',
+//               width: '140px',
+//               margin:'0px'
+//             }}
+//           >
+//             {selectedInvoice || 'Search Invoice'}
+//           </button>
+//           {showDropdown && (
+//             <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
+//               {invoices.map((invoice) => (
+//                 <li key={invoice} className="list-group-item" onClick={() => handleInvoiceSelect(invoice)} style={{ cursor: 'pointer' }}>
+//                   {invoice}
+//                 </li>
+//               ))}
+//             </ul>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* lot number */}
+//       <div className="col-md-4">
+//         <div
+//           className="position-relative"
+//           style={{
+//             marginBottom: '20px'
+//           }}
+//         >
+//           <button
+//             className="btn btn-info"
+//             onClick={() => setShowLotDropdown((prev) => !prev)}
+//             style={{
+//               width: '140px',
+//               margin:'0px'
+//             }}
+//           >
+//             {selectedLotNumber || 'Search Lot No.'}
+//           </button>
+//           {showLotDropdown && (
+//             <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
+//               {lotNumbers.map((lotNumber) => (
+//                 <li key={lotNumber} className="list-group-item" onClick={() => handleLotSelect(lotNumber)} style={{ cursor: 'pointer' }}>
+//                   {lotNumber}
+//                 </li>
+//               ))}
+//             </ul>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* End of button filter. */}
+
 //       <div className="row">
 //         <div className="col-12">
 //           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
@@ -320,6 +430,7 @@
 
 // export default ShowProduct;
 
+
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -338,18 +449,6 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
-  //
-  const [invoices, setInvoices] = useState([]); // State to hold unique invoices
-  const [showDropdown, setShowDropdown] = useState(false); // Toggle dropdown visibility
-  const [selectedInvoice, setSelectedInvoice] = useState(''); // Selected invoice
-  //
-
-  // for lot number
-  const [lotNumbers, setLotNumbers] = useState([]); // State for unique lot numbers
-  const [showLotDropdown, setShowLotDropdown] = useState(false); // Toggle lot dropdown visibility
-  const [selectedLotNumber, setSelectedLotNumber] = useState(''); // Selected lot number
-  // end of lot number
-
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
@@ -361,26 +460,16 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width;
+          const areaM2 = product.length * product.width ;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
-            area: areaM2.toFixed(2),
-            area_sq_ft: areaSqFt.toFixed(2)
+            area: areaM2.toFixed(3), 
+            area_sq_ft: areaSqFt.toFixed(3) 
           };
         });
         setProducts(productsWithArea);
         setFilteredProducts(productsWithArea);
-
-        // invoice
-        const uniqueInvoices = [...new Set(productsWithArea.map((product) => product.stock_invoice?.invoice_no).filter(Boolean))];
-        setInvoices(uniqueInvoices);
-        // end invoice.
-
-        // for lot number
-        const uniqueLotNumbers = [...new Set(productsWithArea.map((product) => product.lot_no).filter(Boolean))];
-        setLotNumbers(uniqueLotNumbers);
-        // end for lot number.
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -394,18 +483,9 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      [
-        product.width?.toString(),
-        product.length?.toString(),
-        product.lot_no?.toString(),
-        product.stock_invoice?.invoice_no?.toString(),
-        product.stock_invoice?.date?.toString(),
-        product.stock_product?.shadeNo?.toString(),
-        product.stock_product?.purchase_shade_no?.toString(),
-        `${product.stock_product?.shadeNo}-${product.stock_code}` // Combined stockCode format
-      ]
-        .filter(Boolean) // Removes undefined or null values
-        .some((value) => value.toLowerCase().includes(lowercasedQuery))
+      ['width', 'length', 'invoice_no', 'lot_no']
+        .map((key) => product[key]?.toString()?.toLowerCase() || '')
+        .some((value) => value.includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -414,22 +494,6 @@ const ShowProduct = () => {
     setSearchQuery(e.target.value);
   };
 
-  // for invoice search filter.
-  const handleInvoiceSelect = (invoice) => {
-    setSelectedInvoice(invoice);
-    setFilteredProducts(products.filter((product) => product.stock_invoice?.invoice_no === invoice));
-    setShowDropdown(false);
-  };
-
-  // for lot number.
-  const handleLotSelect = (lotNumber) => {
-    setSelectedLotNumber(lotNumber);
-    setFilteredProducts(products.filter((product) => product.lot_no === lotNumber));
-    setShowLotDropdown(false);
-  };
-  
-  // End forlot number.
-
   const columns = [
     {
       name: 'Sr No',
@@ -437,8 +501,8 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Date',
-      selector: (row) => row.stock_invoice?.date || 'N/A',
+      name: 'Lot No',
+      selector: (row) => row.lot_no,
       sortable: true
     },
     {
@@ -447,8 +511,8 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Stock Code',
-      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      name: 'Date',
+      selector: (row) => row.stock_invoice?.date || 'N/A',
       sortable: true
     },
     {
@@ -463,17 +527,42 @@ const ShowProduct = () => {
     },
     {
       name: 'Length',
-      selector: (row) => parseFloat(row.length).toFixed(2),
+      selector: (row) => Number(row.length).toFixed(2),
       sortable: true
     },
     {
       name: 'Width',
-      selector: (row) => parseFloat(row.width).toFixed(2),
+      selector: (row) => Number(row.width).toFixed(2),
       sortable: true
     },
     {
       name: 'Unit',
       selector: (row) => row.unit,
+      sortable: true
+    },
+    {
+      name: 'Quantity',
+      selector: (row) => row.quantity,
+      sortable: true
+    },
+    {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity??0,
+      sortable: true
+    },
+    {
+      name: 'Avaible Quantity',
+      selector: (row) => row.quantity-row.out_quantity,
+      sortable: true
+    },
+    {
+      name: 'Total Length',
+      selector: (row) => Number(row.length*row.quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Issue Length',
+      selector: (row) => Number(row.length*row.out_quantity).toFixed(2),
       sortable: true
     },
     {
@@ -487,10 +576,10 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Lot No',
-      selector: (row) => row.lot_no,
+      name: 'Warehouse',
+      selector: (row) => row.warehouse,
       sortable: true
-    }
+    },
   ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -500,12 +589,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
+      'Date': row.stock_invoice?.date || 'N/A',
       'Shade No': row.stock_product?.shadeNo || 'N/A',
       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      Length: row.length,
-      Width: row.width,
-      Unit: row.unit,
+      'Length': row.length,
+      'Width': row.width,
+      'Unit': row.unit,
       'Area (m²)': row.area,
       'Area (sq. ft.)': row.area_sq_ft
     }));
@@ -531,7 +620,8 @@ const ShowProduct = () => {
           'Width',
           'Unit',
           'Area (m²)',
-          'Area (sq. ft.)'
+          'Area (sq. ft.)',
+          'Warehouse'
         ]
       ],
       body: filteredProducts.map((row, index) => [
@@ -547,7 +637,8 @@ const ShowProduct = () => {
         row.width,
         row.unit,
         row.area,
-        row.area_sq_ft
+        row.area_sq_ft,
+        row.Warehouse
       ])
     });
     doc.save('stocks_list.pdf');
@@ -557,8 +648,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0 // Removes spacing between cells
-      }
+        borderSpacing: 0, // Removes spacing between cells
+      },
     },
     header: {
       style: {
@@ -567,8 +658,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
-      }
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
+      },
     },
     rows: {
       style: {
@@ -577,9 +668,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        },
+      },
     },
     headCells: {
       style: {
@@ -588,47 +679,47 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '10px',
-        width: '130px',
-        borderRight: '1px solid #e0e0e0'
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none' // Removes border for the last cell
-        }
-      }
+          borderRight: 'none', // Removes border for the last cell
+        },
+      },
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '20px',
-        borderRight: '1px solid grey' // Vertical lines between cells
-      }
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 8px 8px',
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
+          backgroundColor: 'rgba(255,255,255,0.2)',
         },
-        '& svg': {
-          fill: 'white'
+        '& svg':{
+          fill: 'white',
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
-        }
-      }
-    }
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
+      },
+    },
   };
+  
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -645,67 +736,6 @@ const ShowProduct = () => {
           />
         </div>
       </div>
-
-      {/* code for serach invoice */}
-      <div className="col-md-4">
-        <div className="position-relative" style={{
-          marginBottom: '20px'
-        }}>
-          <button
-            className="btn btn-info"
-            onClick={() => setShowDropdown((prev) => !prev)}
-            style={{
-              marginBottom: '15px',
-              width: '140px',
-              margin:'0px'
-            }}
-          >
-            {selectedInvoice || 'Search Invoice'}
-          </button>
-          {showDropdown && (
-            <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
-              {invoices.map((invoice) => (
-                <li key={invoice} className="list-group-item" onClick={() => handleInvoiceSelect(invoice)} style={{ cursor: 'pointer' }}>
-                  {invoice}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-
-      {/* lot number */}
-      <div className="col-md-4">
-        <div
-          className="position-relative"
-          style={{
-            marginBottom: '20px'
-          }}
-        >
-          <button
-            className="btn btn-info"
-            onClick={() => setShowLotDropdown((prev) => !prev)}
-            style={{
-              width: '140px',
-              margin:'0px'
-            }}
-          >
-            {selectedLotNumber || 'Search Lot No.'}
-          </button>
-          {showLotDropdown && (
-            <ul className="list-group position-absolute" style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'scroll', width: '40%' }}>
-              {lotNumbers.map((lotNumber) => (
-                <li key={lotNumber} className="list-group-item" onClick={() => handleLotSelect(lotNumber)} style={{ cursor: 'pointer' }}>
-                  {lotNumber}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-
-      {/* End of button filter. */}
-
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
