@@ -7,6 +7,8 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import Swal from 'sweetalert2';
+
 
 const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
@@ -219,28 +221,75 @@ const CustomersPage = () => {
       toast.error('Failed to update status!');
     }
   };
+  // const handleDelete = async (userId) => {
+  //   try {
+  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     // Check if the response indicates success
+  //     if (response.status === 200) {
+  //       toast.success('User deleted successfully');
+  //       setCustomer(Customers.filter((user) => user.id !== userId));
+  //       setFilteredCustomer(filteredCustomers.filter((user) => user.id !== userId));
+  //     } else {
+  //       throw new Error('Unexpected response status');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error('Failed to delete user');
+  //   }
+  // };
+
   const handleDelete = async (userId) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
-
-      // Check if the response indicates success
-      if (response.status === 200) {
-        toast.success('User deleted successfully');
-        setCustomer(Customers.filter((user) => user.id !== userId));
-        setFilteredCustomer(filteredCustomers.filter((user) => user.id !== userId));
-      } else {
-        throw new Error('Unexpected response status');
+  
+      if (result.isConfirmed) {
+        // Attempt to delete customer
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+  
+        // Update state on successful deletion
+        setCustomer((prevCustomers) => prevCustomers.filter((customer) => customer.id !== userId));
+        setFilteredCustomer((prevFilteredCustomers) => prevFilteredCustomers.filter((customer) => customer.id !== userId));
+  
+        toast.success('Customer deleted successfully');
+        Swal.fire('Deleted!', 'The customer has been deleted.', 'success');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete user');
+      // Log error for debugging and notify user
+      console.error('Error deleting customer:', error);
+  
+      // Provide user feedback
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(`Failed to delete customer: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the customer.');
+      }
+  
+      // Display error notification in confirmation dialog
+      Swal.fire('Error!', 'There was a problem deleting the customer.', 'error');
     }
   };
+  
+
+
   const handleUpdateCustomer = async () => {
     try {
       if (!selectedCustomer || !selectedCustomer.id) {

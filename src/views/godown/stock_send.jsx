@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import axios from 'axios';n
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
@@ -35,7 +35,9 @@ const Invoice_out = () => {
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const today = new Date().toISOString().split('T')[0];
+  const [categories, setCategories] = useState([]);
   const warehouse_supervisor_id = JSON.parse(localStorage.getItem('user')).id || 'N/A';
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: today,
@@ -45,9 +47,49 @@ const Invoice_out = () => {
   });
 
   useEffect(() => {
-    const fetchShadeNo = async () => {
+    const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/2`, {
+        const response = await axios.get('https://demo2.techsseract.com/stocks/api/products/category', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setCategories(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleCategoryChange = async (event) => {
+    const categoryId = event.target.value;
+    setSelectedCategoryId(categoryId);
+    setShadeNo([]); // Reset shade numbers
+
+    if (categoryId) {
+      try {
+        const response = await axios.get(`https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${categoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setShadeNo(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching ShadeNo:', error);
+        setShadeNo([]);
+      }
+    }
+  };
+  useEffect(() => {
+    const fetchShadeNo = async () => {
+      if (!selectedCategoryId) return; // Prevent fetching if no category is selected
+
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -56,11 +98,13 @@ const Invoice_out = () => {
         console.log(response.data.data);
         setShadeNo(response.data.data);
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        console.error('Error fetching ShadeNo:', error);
+        setShadeNo([]);
       }
     };
+
     fetchShadeNo();
-  }, []);
+  }, [selectedCategoryId]); // Dependency added to fetch only when category is selected
 
   useEffect(() => {
     const fetchInvoiceNo = async () => {
@@ -72,10 +116,11 @@ const Invoice_out = () => {
           }
         });
         console.log('log', response.data.data);
-        SetInvoiceNo(response.data.data);
+        const invoiceData = response.data.data; // Ensure this is the correct structure
+        SetInvoiceNo(invoiceData);
         setFormData((prevData) => ({
           ...prevData,
-          invoice_no: response.data.data
+          invoice_no: invoiceData // Ensure this is set correctly
         }));
       } catch (error) {
         console.error('Error fetching Invoice No data:', error);
@@ -86,25 +131,25 @@ const Invoice_out = () => {
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedProductId = event.target.value;
+    const selectedShadeId = event.target.value; // Get selected shade ID
 
-    if (selectedProductId) {
+    if (selectedShadeId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedProductId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedShadeId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         setLoading(false);
-
-        console.log(response.data.data);
-        setProducts(response.data.data);
+        console.log('Fetched Product Data:', response.data.data);
+        setProducts(response.data.data); // ✅ Ensure this updates the state
       } catch (error) {
+        setLoading(false);
         console.error('Error fetching product data:', error);
       }
     } else {
-      setProducts(null);
+      setProducts([]); // Reset when no shade is selected
     }
   };
 
@@ -172,10 +217,9 @@ const Invoice_out = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Confirmation before submission
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: "Do you want to submit the form?",
+      text: 'Do you want to submit the form?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -184,7 +228,7 @@ const Invoice_out = () => {
     });
 
     if (!result.isConfirmed) {
-      return; // Exit if user cancels
+      return;
     }
 
     try {
@@ -195,7 +239,6 @@ const Invoice_out = () => {
         }
       });
 
-      // Success alert after successful submission
       await Swal.fire({
         title: 'Success!',
         text: 'Stocks out successfully!',
@@ -207,7 +250,6 @@ const Invoice_out = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
 
-      // Error alert on failure
       await Swal.fire({
         title: 'Error!',
         text: errorMessage,
@@ -229,18 +271,22 @@ const Invoice_out = () => {
     { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
     { id: 'product_type', label: 'Type' },
-    { id: 'out_quantity', label: 'Quantity' },
+    { id: 'out_quantity', label: 'Quantity' }
   ];
 
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
 
-      const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.stock_available_id !== id)
-        : [...prevSelected, products.find((p) => p.stock_available_id === id)];
+      let updatedSelectedRows;
+      if (isAlreadySelected) {
+        updatedSelectedRows = prevSelected.filter((row) => row.stock_available_id !== id);
+      } else {
+        const selectedItem = products.find((p) => p.stock_available_id === id);
+        updatedSelectedRows = selectedItem ? [...prevSelected, selectedItem] : prevSelected;
+      }
 
-      console.log(updatedSelectedRows);
+      // Ensure formData is updated with selected rows
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedSelectedRows
@@ -249,6 +295,7 @@ const Invoice_out = () => {
       return updatedSelectedRows;
     });
   };
+
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
   return (
@@ -299,29 +346,46 @@ const Invoice_out = () => {
                 <hr />
 
                 <div>
-                  <div className="d-flex align-items-center gap-3 mb-3">
-                    <label htmlFor="shadeNo" className="form-label mb-0 fw-medium">
-                      Select Shade No
-                    </label>
-                    <Form.Control
-                      as="select"
-                      id="shadeNo"
-                      className="form-select px-2"
-                      style={{ width: '8rem', minWidth: 'fit-content' }}
-                      onChange={handleShadeNoChange}
-                    >
-                      <option value="">Select</option>
-
-                      {shadeNo.map((shade) => {
-                        return (
-                          <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                  <div style={{ display: 'flex', justifyContent: 'start' }}>
+                    <Form.Group>
+                      <Form.Label>Select Category:</Form.Label>
+                      <Form.Control
+                        as="select"
+                        id="category"
+                        className="form-select px-2"
+                        style={{ width: '8rem', minWidth: 'fit-content', color: 'black' }}
+                        onChange={handleCategoryChange}
+                      >
+                        <option value="">Select</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id} style={{ color: 'black' }}>
+                            {category.product_category}
                           </option>
-                        );
-                      })}
-                    </Form.Control>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group style={{ marginLeft: '20px' }}>
+                      <Form.Label>Select Shade Number:</Form.Label>
+                      <Form.Control
+                        as="select"
+                        id="shadeNo"
+                        className="form-select px-2"
+                        style={{ width: '8rem', minWidth: 'fit-content' }}
+                        disabled={!selectedCategoryId} // Disable if no category selected
+                        onChange={handleShadeNoChange} // 🔴 Added this to trigger fetch when selected
+                      >
+                        <option value="">Select</option>
+                        {shadeNo.map((shade) => (
+                          <option key={shade.id} value={shade.id}>
+                            {shade.name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
                   </div>
-                  <div className="row">
+
+                  <div className="row" style={{ marginTop: '5%' }}>
                     <div className="col-12">
                       <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
                         {loading ? (
@@ -365,6 +429,16 @@ const Invoice_out = () => {
                                     </tr>
                                   ))}
                                 </tbody>
+                                <tbody>
+                                  {products.map((row) => (
+                                    <tr key={row.stock_available_id}>
+                                      <td>{row.product_shadeNo || 'N/A'}</td> {/* Display the selected shade number */}
+                                      {columns.map((column) => (
+                                        <td key={column.id}>{row[column.id]}</td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
                               </table>
                             </div>
                           </div>
@@ -393,16 +467,15 @@ const Invoice_out = () => {
                                     <td key="width">{row.out_width}</td>
                                     <td key="length">{row.out_length}</td>
                                     <td key="unit">{row.unit}</td>
-                                    <td key="type" >{row.product_type}</td>
+                                    <td key="type">{row.product_type}</td>
                                     <td key="out_quantity">
                                       <input
-                                      type="number"
+                                        type="number"
                                         className="form-control"
                                         style={{ width: '5rem', paddingInline: '10px' }}
                                         value={row.out_quantity || ''}
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
-                                      >
-                                      </input>
+                                      ></input>
                                     </td>
                                   </tr>
                                 ))}

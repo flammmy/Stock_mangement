@@ -131,7 +131,7 @@ const AddProduct = () => {
                                 <Table bordered hover responsive>
                                     <thead>
                                         <tr className="text-white" style={{ backgroundColor: '#3f4d67' }}>
-                                            <th>Shade No</th>
+                                            <th style={{width:"170px"}}>Shade No</th>
                                             <th>Pur. Shade No</th>
                                             <th>Width</th>
                                             <th>Outer Diameter</th>
@@ -139,7 +139,7 @@ const AddProduct = () => {
                                             <th>Thickness</th>
                                             <th>Length</th>
                                             {/* <th>Unit</th> */}
-                                            <th>Type</th>
+                                            <th style={{width:"150px"}}>Type</th>
                                             {/* <th>Quantity</th> */}
                                             <th>Actions</th>
                                         </tr>

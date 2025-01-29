@@ -184,18 +184,6 @@ const people_type= "Supplier";
       selector: (row) => row.area,
       sortable: true
     },
-    
-    // {
-    //   name: 'Logo',
-    //   cell: (row) => (
-    //     <img
-    //       src={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.logo}`}
-    //       alt={`${row.name} logo`}
-    //       style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-    //     />
-    //   ),
-    //   sortable: false
-    // },
     {
       name: 'Status',
       cell: (row) => (
@@ -441,8 +429,10 @@ const people_type= "Supplier";
     saveAs(blob, 'supplier_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
+    const doc = new jsPDF('landscape'); // Landscape orientation provides more horizontal space.
+  
+    doc.text('Suppliers List', 14, 10);
+  
     doc.autoTable({
       head: [
         [
@@ -458,9 +448,8 @@ const people_type= "Supplier";
           'Registered Address',
           'Work Address',
           'Area',
-          'Logo',
-          'Status'
-        ]
+          'Status',
+        ],
       ],
       body: filteredSuppliers.map((row) => [
         row.name,
@@ -475,12 +464,43 @@ const people_type= "Supplier";
         row.reg_address,
         row.work_address,
         row.area,
-        row.logo,
-        row.status === 1 ? 'Active' : 'Inactive'
-      ])
+        row.status === 1 ? 'Active' : 'Inactive',
+      ]),
+      styles: {
+        fontSize: 6, // Smaller font size to fit more data
+        overflow: 'linebreak', // Wrap text within cells
+        cellPadding: 1, // Reduce padding for tighter fit
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' }, // Auto-adjust column widths
+        1: { cellWidth: 15 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 20 },
+        4: { cellWidth: 20 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 15 },
+        7: { cellWidth: 25 },
+        8: { cellWidth: 20 },
+        9: { cellWidth: 30 },
+        10: { cellWidth: 30 },
+        11: { cellWidth: 15 },
+        12: { cellWidth: 15 },
+      },
+      tableWidth: 'wrap', // Ensure table fits within the page width
+      margin: { top: 20 }, // Top margin for the table
+      didDrawPage: (data) => {
+        doc.text('Suppliers List (continued)', 14, 10);
+      },
+      pageBreak: 'auto', // Automatically breaks into new pages if needed
     });
-    doc.save('user_list.pdf');
+  
+    doc.save('supplier_list.pdf');
   };
+  
+  
+  
+  
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

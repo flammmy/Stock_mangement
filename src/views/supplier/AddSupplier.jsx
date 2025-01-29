@@ -1,4 +1,4 @@
-import React, { useState,useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -24,34 +24,18 @@ const AddSupplier = () => {
         pan_no: '',
         msme_no: '',
         reg_address: '',
-        work_address: '',
         area: '',
         tel_no: '',
         email: '',
         owner_mobile: '',
         logo: null,
     });
-    const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            // Set the file in formData
-            setFormData({ ...formData, logo: file });
-
-            // Create a preview of the image
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,6 +44,7 @@ const AddSupplier = () => {
         const submitData = new FormData();
         submitData.append('name', formData.name);
         submitData.append('gst_no', formData.gst_no);
+        submitData.append('code', formData.code);
         submitData.append('cin_no', formData.cin_no);
         submitData.append('pan_no', formData.pan_no);
         submitData.append('msme_no', formData.msme_no);
@@ -70,7 +55,6 @@ const AddSupplier = () => {
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
         submitData.append('people_type', 'Supplier');
-        
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/peoples`,
@@ -82,12 +66,12 @@ const AddSupplier = () => {
                     }
                 }
             );
-
+            console.log(response.data);
             navigate('/supplier');
             toast.success('Supplier added successfully');
         } catch (error) {
-            console.error('Error adding supplier:', error);
-            toast.error('Error adding supplier');
+            console.error('Error adding supplier:', error.message);
+            toast.error('Error adding supplier', error);
         }
     };
 
@@ -130,6 +114,14 @@ const AddSupplier = () => {
                                         />
                                         <FormField
                                             icon={FaIdCard}
+                                            label="Supplier Code"
+                                            name="code"
+                                            value={formData.code}
+                                            onChange={handleChange}
+                                        />
+
+                                        <FormField
+                                            icon={FaIdCard}
                                             label="GST Number"
                                             name="gst_no"
                                             value={formData.gst_no}
@@ -158,45 +150,6 @@ const AddSupplier = () => {
                                             value={formData.tel_no}
                                             onChange={handleChange}
                                         />
-                                        <Form.Group className="mb-3 position-relative">
-                                            <Form.Label className="d-flex align-items-center">
-                                                <FaImage className="me-2" style={{ color: mainColor }} />
-                                                Supplier Logo
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="file"
-                                                name="logo"
-                                                onChange={handleFileChange}
-                                                accept="image/*"
-                                                style={{
-                                                    paddingLeft: '40px',
-                                                    borderColor: mainColor
-                                                }}
-                                            />
-                                            <FaImage
-                                                className="position-absolute"
-                                                style={{
-                                                    left: '10px',
-                                                    top: '38px',
-                                                    color: mainColor,
-                                                    opacity: 0.5
-                                                }}
-                                            />
-                                            {previewImage && (
-                                                <div className="mt-2 text-center">
-                                                    <img
-                                                        src={previewImage}
-                                                        alt="Logo Preview"
-                                                        style={{
-                                                            maxWidth: '200px',
-                                                            maxHeight: '200px',
-                                                            borderRadius: '8px'
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Form.Group>
-
                                     </Col>
 
                                     {/* Second Column */}
@@ -208,7 +161,6 @@ const AddSupplier = () => {
                                             value={formData.msme_no}
                                             onChange={handleChange}
                                         />
-
                                         <FormField
                                             icon={FaMapMarkerAlt}
                                             label="Registered Address"
@@ -216,7 +168,6 @@ const AddSupplier = () => {
                                             value={formData.reg_address}
                                             onChange={handleChange}
                                         />
-
                                         <FormField
                                             icon={FaMapMarkerAlt}
                                             label="Work Address"
@@ -252,7 +203,7 @@ const AddSupplier = () => {
                                             onChange={handleChange}
                                         />
 
-                                      
+
                                     </Col>
                                 </Row>
 
@@ -266,7 +217,7 @@ const AddSupplier = () => {
                                         borderColor: mainColor,
                                         width: '10rem',
                                     }}
-                                    
+
                                 >
                                     <FaUserPlus className="me-2" /> Add Supplier
                                 </Button>

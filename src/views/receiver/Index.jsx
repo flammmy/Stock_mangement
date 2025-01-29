@@ -442,41 +442,25 @@ const ReceiversPage = () => {
   };
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Receivers List', 20, 10);
+    doc.text('Receivers List', 20, 5);
     doc.autoTable({
       head: [
         [
           'Receiver Name',
-          'Code',
           'GST No',
-          'CIN No',
-          'PAN No',
-          'MSME No',
           'Phone',
           'Email',
-          'Owner Mobile',
           'Registered Address',
-          'Work Address',
-          'Area',
-          'Logo',
-          'Status'
+          'Area'
         ]
       ],
       body: filteredReceivers.map((row) => [
         row.name,
-        row.code,
         row.gst_no,
-        row.cin_no,
-        row.pan_no,
-        row.msme_no,
         row.tel_no,
         row.email,
-        row.owner_mobile,
         row.reg_address,
-        row.work_address,
-        row.area,
-        row.logo,
-        row.status === 1 ? 'Active' : 'Inactive'
+        row.area
       ])
     });
     doc.save('Receivers_list.pdf');
