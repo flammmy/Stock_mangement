@@ -28,7 +28,7 @@ const Add_inoice = () => {
     place_of_supply: '',
     agent: '',
     warehouse: '',
-    supplier_id: '1',
+    people_id: '1',
     date: today,
     irn: '',
     ack_no: '',
@@ -64,7 +64,7 @@ const Add_inoice = () => {
   useEffect(() => {
     const fetchSupplierData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/supplier`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=Supplier`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -147,7 +147,7 @@ const Add_inoice = () => {
                       icon={FaUser}
                       label="Supplier"
                       name="supplier_id"
-                      value={formData.supplier_id}
+                      value={formData.people_id}
                       onChange={handleChange}
                       options={suppliers}
                       add={'/add-Supplier'}

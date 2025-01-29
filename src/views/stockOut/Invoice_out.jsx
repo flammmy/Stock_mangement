@@ -742,7 +742,7 @@ export default Invoice_out;
 //     paleament: '', // New field
 //     units: '', // New field
 //     operator: '', // New field
-//     supplier_id: '1', // New field, default value
+//     people_id: '1', // New field, default value
 //     transport_agency: '' // New field
 //   });
 

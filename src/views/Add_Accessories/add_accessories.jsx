@@ -28,7 +28,7 @@ const Add_inoice = () => {
     place_of_supply: '',
     agent: '',
     warehouse:'',
-    supplier_id: '1',
+    people_id: '1',
     date: today,
     irn: '',
     ack_no: '',
@@ -231,8 +231,8 @@ const Add_inoice = () => {
                     <FormField
                       icon={FaUser}
                       label="Supplier"
-                      name="supplier_id"
-                      value={formData.supplier_id}
+                      name="people_id"
+                      value={formData.people_id}
                       onChange={handleChange}
                       options={suppliers}
                       add={'/add-Supplier'}

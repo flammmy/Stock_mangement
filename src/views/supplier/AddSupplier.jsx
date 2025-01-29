@@ -69,14 +69,11 @@ const AddSupplier = () => {
         submitData.append('tel_no', formData.tel_no);
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
-        // Append logo if it exists
-        if (formData.logo) {
-            submitData.append('logo', formData.logo);
-        }
-
+        submitData.append('people_type', 'Supplier');
+        
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/supplier`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/peoples`,
                 submitData,
                 {
                     headers: {

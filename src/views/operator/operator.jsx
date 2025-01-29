@@ -37,7 +37,7 @@
 //     palement: '',
 //     units: '',
 //     operator: '',
-//     supplier_id: '1',
+//     people_id: '1',
 //     vehicle_no: '',
 //     transport_agency: '',
 //     selectedProduct: '',
@@ -206,7 +206,7 @@
 
 //   //   const basicFormData = {
 //   //     operator: formData.operator,
-//   //     supplier_id: formData.supplier_id,
+//   //     people_id: formData.people_id,
 //   //     total_amount: formData.total_amount,
 //   //   };
 
@@ -277,8 +277,8 @@
 //                     <FormField
 //                       icon={FaUser }
 //                       label="Supplier"
-//                       name="supplier_id"
-//                       value={formData.supplier_id}
+//                       name="people_id"
+//                       value={formData.people_id}
 //                       onChange={handleChange}
 //                       options={suppliers}
 //                       add={'/add-Supplier'}
@@ -573,7 +573,7 @@ const Invoice_out = () => {
     paleament: '', // New field
     units: '', // New field
     operator: '', // New field
-    supplier_id: '1', // New field, default value
+    people_id: '1', // New field, default value
     transport_agency: '' // New field
   });
 
