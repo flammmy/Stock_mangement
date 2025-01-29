@@ -484,7 +484,6 @@ const Invoice_out = () => {
     out_products: []
   });
 
-  // Fetch Categories for the Product Dropdown
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -494,32 +493,33 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-        setCategories(response.data.data);
+        setCategories(response.data.data || []);
       } catch (error) {
         console.error('Error fetching categories:', error);
+        setCategories([]);
       }
     };
     fetchCategories();
   }, []);
 
-  // Fetch ShadeNo based on selected category
   const handleCategoryChange = async (event) => {
-    const selectedCategoryId = event.target.value; // Get selected category ID
-    if (selectedCategoryId) {
+    const categoryId = event.target.value;
+    setSelectedCategoryId(categoryId);
+    setShadeNo([]);
+
+    if (categoryId) {
       try {
-        const response = await axios.get(`https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${selectedCategoryId}`, {
+        const response = await axios.get(`https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${categoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        console.log('Fetched Shade Numbers:', response.data.data);
-        setShadeNo(response.data.data); // Update Shade Numbers based on selected category
+        setShadeNo(response.data.data || []);
       } catch (error) {
         console.error('Error fetching ShadeNo:', error);
+        setShadeNo([]);
       }
-    } else {
-      setShadeNo([]); // Reset shade numbers if no category is selected
     }
   };
 
@@ -651,7 +651,6 @@ const Invoice_out = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Confirmation before submission
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to submit the form?',
@@ -663,7 +662,7 @@ const Invoice_out = () => {
     });
 
     if (!result.isConfirmed) {
-      return; // Exit if user cancels
+      return;
     }
 
     try {
@@ -674,7 +673,6 @@ const Invoice_out = () => {
         }
       });
 
-      // Success alert after successful submission
       await Swal.fire({
         title: 'Success!',
         text: 'Stocks out successfully!',
@@ -686,7 +684,6 @@ const Invoice_out = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
 
-      // Error alert on failure
       await Swal.fire({
         title: 'Error!',
         text: errorMessage,
@@ -778,36 +775,33 @@ const Invoice_out = () => {
                 <hr />
 
                 <div>
-                  <div>
-                    <h3>Category and Shade Selector</h3>
-
-                    {/* Category Dropdown */}
+                  <div style={{ display: 'flex', justifyContent: 'start' }}>
                     <Form.Group>
                       <Form.Label>Select Category:</Form.Label>
                       <Form.Control
                         as="select"
                         id="category"
                         className="form-select px-2"
-                        style={{ width: '8rem', minWidth: 'fit-content',color: "black" }}
-                        onChange={handleCategoryChange} // Trigger fetchShadeNo when category changes
+                        style={{ width: '8rem', minWidth: 'fit-content', color: 'black' }}
+                        onChange={handleCategoryChange}
                       >
                         <option value="">Select</option>
                         {categories.map((category) => (
-                          <option key={category.id} value={category.id} style={{color:"black"}}>
+                          <option key={category.id} value={category.id} style={{ color: 'black' }}>
                             {category.name}
                           </option>
                         ))}
                       </Form.Control>
                     </Form.Group>
 
-                    {/* Shade Number Dropdown */}
-                    <Form.Group>
+                    <Form.Group style={{ marginLeft: '20px' }}>
                       <Form.Label>Select Shade Number:</Form.Label>
                       <Form.Control
                         as="select"
                         id="shadeNo"
                         className="form-select px-2"
                         style={{ width: '8rem', minWidth: 'fit-content' }}
+                        disabled={shadeNo.length === 0}
                       >
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
@@ -819,7 +813,7 @@ const Invoice_out = () => {
                     </Form.Group>
                   </div>
 
-                  <div className="row">
+                  <div className="row" style={{ marginTop: '5%' }}>
                     <div className="col-12">
                       <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
                         {loading ? (

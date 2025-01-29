@@ -176,6 +176,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/product_category',
+        element: lazy(() => import('./views/shades/product_category')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/add-shades',
         element: lazy(() => import('./views/shades/AddShade')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
@@ -184,6 +190,12 @@ const routes = [
         exact: 'true',
         path: '/all-stocks',
         element: lazy(() => import('./views/stock/All_Stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/box_All_Stock',
+        element: lazy(() => import('./views/stock/box_All_Stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
