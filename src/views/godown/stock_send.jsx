@@ -476,6 +476,7 @@ const Invoice_out = () => {
   const today = new Date().toISOString().split('T')[0];
   const [categories, setCategories] = useState([]);
   const warehouse_supervisor_id = JSON.parse(localStorage.getItem('user')).id || 'N/A';
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: today,
@@ -505,7 +506,7 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]);
+    setShadeNo([]); // Reset shade numbers
 
     if (categoryId) {
       try {
@@ -523,24 +524,48 @@ const Invoice_out = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const fetchShadeNo = async () => {
+  //     try {
+  //       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       });
+  //       console.log(response.data.data);
+  //       setShadeNo(response.data.data);
+  //     } catch (error) {
+  //       console.error('Error fetching product data:', error);
+  //     }
+  //   };
+  //   fetchShadeNo();
+  // }, []);
   useEffect(() => {
     const fetchShadeNo = async () => {
+      if (!selectedCategoryId) return; // Prevent fetching if no category is selected
+  
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           }
-        });
+        );
         console.log(response.data.data);
         setShadeNo(response.data.data);
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        console.error('Error fetching ShadeNo:', error);
+        setShadeNo([]);
       }
     };
+  
     fetchShadeNo();
-  }, []);
-
+  }, [selectedCategoryId]); // Dependency added to fetch only when category is selected
+  
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
@@ -788,7 +813,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {categories.map((category) => (
                           <option key={category.id} value={category.id} style={{ color: 'black' }}>
-                            {category.name}
+                            {category.product_category}
                           </option>
                         ))}
                       </Form.Control>
@@ -801,7 +826,7 @@ const Invoice_out = () => {
                         id="shadeNo"
                         className="form-select px-2"
                         style={{ width: '8rem', minWidth: 'fit-content' }}
-                        disabled={shadeNo.length === 0}
+                        disabled={!selectedCategoryId} // Disable if no category selected
                       >
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
@@ -833,7 +858,7 @@ const Invoice_out = () => {
                           <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                             <div className="table-responsive">
                               <table className="table table-hover table-bordered align-middle">
-                                <thead className="table-dark">
+                                {/* <thead className="table-dark">
                                   <tr>
                                     <th scope="col" style={{ width: '50px' }}>
                                       <input type="checkbox" />
@@ -851,6 +876,24 @@ const Invoice_out = () => {
                                       <td>
                                         <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
                                       </td>
+                                      {columns.map((column) => (
+                                        <td key={column.id}>{row[column.id]}</td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody> */}
+                                <thead className="table-dark">
+                                  <tr>
+                                    <th>Shade No</th> {/* Ensure this column is included */}
+                                    {columns.map((column) => (
+                                      <th key={column.id}>{column.label}</th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {products.map((row) => (
+                                    <tr key={row.stock_available_id}>
+                                      <td>{row.product_shadeNo || 'N/A'}</td> {/* Display the selected shade number */}
                                       {columns.map((column) => (
                                         <td key={column.id}>{row[column.id]}</td>
                                       ))}

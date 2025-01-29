@@ -34,7 +34,7 @@ const AddProduct = () => {
       );
 
       if (response.data && response.data.data) {
-        setCategories(response.data.data); // Ensure the correct data structure is used
+        setCategories(response.data.data); 
       } else {
         toast.error('Categories data is not in the expected format');
       }
@@ -154,7 +154,7 @@ const AddProduct = () => {
                         {categories.length > 0 ? (
                           categories.map((category) => (
                             <option key={category.id} value={category.id}>
-                              {category.name}
+                              {category.product_category}
                             </option>
                           ))
                         ) : (

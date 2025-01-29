@@ -133,7 +133,6 @@ const Index = () => {
             <MdPrint />
           </Button>
           <Button variant="outline-info" size="sm" onClick={() => exportToExcel(row)}>
-            {/* <img src="/path-to-your-excel-logo.png" style={{ width: '18px', height: '18px' }} /> */}
             <FaFileExcel />
           </Button>
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
@@ -141,7 +140,7 @@ const Index = () => {
           </Button>
         </div>
       ),
-      width: '300px' // Increased width of the Action column
+      width: '300px' 
     }
   ];
 
