@@ -1,3 +1,5 @@
+@use "../variables";
+
 /**  =====================
       Authentication css start
 ==========================  **/
@@ -11,7 +13,7 @@
   min-height: 100vh;
   a,
   p > a {
-    color: $theme-heading-color;
+    color: variables.$theme-heading-color;
     font-weight: 600;
   }
   .btn-auth-gen {
@@ -62,7 +64,7 @@
   .auth-icon {
     font-size: 30px;
     &:before {
-      background: $theme-color;
+      background: variables.$theme-color;
       background-clip: inherit;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -88,13 +90,13 @@
       &:first-child {
         top: 0px;
         right: 117px;
-        background: $theme-color;
+        background: variables.$theme-color;
       }
 
       &:last-child {
         left: 100px;
         bottom: -105px;
-        background: $theme-color2;
+        background: variables.$theme-color2;
       }
 
       &.s {
@@ -102,13 +104,13 @@
         height: 20px;
         &:nth-child(2) {
           top: 150px;
-          background: $primary-color;
+          background: variables.$primary-color;
         }
 
         &:nth-child(3) {
           right: 228px;
           bottom: 121px;
-          background: $success-color;
+          background: variables.$success-color;
         }
       }
 

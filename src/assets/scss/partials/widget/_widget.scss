@@ -1,3 +1,5 @@
+@use "../variables";
+
 .user-list {
   .table {
     td {
@@ -46,7 +48,7 @@
   }
 
   .card-active > div + div {
-    border-left: 1px solid $theme-border;
+    border-left: 1px solid variables.$theme-border;
   }
 }
 

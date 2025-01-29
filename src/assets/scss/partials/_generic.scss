@@ -1,3 +1,6 @@
+@use "sass:list";
+@use "variables";
+
 /**  =====================
       Generic-class css start
 ========================== **/
@@ -51,21 +54,21 @@ $i: 0;
 /*====== Padding , Margin css ends ======*/
 
 /*====== text-color, background color css starts ======*/
-@each $value in $color-name {
-  $i: index($color-name, $value);
+@each $value in variables.$color-name {
+  $i: list.index(variables.$color-name, $value);
   .bg-#{$value} {
-    background: nth($color-color, $i);
+    background: list.nth(variables.$color-color, $i);
   }
   .text-#{$value} {
-    color: nth($color-color, $i);
+    color: list.nth(variables.$color-color, $i);
   }
 }
 /*====== text-color css ends ======*/
 /*====== Card top border css starts ======*/
-@each $value in $color-name {
-  $i: index($color-name, $value);
+@each $value in variables.$color-name {
+  $i: list.index(variables.$color-name, $value);
   .card-border-#{$value} {
-    border-top: 4px solid nth($color-color, $i);
+    border-top: 4px solid list.nth(variables.$color-color, $i);
   }
 }
 /*====== Card top border ends ======*/

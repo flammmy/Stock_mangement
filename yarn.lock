@@ -5736,6 +5736,11 @@ safe-regex-test@^1.0.3, safe-regex-test@^1.1.0:
   resolved "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
+sass-migrator@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.npmjs.org/sass-migrator/-/sass-migrator-2.3.1.tgz"
+  integrity sha512-JXXLZfzrnxtUWz/TS4xnbJq4g709wqYFgUb2s32FTDsEQSgPThRWrwT49vxfQK+eUbavJUzoQZ/tR5lq7fFnyA==
+
 sass@*, sass@^1.75.0:
   version "1.83.4"
   resolved "https://registry.npmjs.org/sass/-/sass-1.83.4.tgz"

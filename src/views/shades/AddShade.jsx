@@ -20,7 +20,6 @@ const AddProduct = () => {
     const navigate = useNavigate();
     const mainColor = '#3f4d67';
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });

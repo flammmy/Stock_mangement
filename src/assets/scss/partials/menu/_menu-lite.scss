@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "sass:list";
+@use "../variables";
+
 /* new logo start */
 
 .b-brand {
@@ -5,7 +9,7 @@
   align-items: center;
 
   .b-bg {
-    background: $theme-color;
+    background: variables.$theme-color;
     border-radius: 10px;
     width: 35px;
     height: 35px;
@@ -60,14 +64,14 @@
   z-index: 1028;
   position: relative;
   display: flex;
-  min-height: $header-height;
+  min-height: variables.$header-height;
   padding: 0;
   position: relative;
   top: 0;
   background: transparent;
-  color: $header-light-text-color;
-  width: calc(100% - #{$Menu-width});
-  margin-left: $Menu-width;
+  color: variables.$header-light-text-color;
+  width: calc(100% - #{variables.$Menu-width});
+  margin-left: variables.$Menu-width;
   transition: all 0.3s ease-in-out;
 
   .m-header {
@@ -95,10 +99,10 @@
   a,
   .btn,
   &.dropdown-toggle {
-    color: $header-light-text-color;
+    color: variables.$header-light-text-color;
 
     &:hover {
-      color: $primary-color;
+      color: variables.$primary-color;
     }
   }
 
@@ -109,7 +113,7 @@
     display: inline-block;
 
     > li {
-      line-height: $header-height;
+      line-height: variables.$header-height;
       display: inline-block;
       padding: 0 12px;
 
@@ -195,8 +199,8 @@
         .search-btn {
           padding: 5px;
           margin-left: 5px;
-          background: $primary-color;
-          border-color: $primary-color;
+          background: variables.$primary-color;
+          border-color: variables.$primary-color;
 
           .input-group-text {
             color: #fff;
@@ -223,7 +227,7 @@
 
   .dropdown {
     .dropdown-toggle {
-      line-height: $header-height;
+      line-height: variables.$header-height;
       display: inline-block;
       padding-right: 15px;
 
@@ -268,7 +272,7 @@
         &:focus,
         &:hover {
           a {
-            color: $theme-font-color;
+            color: variables.$theme-font-color;
           }
         }
       }
@@ -280,7 +284,7 @@
         font-family: 'pct';
         position: absolute;
         left: -9px;
-        top: $header-height - 8;
+        top: variables.$header-height - 8;
         z-index: 1001;
         font-size: 40px;
         line-height: 0;
@@ -326,7 +330,7 @@
           }
 
           &.notification:hover {
-            background: transparentize($primary-color, 0.9);
+            background: color.adjust(variables.$primary-color, $alpha: -0.9);
           }
 
           p {
@@ -377,7 +381,7 @@
         border-radius: 0.25rem 0.25rem 0 0;
         padding: 15px;
         position: relative;
-        background: $primary-color;
+        background: variables.$primary-color;
 
         img {
           width: 40px;
@@ -405,7 +409,7 @@
 
         li {
           a {
-            color: $theme-font-color;
+            color: variables.$theme-font-color;
             font-size: 14px;
             padding: 10px 20px;
 
@@ -418,7 +422,7 @@
           &:active,
           &:focus,
           &:hover {
-            background: transparentize($primary-color, 0.9);
+            background: color.adjust(variables.$primary-color, $alpha: -0.9);
 
             > a {
               background: transparent;
@@ -430,7 +434,7 @@
 
     &.drp-user.show {
       &:before {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
   }
@@ -443,7 +447,7 @@
   align-items: center;
   justify-content: center;
   width: 37px;
-  height: $header-height;
+  height: variables.$header-height;
   position: absolute;
   right: 0;
   top: 0;
@@ -504,7 +508,7 @@
 }
 
 .navbar-brand {
-  background: $menu-dark-background;
+  background: variables.$menu-dark-background;
   font-size: 1.25rem;
 }
 
@@ -536,7 +540,7 @@
   }
 
   .datta-scroll.navbar-content {
-    height: calc(100vh - #{$header-height});
+    height: calc(100vh - #{variables.$header-height});
   }
 
   .header-logo {
@@ -544,9 +548,9 @@
     align-items: center;
     display: inline-flex;
     float: left;
-    height: $header-height;
+    height: variables.$header-height;
     text-align: center;
-    width: $Menu-width;
+    width: variables.$Menu-width;
     margin-right: 0;
     padding: 10px 20px;
     transition: all 0.3s ease-in-out;
@@ -573,7 +577,7 @@
     align-items: center;
     justify-content: center;
     width: 37px;
-    height: $header-height;
+    height: variables.$header-height;
     position: absolute;
     right: 10px;
     top: 0;
@@ -585,7 +589,7 @@
       display: block;
       width: 100%;
       height: 2.8px;
-      background-color: $menu-dark-text-color;
+      background-color: variables.$menu-dark-text-color;
       transition: all 0.3s ease-in-out;
       backface-visibility: hidden;
       border-radius: 2px;
@@ -596,7 +600,7 @@
         position: absolute;
         left: 0;
         height: 2.8px;
-        background-color: $menu-dark-text-color;
+        background-color: variables.$menu-dark-text-color;
         transition: all 0.3s;
         backface-visibility: hidden;
         border-radius: 2px;
@@ -783,19 +787,19 @@
     }
   }
 
-  width: $Menu-width;
+  width: variables.$Menu-width;
   height: 100vh;
   top: 0;
-  background: $menu-dark-background;
-  color: $menu-dark-text-color;
+  background: variables.$menu-dark-background;
+  color: variables.$menu-dark-text-color;
 
   .pcoded-submenu {
-    background: darken($header-dark-background, 3%);
+    background: color.adjust(variables.$header-dark-background, $lightness: -3%);
     padding: 15px 0;
   }
 
   a {
-    color: $menu-dark-text-color;
+    color: variables.$menu-dark-text-color;
   }
 
   .navbar-content,
@@ -805,12 +809,12 @@
   }
 
   &.navbar-collapsed {
-    width: $Menu-collapsed-width;
+    width: variables.$Menu-collapsed-width;
     height: 100%;
     transition: all 0.3s ease-in-out;
 
     .header-logo {
-      width: $Menu-collapsed-width;
+      width: variables.$Menu-collapsed-width;
 
       img {
         transform: rotateY(-90deg);
@@ -823,7 +827,7 @@
         transform: rotateY(0deg);
         transform-origin: 0 0;
         opacity: 1;
-        left: calc((#{$Menu-collapsed-width} / 2) - 20px);
+        left: calc((#{variables.$Menu-collapsed-width} / 2) - 20px);
       }
 
       .mobile-menu {
@@ -894,10 +898,10 @@
               content: '';
               position: absolute;
               top: 49px;
-              left: calc(calc(#{$Menu-collapsed-width} / 2) - 3px);
+              left: calc(calc(#{variables.$Menu-collapsed-width} / 2) - 3px);
               width: 1px;
               height: calc(100% - 49px);
-              background: transparentize($menu-dark-text-color, 0.8);
+              background: color.adjust(variables.$menu-dark-text-color, $alpha: -0.8);
             }
 
             li {
@@ -920,12 +924,12 @@
     }
 
     ~ .pcoded-header {
-      width: calc(100% - #{$Menu-collapsed-width});
+      width: calc(100% - #{variables.$Menu-collapsed-width});
     }
 
     ~ .pcoded-header,
     ~ .pcoded-main-container {
-      margin-left: $Menu-collapsed-width;
+      margin-left: variables.$Menu-collapsed-width;
     }
 
     .pcoded-badge {
@@ -936,7 +940,7 @@
     }
 
     &:hover {
-      width: $Menu-width !important;
+      width: variables.$Menu-width !important;
 
       .pcoded-badge {
         transition-delay: 0.3s;
@@ -945,7 +949,7 @@
       }
 
       .header-logo {
-        width: $Menu-width;
+        width: variables.$Menu-width;
 
         img {
           transform: rotateY(0deg);
@@ -1077,7 +1081,7 @@
         }
 
         > a {
-          background: darken($menu-dark-background, 6%);
+          background: color.adjust(variables.$menu-dark-background, $lightness: -6%);
           color: #fff;
         }
       }
@@ -1099,7 +1103,7 @@
   &.navbar-collapsed:hover {
     ~ .pcoded-header,
     ~ .pcoded-main-container {
-      margin-left: $Menu-collapsed-width;
+      margin-left: variables.$Menu-collapsed-width;
 
       &:before {
         position: absolute;
@@ -1130,7 +1134,7 @@
   clear: both;
   float: unset;
   right: 0;
-  margin-left: $Menu-width;
+  margin-left: variables.$Menu-width;
   min-height: 100vh;
   transition: all 0.3s ease-in-out;
 }
@@ -1143,16 +1147,16 @@
 
 @media only screen and (max-width: 991px) {
   .pcoded-header {
-    background: $header-dark-background;
-    color: $header-dark-text-color;
+    background: variables.$header-dark-background;
+    color: variables.$header-dark-text-color;
 
     .input-group-text,
     a,
     dropdown-toggle {
-      color: $header-light-text-color;
+      color: variables.$header-light-text-color;
 
       &:hover {
-        color: $primary-color;
+        color: variables.$primary-color;
       }
     }
 
@@ -1172,7 +1176,7 @@
     .dropdown-menu,
     .dropdown-menu a,
     .search-close .input-group-text {
-      color: $header-dark-background;
+      color: variables.$header-dark-background;
     }
 
     .m-header {
@@ -1180,7 +1184,7 @@
       justify-content: flex-start;
       align-items: center;
       width: 100%;
-      height: $header-height;
+      height: variables.$header-height;
 
       .b-brand {
         margin-left: 20px;
@@ -1205,7 +1209,7 @@
   }
 
   .pcoded-navbar {
-    margin-left: -#{$Menu-width};
+    margin-left: -#{variables.$Menu-width};
     position: fixed;
     height: 100%;
     box-shadow: none;
@@ -1365,12 +1369,12 @@
 
 /* temp SCSS for document */
 
-@each $value in $color-menu-name {
-  $i: index($color-menu-name, $value);
+@each $value in variables.$color-menu-name {
+  $i: list.index(variables.$color-menu-name, $value);
 
   .nav-link {
     &.active.h-#{'' + $value} {
-      background: nth($color-menu-color, $i) !important;
+      background: list.nth(variables.$color-menu-color, $i) !important;
     }
   }
 }

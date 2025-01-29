@@ -1,20 +1,25 @@
+@use "sass:color";
+@use "sass:map";
+@use "sass:math";
+@use "../variables";
+
 @function color-yiq($color) {
-  $r: red($color);
-  $g: green($color);
-  $b: blue($color);
+  $r: color.red($color);
+  $g: color.green($color);
+  $b: color.blue($color);
   $yiq: (($r * 299) + ($g * 587) + ($b * 114)) * 0.001;
-  @if ($yiq >= $yiq-contrasted-threshold) {
-    @return $yiq-dark-color;
+  @if ($yiq >= variables.$yiq-contrasted-threshold) {
+    @return variables.$yiq-dark-color;
   } @else {
-    @return $yiq-light-color;
+    @return variables.$yiq-light-color;
   }
 }
 @function theme-color($key: 'primary') {
-  @return map-get($theme-colors, $key);
+  @return map.get(variables.$theme-colors, $key);
 }
 @function theme-color-level($color-name: 'primary', $level: 0) {
   $color: theme-color($color-name);
-  $color-base: if($level > 0, $yiq-dark-color, $yiq-light-color);
-  $level: abs($level);
-  @return mix($color-base, $color, $level * $theme-color-interval);
+  $color-base: if($level > 0, variables.$yiq-dark-color, variables.$yiq-light-color);
+  $level: math.abs($level);
+  @return color.mix($color-base, $color, $level * variables.$theme-color-interval);
 }

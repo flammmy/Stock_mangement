@@ -260,7 +260,7 @@ const ShowProduct = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
+        borderRight: '1px solid grey',
       },
     },
     pagination: {
