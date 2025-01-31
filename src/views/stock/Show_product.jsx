@@ -29,7 +29,7 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        const productsWithArea = response.data.filter((product) => (product.quantity-product.out_quantity) > 0).map((product) => {
+        const productsWithArea = response.data.filter((product) => (product.quantity) > 0).map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
           return {
@@ -118,6 +118,16 @@ const Show_product = () => {
       name: 'Quantity',
       selector: (row) => row.quantity,
       sortable: true
+    },
+    {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity ?? 0,
+      sortable: true,
+    },
+    {
+      name: 'Avaible Quantity',
+      selector: (row) => row.quantity - row.out_quantity,
+      sortable: true,
     },
     {
       name: 'Area(m.sq.)',

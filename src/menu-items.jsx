@@ -167,6 +167,42 @@ const menuItems = {
       ]
     },
     {
+      id: 'Accessory',
+      title: 'Accessories',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'accessories',
+          title: 'Accessories',
+          icon: 'feather icon-package',
+          type: 'collapse', 
+          style: { 
+            boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)', 
+            borderRadius: '8px', 
+            padding: '10px', 
+            backgroundColor: '#ffffff',
+          },
+          children: [
+            {
+              id: 'accessoriesadd',
+              title: 'Add Accessories',
+              type: 'item',
+              url: '/add-Accessories', 
+              icon: 'feather icon-package',
+            },
+            {
+              id: 'accessories_record',
+              title: 'Accessories',
+              type: 'item',
+              url: '/accessories_record', 
+              icon: 'feather icon-package',
+            }
+          ]
+        }
+      ]
+    },
+    {
       id: 'stockin',
       title: 'Stock In',
       type: 'group',
@@ -228,14 +264,6 @@ const menuItems = {
               type: 'item',
               url: '/stocks/old-stock'
             }
-            // {
-            //   id: 'available_stocks',
-            //   title: 'Available Stocks',
-            //   icon: 'feather icon-clipboard',
-            //   type: 'item',
-            //   url: '/available-stocks',
-
-            // },
           ]
         }
       ]
@@ -281,14 +309,6 @@ const menuItems = {
               type: 'item',
               url: '/all-out-stock'
             }
-            //  {
-            //               id: 'stock_to_godown',
-            //               title: 'Send To Godown',
-            //               icon: 'feather icon-file-minus',
-            //               type: 'item',
-            //               url: '/invoiceOut',
-
-            //             },
           ]
         }
       ]
@@ -327,15 +347,6 @@ const menuItems = {
               type: 'item',
               url: '/generated_gate_pass'
             },
-
-            // {
-            //   id: 'approve_operator',
-            //   title: 'Approve Operator',
-            //   icon: 'feather icon-file-plus',
-            //   type: 'item',
-            //   url: '/approve_operator',
-
-            // },
             {
               id: 'godown_stock',
               title: 'Godown Stocks',
@@ -343,6 +354,36 @@ const menuItems = {
               type: 'item',
               url: '/stocks/godown'
             }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'Warehouse_Accessories',
+      title: 'Warehouse Accessories',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'accessories_gatepass',
+          title: 'Accessory GatePass',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+            {
+              id: 'invoice_out',
+              title: 'GatePass',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/accessory/gatepass'
+            },
+            {
+              id: 'accessory_out_index',
+              title: 'Accessory GatePass',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/accessory/gatepassview'
+            },
           ]
         }
       ]

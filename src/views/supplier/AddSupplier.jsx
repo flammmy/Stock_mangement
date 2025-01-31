@@ -69,10 +69,17 @@ const AddSupplier = () => {
             console.log(response.data);
             navigate('/supplier');
             toast.success('Supplier added successfully');
-        } catch (error) {
-            console.error('Error adding supplier:', error.message);
-            toast.error('Error adding supplier', error);
+        } catch (errors) {
+            console.error('Error adding supplier:', errors);
+            let errorMessage = 'Error adding supplier';
+            if (errors.response && errors.response.data) {
+                errorMessage = errors.response.data.message || JSON.stringify(errors.response.data);
+            } else if (errors.message) {
+                errorMessage = errors.message;
+            }
+            toast.error(errorMessage);
         }
+        
     };
 
     const mainColor = '#3f4d67';

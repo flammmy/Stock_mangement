@@ -153,8 +153,14 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/add_accessories',
-        element: lazy(() => import('./views/Add_Accessories/add_accessories')),
+        path: '/accessories_record',
+        element: lazy(() => import('./views/accessories/index.jsx')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/add-Accessories',
+        element: lazy(() => import('./views/accessories/AddAccessories')),
         allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
@@ -281,6 +287,18 @@ const routes = [
         exact: 'true',
         path: '/operator',
         element: lazy(() => import('./views/operator/operator'))
+      },
+      {
+        exact: 'true',
+        path: '/accessory/gatepass',
+        element: lazy(() => import('./views/accessories/gatepass')),
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/accessory/gatepassview',
+        element: lazy(() => import('./views/accessories/generated_gatepass')),
+        allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
       },
       {
         exact: 'true',

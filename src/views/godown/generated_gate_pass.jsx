@@ -23,11 +23,10 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
-
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -312,11 +311,11 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ backgroundColor: '#fff' }}>
-                <div className="card-header" style={{ background: 'transparent' }}>
+                {/* <div className="card-header" style={{ background: 'transparent' }}>
                   <div className="card-title">
                     <h4 style={{ fontWeight: 'bold' }}>Invoices</h4>
                   </div>
-                </div>
+                </div> */}
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}

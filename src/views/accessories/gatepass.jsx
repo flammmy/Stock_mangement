@@ -31,7 +31,7 @@ const Invoice_out = () => {
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
   const [sub_supervisors, setSub_supervisor] = useState([]);
-  const [shadeNo, setShadeNo] = useState([]);
+  const [accessory, setAccessory] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const today = new Date().toISOString().split('T')[0];
@@ -67,44 +67,45 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]); 
+    setAccessory([]);
 
     if (categoryId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${categoryId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setShadeNo(response.data.data || []);
-      } catch (error) {
-        console.error('Error fetching ShadeNo:', error);
-        setShadeNo([]);
-      }
-    }
-  };
-  useEffect(() => {
-    const fetchShadeNo = async () => {
-      if (!selectedCategoryId) return; 
-
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${categoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         console.log(response.data.data);
-        setShadeNo(response.data.data);
+        setAccessory(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching ShadeNo:', error);
-        setShadeNo([]);
+        console.error('Error fetching Accessory:', error);
+        setAccessory([]);
+      }
+    }
+  };
+  useEffect(() => {
+    const fetchAccessory = async () => {
+      if (!selectedCategoryId) return;
+
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${selectedCategoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log(response.data.data);
+        setAccessory(response.data.data);
+      } catch (error) {
+        console.error('Error fetching Accessory:', error);
+        setAccessory([]);
       }
     };
 
-    fetchShadeNo();
-  }, [selectedCategoryId]); // Dependency added to fetch only when category is selected
+    fetchAccessory();
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     const fetchInvoiceNo = async () => {
@@ -116,7 +117,7 @@ const Invoice_out = () => {
           }
         });
         console.log('log', response.data.data);
-        const invoiceData = response.data.data; // Ensure this is the correct structure
+        const invoiceData = response.data.data; 
         SetInvoiceNo(invoiceData);
         setFormData((prevData) => ({
           ...prevData,
@@ -129,13 +130,13 @@ const Invoice_out = () => {
     fetchInvoiceNo();
   }, []);
 
-  const handleShadeNoChange = async (event) => {
+  const handleAccessoryChange = async (event) => {
     setLoading(true);
     const selectedShadeId = event.target.value; // Get selected shade ID
 
     if (selectedShadeId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedShadeId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/category/${selectedShadeId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -143,13 +144,13 @@ const Invoice_out = () => {
         });
         setLoading(false);
         console.log('Fetched Product Data:', response.data.data);
-        setProducts(response.data.data); // ✅ Ensure this updates the state
+        setProducts(response.data.data);
       } catch (error) {
         setLoading(false);
         console.error('Error fetching product data:', error);
       }
     } else {
-      setProducts([]); // Reset when no shade is selected
+      setProducts([]);
     }
   };
 
@@ -181,31 +182,15 @@ const Invoice_out = () => {
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
       const updatedRows = prevSelectedRows.map((row) => {
-        if (row.stock_available_id === id) {
+        if (row.warehouse_accessory_id === id) {
           const updatedRow = { ...row, [field]: value };
-
-          if (field === 'out_length' || field === 'out_width' || field === 'unit') {
-            const lengthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_length) * 3.28084
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_length) / 12
-                  : Number(updatedRow.out_length);
-
-            const widthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_width) * 3.28084
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_width) / 12
-                  : Number(updatedRow.out_width);
-            updatedRow.area = Number(lengthInFeet * widthInFeet).toFixed(2);
-            console.log(updatedRow.area);
+          if (field === 'box') {
+            updatedRow.out_quantity = (Number(updatedRow.items) || 0) * (Number(value) || 0);
           }
           return updatedRow;
         }
         return row;
       });
-
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedRows
@@ -214,6 +199,7 @@ const Invoice_out = () => {
       return updatedRows;
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -232,7 +218,7 @@ const Invoice_out = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/accessory/gatepass`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -266,29 +252,26 @@ const Invoice_out = () => {
   const columns = [
 
     { id: 'product_category', label: 'Product Category' },
-    { id: 'product_shadeNo', label: 'Shade No' },
-    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+    { id: 'product_accessory_name', label: 'Accessory Name' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'out_width', label: 'Width' },
+    { id: 'items', label: 'Items' },
     { id: 'out_length', label: 'Length' },
     { id: 'unit', label: ' Unit' },
-    { id: 'product_type', label: 'Type' },
+    { id: 'box', label: 'Box/Bundle' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
 
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
-      const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
+      const isAlreadySelected = prevSelected.some((row) => row.warehouse_accessory_id === id);
 
       let updatedSelectedRows;
       if (isAlreadySelected) {
-        updatedSelectedRows = prevSelected.filter((row) => row.stock_available_id !== id);
+        updatedSelectedRows = prevSelected.filter((row) => row.warehouse_accessory_id !== id);
       } else {
-        const selectedItem = products.find((p) => p.stock_available_id === id);
+        const selectedItem = products.find((p) => p.warehouse_accessory_id === id);
         updatedSelectedRows = selectedItem ? [...prevSelected, selectedItem] : prevSelected;
       }
-
-      // Ensure formData is updated with selected rows
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedSelectedRows
@@ -355,7 +338,7 @@ const Invoice_out = () => {
                         as="select"
                         id="category"
                         className="form-select px-2"
-                        style={{ width: '8rem', minWidth: 'fit-content', color: 'black' }}
+                        style={{ width: '8rem', minItems: 'fit-content', color: 'black' }}
                         onChange={handleCategoryChange}
                       >
                         <option value="">Select</option>
@@ -371,16 +354,16 @@ const Invoice_out = () => {
                       <Form.Label>Select Shade Number:</Form.Label>
                       <Form.Control
                         as="select"
-                        id="shadeNo"
+                        id="accessory_name"
                         className="form-select px-2"
-                        style={{ width: '8rem', minWidth: 'fit-content' }}
-                        disabled={!selectedCategoryId} 
-                        onChange={handleShadeNoChange}
+                        style={{ width: '8rem', minItems: 'fit-content' }}
+                        disabled={!selectedCategoryId}
+                        onChange={handleAccessoryChange}
                       >
                         <option value="">Select</option>
-                        {shadeNo.map((shade) => (
+                        {accessory.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.name}
+                            {shade.accessory_name}
                           </option>
                         ))}
                       </Form.Control>
@@ -421,9 +404,9 @@ const Invoice_out = () => {
                                 </thead>
                                 <tbody>
                                   {products.map((row) => (
-                                    <tr key={row.stock_available_id}>
+                                    <tr key={row.warehouse_accessory_id}>
                                       <td>
-                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.warehouse_accessory_id)} />
                                       </td>
                                       {columns.map((column) => (
                                         <td key={column.id}>{row[column.id]}</td>
@@ -452,24 +435,23 @@ const Invoice_out = () => {
                               </thead>
                               <tbody>
                                 {selectedRows.map((row) => (
-                                  <tr key={row.stock_available_id}>
+                                  <tr key={row.warehouse_accessory_id}>
                                     <td key="product_category">{row.product_category}</td>
-                                    <td key="shadeNo">{row.product_shadeNo}</td>
-                                    <td key="pur_shadeNo">{row.product_shadeNo}</td>
-                                    <td key="lot_no">{row.lot_no}</td>
-                                    <td key="width">{row.out_width}</td>
-                                    <td key="length">{row.out_length}</td>
-                                    <td key="unit">{row.unit}</td>
-                                    <td key="type">{row.product_type}</td>
-                                    <td key="out_quantity">
+                                    <td key="product_accessory_name">{row.product_accessory_name}</td>
+                                    <td key="lot_no">{row.lot_no || '-'}</td>
+                                    <td key="items">{row.items || '-'}</td> 
+                                    <td key="out_length">{row.out_length || '-'}</td> 
+                                    <td key="unit">{row.unit || '-'}</td> 
+                                    <td key="box">
                                       <input
                                         type="number"
                                         className="form-control"
                                         style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.out_quantity || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
-                                      ></input>
+                                        value={row.box || ''}
+                                        onChange={(e) => handleInputChange(row.warehouse_accessory_id, 'box', e.target.value)}
+                                      />
                                     </td>
+                                    <td key="out_quantity">{(row.box || 0) * (row.items || 0)}</td> {/* Dynamic Out Quantity */}
                                   </tr>
                                 ))}
                               </tbody>
