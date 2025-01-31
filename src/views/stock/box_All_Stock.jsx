@@ -533,15 +533,28 @@ const ShowProduct = () => {
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate',
-        borderSpacing: 0,
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0, // Removes spacing between cells
+      },
+    },
+    header: {
+      style: {
+        backgroundColor: '#2E8B57',
+        color: '#fff',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        padding: '15px',
+        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
       },
     },
     rows: {
       style: {
         backgroundColor: '#f0fff4',
+        borderBottom: '1px solid #e0e0e0',
+        transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
         },
       },
     },
@@ -549,17 +562,52 @@ const ShowProduct = () => {
       style: {
         backgroundColor: '#20B2AA',
         color: '#fff',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none', // Removes border for the last cell
+        },
       },
     },
     cells: {
       style: {
         fontSize: '14px',
+        color: '#333',
+        padding: '12px',
+        borderRight: '1px solid grey', // Vertical lines between cells
+      },
+    },
+    pagination: {
+      style: {
+        backgroundColor: '#3f4d67',
+        color: '#fff',
+        borderRadius: '0 0 8px 8px',
+      },
+      pageButtonsStyle: {
+        backgroundColor: 'transparent',
+        color: 'black', // Makes the arrows white
+        border: 'none',
+        '&:hover': {
+          backgroundColor: 'rgba(255,255,255,0.2)',
+        },
+        '& svg':{
+          fill: 'white',
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+        },
       },
     },
   };
 
   return (
-    <div className="container-fluid pt-4">
+    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input

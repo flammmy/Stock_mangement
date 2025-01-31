@@ -227,15 +227,22 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/stocks/old-stock'
-            }
-            // {
-            //   id: 'available_stocks',
-            //   title: 'Available Stocks',
-            //   icon: 'feather icon-clipboard',
-            //   type: 'item',
-            //   url: '/available-stocks',
+            },
+            {
+              id: 'accessories',
+              title: 'Accessories',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/accessories_record'
+            },
+            {
+              id: 'wareHouse_accessory',
+              title: 'WareHouse Accessory',
+              icon: 'feather icon-clipboard',
+              type: 'item',
+              url: '/wareHouse_Accessory',
 
-            // },
+            },
           ]
         }
       ]

@@ -488,7 +488,7 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('https://demo2.techsseract.com/stocks/api/products/category', {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -506,11 +506,11 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]); // Reset shade numbers
+    setShadeNo([]); 
 
     if (categoryId) {
       try {
-        const response = await axios.get(`https://demo2.techsseract.com/stocks/api/gatepass/shadeno/${categoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${categoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -523,38 +523,17 @@ const Invoice_out = () => {
       }
     }
   };
-
-  // useEffect(() => {
-  //   const fetchShadeNo = async () => {
-  //     try {
-  //       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/1`, {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //           'Content-Type': 'application/json'
-  //         }
-  //       });
-  //       console.log(response.data.data);
-  //       setShadeNo(response.data.data);
-  //     } catch (error) {
-  //       console.error('Error fetching product data:', error);
-  //     }
-  //   };
-  //   fetchShadeNo();
-  // }, []);
   useEffect(() => {
     const fetchShadeNo = async () => {
-      if (!selectedCategoryId) return; // Prevent fetching if no category is selected
-  
+      if (!selectedCategoryId) return; 
+
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
           }
-        );
+        });
         console.log(response.data.data);
         setShadeNo(response.data.data);
       } catch (error) {
@@ -562,10 +541,10 @@ const Invoice_out = () => {
         setShadeNo([]);
       }
     };
-  
+
     fetchShadeNo();
   }, [selectedCategoryId]); // Dependency added to fetch only when category is selected
-  
+
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
@@ -576,10 +555,11 @@ const Invoice_out = () => {
           }
         });
         console.log('log', response.data.data);
-        SetInvoiceNo(response.data.data);
+        const invoiceData = response.data.data; // Ensure this is the correct structure
+        SetInvoiceNo(invoiceData);
         setFormData((prevData) => ({
           ...prevData,
-          invoice_no: response.data.data
+          invoice_no: invoiceData // Ensure this is set correctly
         }));
       } catch (error) {
         console.error('Error fetching Invoice No data:', error);
@@ -590,25 +570,25 @@ const Invoice_out = () => {
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedProductId = event.target.value;
+    const selectedShadeId = event.target.value; // Get selected shade ID
 
-    if (selectedProductId) {
+    if (selectedShadeId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedProductId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedShadeId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         setLoading(false);
-
-        console.log(response.data.data);
-        setProducts(response.data.data);
+        console.log('Fetched Product Data:', response.data.data);
+        setProducts(response.data.data); // ✅ Ensure this updates the state
       } catch (error) {
+        setLoading(false);
         console.error('Error fetching product data:', error);
       }
     } else {
-      setProducts(null);
+      setProducts([]); // Reset when no shade is selected
     }
   };
 
@@ -723,6 +703,8 @@ const Invoice_out = () => {
   };
 
   const columns = [
+
+    { id: 'product_category', label: 'Product Category' },
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
@@ -737,11 +719,15 @@ const Invoice_out = () => {
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
 
-      const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.stock_available_id !== id)
-        : [...prevSelected, products.find((p) => p.stock_available_id === id)];
+      let updatedSelectedRows;
+      if (isAlreadySelected) {
+        updatedSelectedRows = prevSelected.filter((row) => row.stock_available_id !== id);
+      } else {
+        const selectedItem = products.find((p) => p.stock_available_id === id);
+        updatedSelectedRows = selectedItem ? [...prevSelected, selectedItem] : prevSelected;
+      }
 
-      console.log(updatedSelectedRows);
+      // Ensure formData is updated with selected rows
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedSelectedRows
@@ -750,6 +736,7 @@ const Invoice_out = () => {
       return updatedSelectedRows;
     });
   };
+
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
   return (
@@ -826,7 +813,8 @@ const Invoice_out = () => {
                         id="shadeNo"
                         className="form-select px-2"
                         style={{ width: '8rem', minWidth: 'fit-content' }}
-                        disabled={!selectedCategoryId} // Disable if no category selected
+                        disabled={!selectedCategoryId} 
+                        onChange={handleShadeNoChange}
                       >
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
@@ -858,7 +846,7 @@ const Invoice_out = () => {
                           <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                             <div className="table-responsive">
                               <table className="table table-hover table-bordered align-middle">
-                                {/* <thead className="table-dark">
+                                <thead className="table-dark">
                                   <tr>
                                     <th scope="col" style={{ width: '50px' }}>
                                       <input type="checkbox" />
@@ -876,24 +864,6 @@ const Invoice_out = () => {
                                       <td>
                                         <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
                                       </td>
-                                      {columns.map((column) => (
-                                        <td key={column.id}>{row[column.id]}</td>
-                                      ))}
-                                    </tr>
-                                  ))}
-                                </tbody> */}
-                                <thead className="table-dark">
-                                  <tr>
-                                    <th>Shade No</th> {/* Ensure this column is included */}
-                                    {columns.map((column) => (
-                                      <th key={column.id}>{column.label}</th>
-                                    ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {products.map((row) => (
-                                    <tr key={row.stock_available_id}>
-                                      <td>{row.product_shadeNo || 'N/A'}</td> {/* Display the selected shade number */}
                                       {columns.map((column) => (
                                         <td key={column.id}>{row[column.id]}</td>
                                       ))}
@@ -922,6 +892,7 @@ const Invoice_out = () => {
                               <tbody>
                                 {selectedRows.map((row) => (
                                   <tr key={row.stock_available_id}>
+                                    <td key="product_category">{row.product_category}</td>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
